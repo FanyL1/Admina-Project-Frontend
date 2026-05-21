@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Admina - Integración de Trámites Académicos',
+  title: 'Admina - Trámites Académicos AIS',
   description: 'Admina. Tecnologia que simplifica',
 };
 

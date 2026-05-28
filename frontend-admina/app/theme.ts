@@ -13,16 +13,20 @@ const theme = createTheme({
     fontSize: 14,
     body1: {
       fontSize: 14,
-      color: '#0A141A',
+      color: '#090F1B',
       fontFamily: 'Arial, Helvetica, sans-serif',
     },
     body2: {
       fontSize: 12,
-      color: '#0A141A',
+      color: '#090F1B',
       fontFamily: 'Arial, Helvetica, sans-serif',
     },
     h2: {
       fontFamily: 'Arial, Helvetica, sans-serif',
+      backgroundColor: 'linear-gradient(135deg, #0c1527 0%, #253E74, #6586CD 100%)',
+      color: 'transparent',
+      backgroundClip: 'text',
+      WebkitBackgroundClip: 'text',
     },
     h5: {
       fontFamily: 'Arial, Helvetica, sans-serif',
@@ -33,15 +37,15 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#377495',
+      main: '#32539A',
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#DAE9F1',
-      contrastText: '#0E1D25',
+      main: '#D8E1F3',
+      contrastText: '#0c1527',
     },
     text: {
-      primary: '#0A141A',
+      primary: '#0c1527',
     },
     background: {
       default: '#FFFFFF',
@@ -63,14 +67,14 @@ const theme = createTheme({
           props: { variant: 'tertiary' as any },
           style: {
             backgroundColor: '#FFFFFF',
-            border: '1px solid #377495',
-            color: '#377495',
+            border: '1px solid  #32539A',
+            color: ' #32539A',
             '&:hover': {
-              backgroundColor: '#ECF4F8',
-              border: '1px solid #377495',
+              backgroundColor: ' #ECF0F9',
+              border: '1px solid  #32539A',
             },
             '&:active': {
-              backgroundColor: '#8FBDD6',
+              backgroundColor: '#253E74',
             },
           },
         },

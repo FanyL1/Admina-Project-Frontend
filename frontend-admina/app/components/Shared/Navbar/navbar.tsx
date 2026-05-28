@@ -55,7 +55,7 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
         {menuItems.map((item) => (
           <ListItem 
             key={item.label} 
-            sx={{ pb: 0 }}
+            sx={{ pb: 0, border: 'none', background: 'none'}}
             onClick={() => handleNavClick(item.sectionId)}
             component="button"
           >

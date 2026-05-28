@@ -202,7 +202,7 @@ export default function NotFound() {
             variant="text"
             size="large"
             startIcon={<HelpIcon />}
-            onClick={() => router.push('/contacto')}
+            onClick={() => router.push('/')}
             sx={{ color: theme.palette.primary.main }}
           >
             Ayuda

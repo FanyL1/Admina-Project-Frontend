@@ -1,20 +1,23 @@
 // app/page.tsx (o pages/index.tsx)
 'use client';
 import { useRef, useEffect, useState } from 'react';
-import { Box, Container, Grid, Card, CardContent, Typography, useTheme, alpha } from '@mui/material';
+import { Box, Container, Grid, Card, CardContent, Typography, alpha, useMediaQuery } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import SchoolIcon from '@mui/icons-material/School';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import EmailIcon from '@mui/icons-material/Email';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { Navbar } from './components/Shared/Navbar/navbar';
 import { Hero } from './components/UX/Header/header';
 import { Buttons } from './components/UX/Buttons/buttons';
 import { fadeInLeft, fadeInRight, pulseSuave} from './components/UX/Animation/animationHome';
 import { floatSuave } from './components/UX/Animation/animation404';
+import { Copy } from './components/UX/Copy/handleCopy';
 import theme from './theme';
+
 
 
 export default function HomePage() {
@@ -24,7 +27,8 @@ export default function HomePage() {
   const servicesRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
-
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -91,12 +95,9 @@ export default function HomePage() {
       <Box ref={servicesRef} sx={{ py: { xs: 2, sm: 6, md: 4 }}}>
         <Container sx={{  py: { xs: 8, sm: 10, md: 12 }, }}>
           <Box
-            sx={{
-              width: 80,
-              height: 4,
+            sx={{ width: 80, height: 4,
               background: `linear-gradient(90deg,${theme.palette.text.primary}, ${theme.palette.primary.main})`,
-              mb: 3,
-              borderRadius: 2,
+              mb: 3, borderRadius: 2,
             }}
           />
           <Typography
@@ -164,8 +165,7 @@ export default function HomePage() {
       </Box>
       
       {/* Acerca de*/}
-     <Box
-      ref={aboutRef}
+     <Box ref={aboutRef}
       sx={{
         py: { xs: 8, sm: 10, md: 12 },
         background: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${alpha(theme.palette.secondary.main, 0.3)} 50%, ${theme.palette.secondary.main} 100%)`,
@@ -252,6 +252,7 @@ export default function HomePage() {
                   lineHeight: 1.8,
                   mb: 3,
                   fontSize: '1rem',
+                  textAlign: 'justify',
                 }}
               >
                 Somos una alianza estratégica entre <strong style={{ color: theme.palette.primary.main }}>Admina</strong> y <strong style={{ color: theme.palette.primary.main }}>AIS</strong>, 
@@ -265,6 +266,7 @@ export default function HomePage() {
                   lineHeight: 1.8,
                   mb: 3,
                   fontSize: '1rem',
+                  textAlign: 'justify',
                 }}
               >
                 Nuestro equipo está conformado por profesionales apasionados por la tecnología 
@@ -277,6 +279,7 @@ export default function HomePage() {
                   color: theme.palette.text.primary,
                   lineHeight: 1.8,
                   fontSize: '1rem',
+                  textAlign: 'justify',
                 }}
               >
                 Con más de una década de experiencia, hemos ayudado a cientos de empresas 
@@ -285,8 +288,9 @@ export default function HomePage() {
             </Box>
           </Grid>
 
+
           {/* ÁREA DE ANIMACIÓN */}
-          <Grid>
+          {!isMobile && (<Grid>
             <Box
               sx={{
                 display: 'flex',
@@ -339,77 +343,47 @@ export default function HomePage() {
                 </Box>
               </Box>
             </Box>
-          </Grid>
+          </Grid>)}
         </Grid>
       </Container>
      </Box>
 
-      {/* Sección CTA */}
-      <Box
-        sx={{
-          py: { xs: 6, md: 8 },
-          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, #1c3a4a 100%)`,
-          color: 'white',
-          textAlign: 'center',
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography
-            variant="h4"
-            sx={{
-              mb: 2,
-              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-              fontWeight: 700,
-            }}
-          >
-            ¿Listo para comenzar?
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mb: 4,
-              color: 'white',
-              opacity: 0.9,
-              fontSize: { xs: '0.875rem', sm: '1rem' },
-            }}
-          >
-            Únete y agiliza tus procesos.
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Buttons
-              variantType="secondary"
-              href="/signUp"
-              sx={{
-                backgroundColor: 'white',
-                color: theme.palette.primary.main,
-                '&:hover': {
-                  backgroundColor: theme.palette.secondary.main,
-                },
-              }}
-            >
-              Comenzar ahora
-            </Buttons>
-          </Box>
-        </Container>
-      </Box>
-
        {/* Seccion de Contactos */}
-      <Box 
-        ref={contactRef}
-        sx={{
-          py: { xs: 6, md: 10 },
-          bgcolor: '#f8f9fa',
-        }}
+      <Box   ref={contactRef} sx={{ py: { xs: 2, sm: 6, md: 12}, }}
       >
+        <Box sx={{  mx: { xs: 2, sm: 3, md: 12 }}}>
+          <Box
+            sx={{ width: 80, height: 4,
+              background: `linear-gradient(90deg,${theme.palette.text.primary}, ${theme.palette.primary.main})`,
+                mb: 3, borderRadius: 2,
+            }}
+          />
+          <Typography
+            variant="h3"
+            sx={{
+              mb: { xs: 4, md: 6 },
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '2.5rem' },
+              fontWeight: 800,
+              background: `linear-gradient(90deg, ${theme.palette.text.primary}, ${theme.palette.primary.main})`,
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Contacto
+          </Typography>
+        </Box>
         <Container maxWidth="sm">
           <Box
            sx={{
+              position: 'relative',
               textAlign: 'center',
-              p: 6,
+              p: {xs: 2, sm: 4, md: 6},
               borderRadius: 4,
               transition: 'transform 0.3s, box-shadow 0.3s',
+              cursor: 'pointer',
               '&:hover': {
-                transform: 'translateY(-8px)',
+                transform: 'translateY(-4px)',
                 boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.1)',
               },    
               '&::before': {
@@ -423,8 +397,10 @@ export default function HomePage() {
                 WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                 WebkitMaskComposite: 'xor',
                 maskComposite: 'exclude',
-                opacity: 0,                    transition: 'opacity 0.3s',
+                opacity: 0,
+                transition: 'opacity 0.3s',
                 animation: 'borderMove 2s linear infinite',
+                pointerEvents: 'none', 
               },
               '&:hover::before': {
                 opacity: 1,
@@ -446,7 +422,7 @@ export default function HomePage() {
               <SupportAgentIcon sx={{ fontSize: 50, color: theme.palette.primary.main }} />
             </Box>
 
-            <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: theme.palette.primary.main }}>
+            <Typography variant="h4" sx={{ fontSize: { xs: '1.125rem', sm: '1.5rem', md: '2rem' }, fontWeight: 700, mb: 1, color: theme.palette.primary.main }}>
               Soporte Técnico
             </Typography>
 
@@ -454,22 +430,28 @@ export default function HomePage() {
               Estamos aquí para ayudarte
             </Typography>
 
-            <Buttons
+            {isMobile &&  (<Buttons
               sx={{
-                p: '10px',
+                p: {xs: 1, md: 1},
                 cursor: 'pointer',
                 transition: 'all 0.3s',
               }}
               onClick={() => window.location.href = 'mailto:soporteTecnicoAdmina@gmail.com'}
             >
-              <EmailIcon sx={{ fontSize: 20, mr:'10px' }} />
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                soporteTecnicoAdmina@gmail.com
+             <EmailIcon sx={{ fontSize: 20, mr:'5px' }} />
+              <Typography variant="body1" sx={{ fontSize: {xs: '0.875rem', sm: '1rem', md: '1.25rem'} ,color:'white', fontWeight: 600 }}>
+                soporteAdmina@gmail.com
               </Typography>
-            </Buttons>
+            </Buttons>)}
+            {!isMobile && (<Copy text="soporteAdmina@gmail.com">
+                <Typography variant="body1" sx={{ fontSize: {xs: '0.875rem', sm: '1rem', md: '1.25rem'} ,fontWeight: 600 }}>
+                  soporteAdmina@gmail.com
+                </Typography>
+            </Copy>)}
           </Box>
         </Container>
       </Box>
+     
       {/* Footer */}
       <Box
         component="footer"

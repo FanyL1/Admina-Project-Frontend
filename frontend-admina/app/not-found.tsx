@@ -7,12 +7,10 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { useTheme, alpha } from '@mui/material/styles';
-
-// Importaciones directas de íconos (Crucial para el rendimiento en Next.js)
 import HomeIcon from '@mui/icons-material/Home';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HelpIcon from '@mui/icons-material/Help';
-import { float, pulse } from './components/UX/Animation/animation404';
+import { float, pulse } from '../components/UX/Animation/animation404';
 
 
 export default function NotFound() {

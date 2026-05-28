@@ -10,12 +10,12 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import EmailIcon from '@mui/icons-material/Email';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-import { Navbar } from './components/Shared/Navbar/navbar';
-import { Hero } from './components/UX/Header/header';
-import { Buttons } from './components/UX/Buttons/buttons';
-import { fadeInLeft, fadeInRight, pulseSuave} from './components/UX/Animation/animationHome';
-import { floatSuave } from './components/UX/Animation/animation404';
-import { Copy } from './components/UX/Copy/handleCopy';
+import { Navbar } from '../components/Shared/Navbar/navbar';
+import { Hero } from '../components/UX/Header/header';
+import { Buttons } from '../components/UX/Buttons/buttons';
+import { fadeInLeft, fadeInRight, pulseSuave} from '../components/UX/Animation/animationHome';
+import { floatSuave } from '../components/UX/Animation/animation404';
+import { Copy } from '../components/UX/Copy/handleCopy';
 import theme from './theme';
 
 

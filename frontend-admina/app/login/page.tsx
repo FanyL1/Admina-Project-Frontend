@@ -3,9 +3,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { TextField,  Button,  Typography,} from '@mui/material';
+import { TextField,  Button,  Typography, Box,} from '@mui/material';
 import {  Login as LoginIcon,} from '@mui/icons-material';
-import { Form } from '../components/UX/Form/formAcces';
+import { Form } from '../../components/UX/Form/formAcces';
 import { authService } from './useLogin';
 import { LoginData } from './type';
 
@@ -55,7 +55,9 @@ export default function LoginPage() {
     };
 
     return (
-        <Form
+
+       <Box>
+         <Form
             onSubmit={handleSubmit}
             title="Iniciar Sesión"
             subtitle="Ingresa tus credenciales para acceder"
@@ -109,5 +111,6 @@ export default function LoginPage() {
                 sx={{ mb: 2 }}
             />
         </Form>
+       </Box>
     );
 }

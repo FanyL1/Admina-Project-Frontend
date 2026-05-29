@@ -452,21 +452,6 @@ export default function HomePage() {
         </Container>
       </Box>
      
-      {/* Footer */}
-      <Box
-        component="footer"
-        sx={{
-          py: 4,
-          textAlign: 'center',
-          borderTop: `1px solid ${theme.palette.secondary.main}`,
-        }}
-      >
-        <Container maxWidth="lg">
-          <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} Admina. Todos los derechos reservados.
-          </Typography>
-        </Container>
-      </Box>
     </Box>
   );
 }

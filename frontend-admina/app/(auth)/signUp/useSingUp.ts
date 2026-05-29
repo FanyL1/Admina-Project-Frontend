@@ -1,8 +1,6 @@
-/*
-ESTO ES UN PROTOTIPO DESARROLLADO PARA PROBAR LA CONEXION CON EL BACKEND.
-SE PUEDE TOMAR COMO EJEMPLO DE COMO REALIZAR PETICIONES AL BACKEND
-*/
-
+"use client"
+import { useState } from "react";
+import toast from 'react-hot-toast';
 
 export interface SignUpData {
   name: string;
@@ -20,8 +18,13 @@ export interface SignUpResponse {
 }
 
 export const signUp = async (formData: SignUpData): Promise<SignUpResponse> => {
-  try {
+  let toastId: string | undefined;
 
+  try {
+    // Mostrar toast de carga
+    toastId = toast.loading('Registrando usuario...');
+    console.log(formData);
+    
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/signup`, {
       method: 'POST',
       headers: {
@@ -39,6 +42,9 @@ export const signUp = async (formData: SignUpData): Promise<SignUpResponse> => {
     const data = await res.json();
 
     if (!res.ok) {
+      // Error del servidor
+      toast.dismiss(toastId);
+      toast.error(data.error || 'Error en el registro');
       return {
         success: false,
         message: data.error || 'Error en el registro',
@@ -47,17 +53,46 @@ export const signUp = async (formData: SignUpData): Promise<SignUpResponse> => {
       };
     }
 
+    // Éxito
+    toast.dismiss(toastId);
+    toast.success('¡Usuario registrado exitosamente!');
+    
     return {
       success: true,
-      message: '¡Registro exitoso!',
+      message: 'Usuario registrado exitosamente',
       data: data,
     };
 
   } catch (error: any) {
+    // Error de conexión
+    if (toastId) toast.dismiss(toastId);
+    toast.error('Error de conexión con el servidor');
+    
     return {
       success: false,
       message: 'Error de conexión con el servidor',
       details: [{ field: 'general', message: error.message }],
     };
   }
+};
+
+export const useSignUp = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const register = async (formData: SignUpData) => {
+    setLoading(true);
+    setError(null);
+    
+    const result = await signUp(formData);
+    
+    if (!result.success) {
+      setError(result.message);
+    }
+    
+    setLoading(false);
+    return result;
+  };
+
+  return { register, loading, error };
 };

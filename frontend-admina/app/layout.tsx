@@ -3,16 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme';
 import { ThemeProvider } from '@mui/material/styles';
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import Footer from "@/components/Shared/Footer/Footer";
 
 export const metadata: Metadata = {
   title: 'Admina - Trámites Académicos AIS',
@@ -30,6 +21,7 @@ export default function RootLayout({
         <ThemeProvider theme={theme}>
           <CssBaseline />
           {children}
+          <Footer/>
         </ThemeProvider>
       </body>
     </html>

@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     ];
   },
   outputFileTracingRoot: path.join(__dirname, '../../'),
-  allowedDevOrigins: ['192.168.1.109'],
+  allowedDevOrigins: ['10.227.208.21'],
 };
 
 export default nextConfig;

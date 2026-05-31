@@ -8,11 +8,11 @@ export const registerSchema = z.object({
   name: z.string()
     .min(3,"El nombre debe tener al menos 3 caracteres")
     .max(50, 'El nombre no puede superar los 50 caracteres')
-    .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El nombre solo puede contener letras y espacios'),
+    .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El nombre solo puede tener letras y espacios'),
   lastname: z.string()
     .min(3,"El nombre debe tener al menos 3 caracteres")
     .max(50, 'El nombre no puede superar los 50 caracteres')
-    .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El nombre solo puede contener letras y espacios'),
+    .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El nombre solo puede tener letras y espacios'),
   email: z.string()
     .email("Correo electrónico inválido")
     .min(5, 'El email es demasiado corto')
@@ -33,3 +33,4 @@ export const loginSchema = z.object({
 });
 
 export type SignUpData = z.infer<typeof registerSchema>;
+export type LoginData = z.infer<typeof loginSchema>;

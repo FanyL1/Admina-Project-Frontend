@@ -1,47 +1,48 @@
 // app/signUp/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSignUp } from './useSingUp';
 import { TextField, Paper, Typography, Box, Link } from '@mui/material';
 
+import { useSignUp } from './useSingUp';
 import { Buttons } from '@/components/UX/Buttons/buttons';
-import Form from '../../../components/UX/Form/formAcces';
+import Form from '../../components/UX/Form/formAcces';
 import { Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/Shared/Navbar/navbar';
 import theme from '@/app/theme';
 
-
 export default function SignUpPage() {
   const router = useRouter();
-  const { register, loading } = useSignUp();
+  const { register, loading, validationErrors } = useSignUp();
   const [formData, setFormData] = useState({
     name: '',
     lastname: '',
     dni: '',
     email: '',
-    password: '',
+    pass: '',
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const result = await register(formData);
-    
-    if (result.success) {
-      // Redirigir después de 2 segundos para que el usuario vea el éxito
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
-    }
-  };
+
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {  
+  e.preventDefault()
+  
+  const result = await register(formData);
+  
+  if (result.success) {
+    setTimeout(() => {
+      router.push('/login');
+    }, 2000);
+  }
+  
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  
   };
 
   return (
@@ -126,6 +127,9 @@ export default function SignUpPage() {
             required
             fullWidth
             variant="outlined"
+            placeholder='Juan Antonio'
+            error={!!validationErrors.find(e => e.field === 'name')}  // Coloca el borde rojo
+            helperText={validationErrors.find(e => e.field === 'name')?.message}  // Coloca el texto
           />
           
           <TextField
@@ -136,18 +140,23 @@ export default function SignUpPage() {
             required
             fullWidth
             variant="outlined"
+            placeholder='Perez Hernandez'
+            error={!!validationErrors.find(e => e.field === 'lastname')}  // Coloca el borde rojo
+            helperText={validationErrors.find(e => e.field === 'lastname')?.message}  // Coloca el texto
           />
         </Box>
         
         <TextField
           name="dni"
-          label="DNI"
+          label="Cedula"
           value={formData.dni}
           onChange={handleChange}
           required
           fullWidth
           variant="outlined"
           sx={{ mb: 2 }}
+          error={!!validationErrors.find(e => e.field === 'dni')}  // Coloca el borde rojo
+          helperText={validationErrors.find(e => e.field === 'dni')?.message} // Coloca el texto
         />
         
         <TextField
@@ -159,21 +168,43 @@ export default function SignUpPage() {
           required
           fullWidth
           variant="outlined"
+          placeholder='ejemplo@gmail.com'
           sx={{ mb: 2 }}
+          error={!!validationErrors.find(e => e.field === 'email')}  // Coloca el borde rojo
+          helperText={validationErrors.find(e => e.field === 'email')?.message}  // Coloca el texto
         />
         
         <TextField
-          name="password"
+          name="pass"
           label="Contraseña"
           type="password"
-          value={formData.password}
+          value={formData.pass}
           onChange={handleChange}
           required
           fullWidth
           variant="outlined"
-          sx={{ mb: 3 }}
+          sx={{ mb: 2 }}
+          error={!!validationErrors.find(e => e.field === 'pass')}  // Coloca el borde rojo
+          helperText={validationErrors.find(e => e.field === 'pass')?.message}  // Coloca el texto
         />
-        
+        <Box sx={{ textAlign: 'center'}}>
+          <Typography variant="body2" color="text.secondary">
+            Al registrarte aceptas los {' '}
+            <Link
+              href="/terms"
+              sx={{
+                color: '#667eea',
+                textDecoration: 'none',
+                fontWeight: 600,
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Terminos y Condiciones.
+            </Link>
+          </Typography>
+        </Box>
         <Buttons
           type="submit"
           variant="contained"

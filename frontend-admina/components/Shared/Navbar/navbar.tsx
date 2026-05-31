@@ -1,5 +1,5 @@
-// components/Navigation.tsx
-import React, { useState } from 'react';
+'use client'
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -17,12 +17,17 @@ import Image from 'next/image';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
+
+
 import { Buttons } from '../../UX/Buttons/buttons';
 
 
 export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({ onNavClick }) => {  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
+
+ const [currentPath, setCurrentPath] = useState('');
+ const [currentPath2, setCurrentPath2] = useState('');
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -44,6 +49,11 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
     }
   };
 
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+    setCurrentPath2(window.location.pathname);
+  }, []);
+
   const drawer = (
     <Box sx={{ width: 230, p: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
@@ -51,7 +61,7 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
           <CloseIcon />
         </IconButton>
       </Box>
-      <List>
+      { currentPath == '/' && (<List> 
         {menuItems.map((item) => (
           <ListItem 
             key={item.label} 
@@ -64,22 +74,51 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
         ))}
         <Divider sx={{ my: 2 }} />
         <ListItem sx={{ flexDirection: 'column', gap: 1, mt: 2 }}>
-          <Buttons
+          {currentPath2 !== '/login' && (<Buttons
             variantType="primary"
             fullWidth
             href="/login"
           >
             Iniciar Sesión
-          </Buttons>
-          <Buttons
+          </Buttons>)}
+          {currentPath2 !== '/signUp' && (<Buttons
             variantType="tertiary"
             fullWidth
             href="/signUp"
           >
             Registrarse
-          </Buttons>
+          </Buttons>)}
         </ListItem>
-      </List>
+      </List>)}
+      { currentPath !== '/' && (<List> 
+        {menuItems.map((item) => (
+          <ListItem 
+            key={item.label} 
+            sx={{ pb: 0, border: 'none', background: 'none'}}
+            onClick={() => window.location.href='/' }
+            component="button"
+          >
+            <ListItemText primary={item.label} />
+          </ListItem>
+        ))}
+        <Divider sx={{ my: 2 }} />
+        <ListItem sx={{ flexDirection: 'column', gap: 1, mt: 2 }}>
+          { currentPath2 !== '/login'  && (<Buttons
+            variantType="primary"
+            fullWidth
+            href="/login"
+          >
+            Iniciar Sesión
+          </Buttons>)}
+          {currentPath2 !== '/signUp' && (<Buttons
+            variantType="tertiary"
+            fullWidth
+            href="/signUp"
+          >
+            Registrarse
+          </Buttons>)}
+        </ListItem>
+      </List>)}
     </Box>
   );
 
@@ -111,7 +150,8 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
 
           {/* Menú Desktop */}
           {!isMobile && (
-            <Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+           <Box>
+            {currentPath == '/' && (<Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
               {menuItems.map((item) => (
                 <Box
                   key={item.label}
@@ -130,18 +170,39 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
                   {item.label}
                 </Box>
               ))}
-            </Box>
+            </Box>)}
+            {currentPath !== '/' && (<Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+              {menuItems.map((item) => (
+                <Box
+                  key={item.label}
+                  component="button"
+                  onClick={() => window.location.href='/'}
+                  sx={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    color: theme.palette.text.primary,
+                    '&:hover': { color: theme.palette.primary.main },
+                    transition: 'color 0.3s ease',
+                  }}
+                >
+                  {item.label}
+                </Box>
+              ))}
+            </Box>)}
+           </Box>
           )}
 
           {/* Botones Desktop */}
           {!isMobile && (
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Buttons variantType="tertiary" href="/login">
+              {currentPath !== '/login' && (<Buttons variantType="tertiary" href="/login">
                 Iniciar Sesión
-              </Buttons>
-              <Buttons variantType="primary" href="/signUp">
+              </Buttons>)}
+              {currentPath !== '/signUp' && (<Buttons variantType="primary" href="/signUp">
                 Registrarse
-              </Buttons>
+              </Buttons>)}
             </Box>
           )}
 

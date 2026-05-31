@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TextField,  Typography, Box, Link, Paper,} from '@mui/material';
 
-import  Form  from '../../../components/UX/Form/formAcces';
-import { authService } from './useLogin';
-import { LoginData } from './type';
+import  Form  from '../../components/UX/Form/formAcces';
+import { useLogin } from './useLogin';
+import { LoginData } from '../type';
 import { Buttons } from '@/components/UX/Buttons/buttons';
 import { Navbar } from '@/components/Shared/Navbar/navbar';
 import theme from '@/app/theme';
@@ -19,45 +19,32 @@ const initialState: LoginData = {
 export default function LoginPage() {
     const router = useRouter();
     const [formData, setFormData] = useState<LoginData>(initialState);
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { loginUser, loading, validationErrors} = useLogin()
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        if (error) setError(null);
-    };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {  
+    e.preventDefault()
+    
+    const result = await loginUser(formData);
+    
+    //Despues de 1s redirigue, esto es para que se vea el toast
+    if (result.success) {
+      setTimeout(() => {
+        router.push('/Inicio');
+      }, 1000);
+    }
+  
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
 
-        if (!formData.email || !formData.pass) {
-            setError('Por favor, completa todos los campos');
-            setLoading(false);
-            return;
-        }
+  };
 
-        const result = await authService.login(formData);
-
-        if (result.success) {
-            const userRole = result.user?.role?.name;
-            if (userRole === 'admin' || userRole === 'Administrador') {
-                router.push('/');
-            } else {
-                router.push('/');
-            }
-        } else {
-            setError(result.message);
-        }
-
-        setLoading(false);
-    };
-
-    return (
-<Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+  return (
+  <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
     <Navbar />
   
     <Box
@@ -70,7 +57,7 @@ export default function LoginPage() {
       }}
     >
       <Toaster 
-        position="top-right"
+        position="top-center"
         reverseOrder={false}
         toastOptions={{
           duration: 3000,
@@ -121,46 +108,14 @@ export default function LoginPage() {
               mb: 1,
             }}
           >
-            Bienvenido
+            Iniciar Sesión
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Regístrate para comenzar
+            Ingresa tus datos para continuar
           </Typography>
         </Box>
 
         <Form onSubmit={handleSubmit}>
-          <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' }, mb: 2 }}>
-            <TextField
-              name="name"
-              label="Nombre"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              fullWidth
-              variant="outlined"
-            />
-            
-            <TextField
-              name="lastname"
-              label="Apellido"
-              value={formData.lastname}
-              onChange={handleChange}
-              required
-              fullWidth
-              variant="outlined"
-            />
-          </Box>
-          
-          <TextField
-            name="dni"
-            label="DNI"
-            value={formData.dni}
-            onChange={handleChange}
-            required
-            fullWidth
-            variant="outlined"
-            sx={{ mb: 2 }}
-          />
           
           <TextField
             name="email"
@@ -172,18 +127,22 @@ export default function LoginPage() {
             fullWidth
             variant="outlined"
             sx={{ mb: 2 }}
+            error={!!validationErrors.find(e => e.field === 'email')}  // Coloca el borde rojo
+            helperText={validationErrors.find(e => e.field === 'email')?.message}  // Coloca el texto
           />
           
           <TextField
-            name="password"
+            name="pass"
             label="Contraseña"
             type="password"
-            value={formData.password}
+            value={formData.pass}
             onChange={handleChange}
             required
             fullWidth
             variant="outlined"
             sx={{ mb: 3 }}
+            error={!!validationErrors.find(e => e.field === 'pass')}  // Coloca el borde rojo
+            helperText={validationErrors.find(e => e.field === 'pass')?.message}  // Coloca el texto
           />
           
           <Buttons
@@ -200,14 +159,14 @@ export default function LoginPage() {
               fontWeight: 600,
             }}
           >
-            {loading ? 'Registrando...' : 'Registrarse'}
+            {loading ? 'Iniciando Sessión...' : 'Iniciar Sessión'}
           </Buttons>
 
           <Box sx={{ textAlign: 'center', mt: 3 }}>
             <Typography variant="body2" color="text.secondary">
-              ¿Ya tienes cuenta?{' '}
+              ¿No tienes cuenta?{' '}
               <Link
-                href="/login"
+                href="/signUp"
                 sx={{
                   color: '#667eea',
                   textDecoration: 'none',
@@ -217,7 +176,7 @@ export default function LoginPage() {
                   },
                 }}
               >
-                Inicia sesión aquí
+                Registrate aquí
               </Link>
             </Typography>
           </Box>

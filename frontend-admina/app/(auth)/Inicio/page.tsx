@@ -1,4 +1,3 @@
-// app/page.tsx (o pages/index.tsx)
 'use client';
 import { Box, Container,Typography, useMediaQuery } from '@mui/material';
 

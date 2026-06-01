@@ -49,3 +49,71 @@ export interface NavItem {
   roles: UserRole[];
   sectionId?: string;
 }
+
+export interface UserData {
+  id: string;
+  name: string;  
+  lastname: string;  
+  dni: string;      
+  email: string;
+  status: string;    
+  created_at: string;
+  role: {
+    id: string;
+    name: string;   
+  };
+}
+
+export interface GetAllUsersResponse {
+  success: boolean;
+  message: string;
+  data?: UserData[];
+  details?: any;
+}
+
+export type Order = 'asc' | 'desc';
+
+export interface Column {
+  id: string;
+  label: string;
+  numeric: boolean;
+  render?: (value: any, row: any) => React.ReactNode;
+}
+
+export interface DataTableProps {
+  data: any[];
+  columns: Column[];
+  title?: string;
+  loading?: boolean;
+  error?: string | null;
+  onRefresh?: () => void;
+  onEdit?: (row: any) => void;
+  onToggleStatus?: (row: any) => void;
+  onRolChange?: (row: any, newRol: string) => void;
+  getRowId: (row: any) => string | number;
+  filterFields?: {
+    searchFields: { [key: string]: boolean };
+    onSearchFieldsChange: (fields: any) => void;
+    rolFilter: string;
+    onRolFilterChange: (rol: string) => void;
+    estadoFilter: string;
+    onEstadoFilterChange: (estado: string) => void;
+    searchTerm: string;
+    onSearchTermChange: (term: string) => void;
+    rolOptions?: Array<{ value: string; label: string }>;
+    estadoOptions?: Array<{ value: string; label: string }>;
+  };
+}
+
+export interface RoleData {
+  id: string;
+  name: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface GetAllRolesResponse {
+  success: boolean;
+  message: string;
+  data?: RoleData[];
+}

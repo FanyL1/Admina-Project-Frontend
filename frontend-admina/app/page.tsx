@@ -1,4 +1,3 @@
-// app/page.tsx (o pages/index.tsx)
 'use client';
 import { useRef, useEffect, useState } from 'react';
 import { Box, Container, Grid, Card, CardContent, Typography, alpha, useMediaQuery } from '@mui/material';

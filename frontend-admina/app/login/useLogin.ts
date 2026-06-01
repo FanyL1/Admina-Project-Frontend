@@ -14,15 +14,10 @@ const saveSession = (session: Session) => {
     Cookies.set('userSession', JSON.stringify(session), { expires: 1 }); // 1 día
     Cookies.set('userRole', session.user?.role?.name || '', { expires: 1 });
     Cookies.set('userToken', session.token || '', { expires: 1 });
-
+     
     if (session.token) {
       localStorage.setItem('authToken', session.token);
     }
-
-    console.log('✅ Sesión guardada en localStorage:', {
-      userRole: localStorage.getItem('userRole'),
-      hasToken: !!session.token
-    });
   }
 };
 

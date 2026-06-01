@@ -27,16 +27,8 @@ export default function AuthenticatedLayout({
 
     if (!isClient || loading) return;
     
-    console.log('🔍 Verificando sesión:', {
-      isAuthenticated,
-      hasSession: !!session,
-      hasUser: !!session?.user,
-      role: session?.user?.role?.name
-    });
-    
     // Si no está autenticado, redirigir
     if (!isAuthenticated || !session?.user) {
-      console.log('No autenticado, redirigiendo a login');
       router.push('/login');
       return;
     }
@@ -47,7 +39,7 @@ export default function AuthenticatedLayout({
   // Mostrar loading
   if (!isClient || loading || !verificado) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ display: 'flex',flexDirection:'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Typography variant="h3" sx={{ 
           fontSize: { xs: '0.5rem', sm: '1rem', md: '1.5rem' }, 
           fontWeight: 800, 
@@ -58,6 +50,12 @@ export default function AuthenticatedLayout({
         }}>
           Cargando...
         </Typography>
+        <Typography variant="h6" sx={{ 
+          fontSize: { xs: '0.5rem', sm: '0.5rem', md: '1rem' }, 
+        }}>
+          Recargue la pagina despues de 5 segundos
+        </Typography>
+        
       </Box>
     );
   }

@@ -41,12 +41,14 @@ const getMenuItems = (role: string) => {
     ],
     Superusuario: [
       { label: 'Gestión de Usuarios', href: '/managementUser', icon: <AdminPanelSettingsIcon /> },
+      { label: 'Gestión de Estudiantes', href: '/managementStudiants', icon: <GroupIcon /> },
+      { label: 'Gestión de Roles (Solo Para desarrollo)', href: '/role', icon: <AdminPanelSettingsIcon /> },
       { label: 'Gestión de Carreras', href: '/managementDegree', icon: <SquareFootIcon /> },
       { label: 'Gestión de Tramites', href: '/managementRequest', icon: <TableRowsIcon /> },
-      { label: 'Gestión de Estudiantes', href: '/managementStudiants', icon: <GroupIcon /> },
       { label: 'Gestión de Categorias', href: '/managementCategory', icon: <StyleIcon /> },
       { label: 'Estadisticas', href: '/statistics', icon: <EqualizerIcon /> },
       { label: 'Reportes', href: '/reports', icon: <TrackChangesIcon /> },
+
     ],
   };
 
@@ -100,7 +102,7 @@ export default function Sidebar() {
       {/* Menú */}
       <List sx={{ flex: 1, px: 1, py: 1 }}>
         {menuItems.map((item) => (
-          <ListItem key={item.label} disablePadding sx={{ mb: 0.5 }}>
+          <ListItem key={item.label} disablePadding sx={{ mb: 0.5}}>
             <ListItemButton
               component={Link}
               href={item.href}

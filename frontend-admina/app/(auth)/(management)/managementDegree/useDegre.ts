@@ -1,13 +1,14 @@
 // hooks/useGetAllRoles.ts
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { GetAllRolesResponse, RoleData } from '@/app/type';
+import { GetAllResponseOnlyName, OnlyNameData } from '@/app/type';
+import { onlyNameSchem } from "@/schemas/onlyNameSchem"; 
+import { z } from "zod";
 
-export const getAllDegree = async (): Promise<GetAllRolesResponse> => {
+export const getAllDegree = async (): Promise<GetAllResponseOnlyName> => {
   let toastId: string | undefined;
 
   try {
-    toastId = toast.loading('Obteniendo roles...');
     
     const token = localStorage.getItem('authToken')
     
@@ -19,6 +20,7 @@ export const getAllDegree = async (): Promise<GetAllRolesResponse> => {
       },
     });
 
+  
     const data = await res.json();
 
     if (!res.ok) {
@@ -33,6 +35,7 @@ export const getAllDegree = async (): Promise<GetAllRolesResponse> => {
 
     toast.dismiss(toastId);
     toast.success('¡Carreras obtenidas exitosamente!');
+    console.log(data.data);
     
     return {
       success: true,
@@ -52,33 +55,32 @@ export const getAllDegree = async (): Promise<GetAllRolesResponse> => {
   }
 };
 
-export const createDegree = async (name: string): Promise<any> => {
+export const createDegree = async (formData: OnlyNameData): Promise<any> =>{
   let toastId: string | undefined;
-  
+
   try {
-    toastId = toast.loading('Creando rol...');
     
-    const token = localStorage.getItem('authToken')
-    
+    const token = localStorage.getItem('authToken');
+    const validatedData = onlyNameSchem.parse({ name: formData.name });
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/degree`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name: validatedData.name }),
     });
     
     const data = await res.json();
     
     if (!res.ok) {
       toast.dismiss(toastId);
-      toast.error(data.error || 'Error al crear el rol');
-      throw new Error(data.error || 'Error al crear el rol');
+      toast.error(data.error || 'Error al añadir carrera');
+      throw new Error(data.error || 'Error al añadir la carrera');
     }
     
     toast.dismiss(toastId);
-    toast.success('¡Rol creado exitosamente!');
+    toast.success('¡Carrera creada exitosamente!');
     
     return data;
   } catch (error) {
@@ -86,13 +88,17 @@ export const createDegree = async (name: string): Promise<any> => {
     throw error;
   }
 };
-
-export const updateDegree = async (id: string, name: string): Promise<any> => {
+export const updateDegree = async ( id: string,  updates: { name?: string; status?: string }): Promise<any> => {
+  
   let toastId: string | undefined;
   
   try {
+    if (!updates.name && !updates.status) {
+      toast.error('Debe proporcionar al menos un campo para actualizar');
+      throw new Error('Debe proporcionar al menos un campo para actualizar');
+    }
     
-    const token = localStorage.getItem('authToken')
+    const token = localStorage.getItem('authToken');
     
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/degree/${id}`, {
       method: 'PATCH',
@@ -100,19 +106,18 @@ export const updateDegree = async (id: string, name: string): Promise<any> => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify(updates), 
     });
     
     const data = await res.json();
     
     if (!res.ok) {
       toast.dismiss(toastId);
-      toast.error(data.error || 'Error al actualizar el rol');
-      throw new Error(data.error || 'Error al actualizar el rol');
+      toast.error(data.error || 'Error al actualizar la carrera');  throw new Error(data.error || 'Error al actualizar la carrera');
     }
     
     toast.dismiss(toastId);
-    toast.success('¡Rol actualizado exitosamente!');
+    toast.success('¡Carrera actualizada exitosamente!');
     
     return data;
   } catch (error) {
@@ -121,77 +126,126 @@ export const updateDegree = async (id: string, name: string): Promise<any> => {
   }
 };
 
-export const updateStatusDegree = async (id: string): Promise<any> => {
-  let toastId: string | undefined;
-  
-  try {
-    toastId = toast.loading('Eliminando Carrera...');
-    
-    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
-    const cleanToken = token?.replace(/undefined\.undefined\./g, '');
-    
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/roles/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${cleanToken}`,
-      },
-    });
-    
-    const data = await res.json();
-    
-    if (!res.ok) {
-      toast.dismiss(toastId);
-      toast.error(data.error || 'Error al eliminar el rol');
-      throw new Error(data.error || 'Error al eliminar el rol');
-    }
-    
-    toast.dismiss(toastId);
-    toast.success('¡Rol eliminado exitosamente!');
-    
-    return data;
-  } catch (error) {
-    toast.dismiss(toastId);
-    throw error;
-  }
-};
 
-// Hook personalizado para obtener roles
+// Hook personalizado para obtener carerras
 export const useGetAllDegree = () => {
-  const [roles, setRoles] = useState<RoleData[]>([]);
+  const [degrees, setDegrees] = useState<OnlyNameData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refetch, setRefetch] = useState(0);
+  const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]); // Estado para errores de validación
 
-  const fetchRoles = async () => {
+
+    const registerDegree = async (formData: OnlyNameData) => {
+      setLoading(true);
+      setError(null);
+      setValidationErrors([]); 
+      
+       try {
+  
+        onlyNameSchem.parse(formData);
+  
+      } catch (error: any) {
+        
+        if (error instanceof z.ZodError) {
+          const formattedErrors = error.issues.map(err => ({
+            field: err.path.join('.'),
+            message: err.message
+          }));
+          
+          setValidationErrors(formattedErrors);
+          setLoading(false);
+          
+          return {
+            success: false,
+            message: 'Error de validación',
+            details: formattedErrors, 
+          };
+        }
+      }
+      
+  
+      const result = await createDegree(formData);
+      
+      if (!result.success) {
+        setError(result.message);
+        if (result.details) {
+          setValidationErrors(result.details);
+        }
+      }
+      
+      setLoading(false);
+      return result;
+    };
+
+    const updateDegreeById = async (id: string, updates: { name?: string; status?: string }) => {
+  setLoading(true);
+  setError(null);
+  setValidationErrors([]);
+  
+  try {
+    // Validar si el nombre está presente y es válido
+    if (updates.name) {
+      onlyNameSchem.parse({ name: updates.name });
+    }
+    
+    const result = await updateDegree(id, updates);
+    
+    if (result && result.success !== false) {
+      refreshDegrees();
+      return result;
+    }
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      const formattedErrors = error.issues.map(err => ({
+        field: err.path.join('.'),
+        message: err.message
+      }));
+      
+      setValidationErrors(formattedErrors);
+      setError('Por favor, corrige los errores del formulario');
+    } else {
+      setError(error.message || 'Error al actualizar la carrera');
+    }
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const fetchDegrees = async () => {
     setLoading(true);
     setError(null);
     
     const result = await getAllDegree();
     
     if (result.success && result.data) {
-      setRoles(result.data);
+      setDegrees(result.data);
     } else {
       setError(result.message);
-      setRoles([]);
+      setDegrees([]);
     }
     
     setLoading(false);
   };
 
-  const refreshRoles = () => {
+  const refreshDegrees = () => {
     setRefetch(prev => prev + 1);
   };
 
   useEffect(() => {
-    fetchRoles();
+    fetchDegrees();
   }, [refetch]);
 
+
   return { 
-    roles, 
+    degrees, 
     loading, 
     error, 
-    refreshRoles,
-    refetch: fetchRoles 
+    validationErrors,
+    registerDegree,
+    updateDegreeById,
+    refreshDegrees,
+    refetch: fetchDegrees 
   };
 };

@@ -44,6 +44,7 @@ export default function DataTable({
   title = "Datos",
   loading = false,
   error = null,
+  isEmpty = false,
   onRefresh,
   onEdit,
   onToggleStatus,
@@ -61,13 +62,17 @@ export default function DataTable({
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [editModalOpen, setEditModalOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const editColumns = columns //funcion que quita el campo status para Modal de edicion
+  const editColumns = columns.filter(col => col.id !== 'status' && col.id !== 'role'); // Excluir columna de estado para edición
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
  
+  const isRealError = error && 
+    !error.toLowerCase().includes('exitosamente') && 
+    !error.toLowerCase().includes('no hay datos');
+
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = filteredData.map((n) => getRowId(n));
@@ -280,7 +285,7 @@ export default function DataTable({
         </DialogTitle>
         <DialogContent sx={{ mt: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            {columns.map((column) => (
+            {editColumns.map((column) => (
               <TextField
                 key={column.id}
                 fullWidth
@@ -311,7 +316,7 @@ export default function DataTable({
     );
   }
 
-  if (error && data.length === 0) {
+  if (isRealError) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
         <Typography color="error" gutterBottom>
@@ -377,73 +382,90 @@ export default function DataTable({
               </TableRow>
             </TableHead>
             <TableBody>
-              {visibleRows.map((row) => {
-                const rowId = getRowId(row);
-                const isItemSelected = selected.includes(rowId);
-
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={rowId}
-                    selected={isItemSelected}
+              {data.length === 0 ? (
+                <TableRow>
+                  <TableCell 
+                    align="center" 
+                    colSpan={columns.length + 2}
+                    sx={{ py: 4 }}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        onClick={() => handleClick(rowId)}
-                      />
-                    </TableCell>
-                    {columns.map((column) => (
-                      <TableCell key={column.id}>
-                        {column.render ? column.render(row[column.id], row) : row[column.id]}
-                      </TableCell>
-                    ))}
-                    <TableCell>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        {onEdit && (
-                          <Tooltip title="Editar">
-                            <IconButton onClick={() => handleEditClick(row)} size="small" sx={{ color: theme.palette.info.main }}>
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        {onToggleStatus && (
-                          <Tooltip title={row.status === 'active' ? 'Activar' : 'Inactivar'}>
-                            <IconButton onClick={() => onToggleStatus(row)} size="small">
-                              {row.status === 'active' ? 
-                                <BlockIcon sx={{ color: theme.palette.error.main }} /> : 
-                                <CheckCircleIcon sx={{ color: theme.palette.success.main }} />
-                              }
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        {onRolChange && (
-                          <FormControl size="small" sx={{ minWidth: 140 }}>
-                            <Select
-                              value={row.role?.name || ''}
-                              onChange={(e) => onRolChange(row, e.target.value)}
-                              size="small"
-                            >
-                              <MenuItem value="Estudiante">Estudiante</MenuItem>
-                              <MenuItem value="Administrativo">Administrativo</MenuItem>
-                              <MenuItem value="Superusuario">Super Usuarios</MenuItem>
-                            </Select>
-                          </FormControl>
-                        )}
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={columns.length + 2} />
+                    <Typography variant="body1" color="textSecondary">
+                      No hay datos registrados
+                    </Typography>
+                  </TableCell>
                 </TableRow>
+              ) : (
+                <>
+                  {visibleRows.map((row) => {
+                    const rowId = getRowId(row);
+                    const isItemSelected = selected.includes(rowId);
+
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={rowId}
+                        selected={isItemSelected}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            onClick={() => handleClick(rowId)}
+                          />
+                        </TableCell>
+                        {columns.map((column) => (
+                          <TableCell key={column.id}>
+                            {column.render ? column.render(row[column.id], row) : row[column.id]}
+                          </TableCell>
+                        ))}
+                        <TableCell>
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            {onEdit && (
+                              <Tooltip title="Editar">
+                                <IconButton onClick={() => handleEditClick(row)} size="small" sx={{ color: theme.palette.info.main }}>
+                                  <EditIcon />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                            {onToggleStatus && (
+                              <Tooltip title={row.status === 'active' ? 'Activar' : 'Inactivar'}>
+                                <IconButton onClick={() => onToggleStatus(row)} size="small">
+                                  {row.status === 'active' ? 
+                                    <BlockIcon sx={{ color: theme.palette.error.main }} /> : 
+                                    <CheckCircleIcon sx={{ color: theme.palette.success.main }} />
+                                  }
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                            {onRolChange && (
+                              <FormControl size="small" sx={{ minWidth: 140 }}>
+                                <Select
+                                  value={row.role?.name || ''}
+                                  onChange={(e) => onRolChange(row, e.target.value)}
+                                  size="small"
+                                >
+                                  <MenuItem value="Estudiante">Estudiante</MenuItem>
+                                  <MenuItem value="Administrativo">Administrativo</MenuItem>
+                                  <MenuItem value="Superusuario">Super Usuarios</MenuItem>
+                                </Select>
+                              </FormControl>
+                            )}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                      <TableCell colSpan={columns.length + 2} />
+                    </TableRow>
+                  )}
+                </>
               )}
+              
             </TableBody>
           </Table>
         </TableContainer>

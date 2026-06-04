@@ -71,32 +71,7 @@ export default function ProfilePage() {
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
 
       {/* Header decorativo */}
-      <Box sx={{ py: { xs: 2, sm: 6, md: 8 } }}>
-        <Box sx={{ mx: { xs: 2, sm: 3, md: 12 } }}>
-          <Box
-            sx={{
-              width: 80,
-              height: 4,
-              background: `linear-gradient(90deg,${theme.palette.text.primary}, ${theme.palette.primary.main})`,
-              mb: 3,
-              borderRadius: 2,
-            }}
-          />
-          <Typography
-            variant="h3"
-            sx={{
-              mb: { xs: 4, md: 2 },
-              fontSize: { xs: '2rem', sm: '2.5rem', md: '2.5rem' },
-              fontWeight: 800,
-              background: `linear-gradient(90deg, ${theme.palette.text.primary}, ${theme.palette.primary.main})`,
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            Mi Perfil
-          </Typography>
-        </Box>
+      <Box sx={{ py: { xs: 5, sm: 2, md: 0 } }}>
 
         <Container maxWidth="lg">
           {/* Tarjeta principal - Avatar y datos principales */}

@@ -86,6 +86,7 @@ export interface DataTableProps {
   title?: string;
   loading?: boolean;
   error?: string | null;
+  isEmpty?: boolean;
   onRefresh?: () => void;
   onEdit?: (row: any) => void;
   onToggleStatus?: (row: any) => void;
@@ -116,4 +117,21 @@ export interface GetAllRolesResponse {
   success: boolean;
   message: string;
   data?: RoleData[];
+}
+
+export interface OnlyNameData {
+  id: string;
+  name: string;
+}
+
+export interface GetAllResponseOnlyName {
+  success: boolean;
+  message: string;
+  data?: OnlyNameData[];
+}
+
+export interface DegreeData {
+  id: string;
+  name: string;
+  status?: 'active' | 'inactive';
 }

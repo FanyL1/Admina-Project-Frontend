@@ -1,11 +1,11 @@
 // hooks/useGetAllRoles.ts
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { GetAllResponseOnlyName, OnlyNameData } from '@/app/type';
+import { ProcedureTypeData, GetAllTypeResponse } from '@/app/type';
 import { onlyNameSchem } from "@/schemas/onlyNameSchem"; 
 import { z } from "zod";
 
-export const getAlltype = async (): Promise<GetAllResponseOnlyName> => {
+export const getAlltype = async (): Promise<GetAllTypeResponse> => {
   let toastId: string | undefined;
 
   try {
@@ -94,15 +94,16 @@ export const updateType = async ( id: string,  updates: { name?: string; status?
 };
 
 
+
 // Hook personalizado para obtener carerras
 export const useGetAlltype = () => {
-  const [types, setTypes] = useState<OnlyNameData[]>([]);
+  const [types, setTypes] = useState<ProcedureTypeData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refetch, setRefetch] = useState(0);
   const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]); // Estado para errores de validación
 
-    const updateTypesById = async (id: string, updates: { name?: string; status?: string }) => {
+  const updateTypesById = async (id: string, updates: { name?: string; status?: string }) => {
   setLoading(true);
   setError(null);
   setValidationErrors([]);
@@ -161,7 +162,7 @@ export const useGetAlltype = () => {
     fetchtype();
   }, [refetch]);
 
-
+  console.log(types)
   return { 
     types, 
     loading, 

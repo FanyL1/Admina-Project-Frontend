@@ -22,7 +22,8 @@ import {
 } from '@mui/icons-material';
 import { Cards } from '@/components/UX/Card/card';
 import { Buttons } from '@/components/UX/Buttons/buttons';
-import { useGetAllCategory } from '@/app/(auth)/(management)/request/usePage';
+import { useGetAllCategory } from '@/app/(auth)/(management)/managementCategory/useCategory';
+import { useGetAlltype } from '@/app/(auth)/(management)/managementRequest/useGetType';
 
 // Definición de tipos
 interface Type {
@@ -74,6 +75,7 @@ interface TramitesSelectorProps {
 
 export const CardRequest = () => {
   const { categories } = useGetAllCategory();
+  const {types} = useGetAlltype();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const toggleCategory = (categoryId: string) => {
@@ -136,9 +138,9 @@ export const CardRequest = () => {
               <Box sx={{ p: 2 }}>
                 <Stack spacing={2}>
                   {/* Aquí mapeas los tipos (trámites) */}
-                  {typeProcedure.map((type) => (
+                  {types.map((type) => (
                     <>
-                    { category.name == type.category && <Box
+                    { category.id == type.category_id && <Box
                       key={type.id}
                       sx={{
                         p: 2,
@@ -159,7 +161,7 @@ export const CardRequest = () => {
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
                             {/* Si tienes descripción, agrega aquí */}
-                            Trámite de {type.category}
+                            Trámite de {category.name}
                           </Typography>
                         </Box>
                         <Buttons

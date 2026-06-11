@@ -158,6 +158,7 @@ export interface ProcedureRequirements {
 export interface ProcedureTypeData {
   id: string;
   name: string;
+  category_id:string;
   requirements: ProcedureRequirements;
   status?: 'active' | 'inactive';
   created_at?: string;
@@ -167,4 +168,10 @@ export interface ProcedureTypeData {
 export interface ProcedureTypeFormData {
   name: string;
   requirements: ProcedureRequirements;
+}
+
+export interface GetAllTypeResponse {
+  success: boolean;
+  message: string;
+  data?: ProcedureTypeData[];
 }

@@ -135,3 +135,9 @@ export interface DegreeData {
   name: string;
   status?: 'active' | 'inactive';
 }
+
+export interface GetAllResquest {
+  id: string;
+  name: string;
+  status?: 'active' | 'inactive';
+}

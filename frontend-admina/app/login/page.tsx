@@ -1,7 +1,10 @@
 'use client';
+import React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TextField,  Typography, Box, Link, Paper,} from '@mui/material';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import  Form  from '../../components/UX/Form/formAcces';
 import { useLogin } from './useLogin';
@@ -19,6 +22,7 @@ const initialState: LoginData = {
 export default function LoginPage() {
     const router = useRouter();
     const [formData, setFormData] = useState<LoginData>(initialState);
+    const [showPassword, setShowPassword] = React.useState(false);
     const { loginUser, loading, validationErrors} = useLogin()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {  
@@ -134,7 +138,7 @@ export default function LoginPage() {
           <TextField
             name="pass"
             label="Contraseña"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={formData.pass}
             onChange={handleChange}
             required
@@ -143,6 +147,17 @@ export default function LoginPage() {
             sx={{ mb: 3 }}
             error={!!validationErrors.find(e => e.field === 'pass')}  // Coloca el borde rojo
             helperText={validationErrors.find(e => e.field === 'pass')?.message}  // Coloca el texto
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
           
           <Buttons

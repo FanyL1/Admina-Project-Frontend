@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { useLogin } from '../../login/useLogin';
 import { z } from 'zod';
+import { useLogin } from '../../login/useLogin';
 
 export interface ProfileFormData {
   name: string;
@@ -13,10 +13,68 @@ export interface ProfileFormData {
   confirmPass: string;
 }
 
+// Esquema de validación para el perfil
+const profileSchema = z.object({
+  name: z.string()
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(50, 'El nombre no puede superar los 50 caracteres')
+    .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El nombre solo puede contener letras y espacios'),
+  
+  lastname: z.string()
+    .min(3, 'El apellido debe tener al menos 3 caracteres')
+    .max(50, 'El apellido no puede superar los 50 caracteres')
+    .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El apellido solo puede contener letras y espacios'),
+  
+  email: z.string()
+    .email('Correo electrónico inválido')
+    .min(5, 'El email es demasiado corto')
+    .max(100, 'El email es demasiado largo')
+    .toLowerCase(),
+  
+  currentPass: z.string().optional(),
+  newPass: z.string().optional(),
+  confirmPass: z.string().optional(),
+}).refine((data) => {
+  // Si se está cambiando contraseña
+  if (data.newPass || data.currentPass || data.confirmPass) {
+    return !!data.currentPass;
+  }
+  return true;
+}, {
+  message: 'Debes ingresar tu contraseña actual para cambiar la contraseña',
+  path: ['currentPass'],
+}).refine((data) => {
+  if (data.newPass || data.currentPass || data.confirmPass) {
+    return !!data.newPass;
+  }
+  return true;
+}, {
+  message: 'Debes ingresar una nueva contraseña',
+  path: ['newPass'],
+}).refine((data) => {
+  if (data.newPass || data.confirmPass) {
+    return data.newPass === data.confirmPass;
+  }
+  return true;
+}, {
+  message: 'Las contraseñas nuevas no coinciden',
+  path: ['confirmPass'],
+}).refine((data) => {
+  if (data.newPass) {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).*$/;
+    return passwordRegex.test(data.newPass);
+  }
+  return true;
+}, {
+  message: 'La contraseña debe incluir una mayúscula, un número y un caracter especial',
+  path: ['newPass'],
+});
+
 export const useProfile = () => {
   const { sessionUser, token, getUserCreatedAt } = useLogin();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]);
   const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
   const [formData, setFormData] = useState<ProfileFormData>({
     name: '',
@@ -40,6 +98,8 @@ export const useProfile = () => {
 
   const handleChange = (field: keyof ProfileFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Limpiar error de validación de ese campo cuando el usuario escribe
+    setValidationErrors(prev => prev.filter(err => err.field !== field));
   };
 
   const toggleShowPassword = (field: 'current' | 'new' | 'confirm') => {
@@ -50,48 +110,27 @@ export const useProfile = () => {
     let toastId: string | undefined;
 
     try {
-      const body: Record<string, string> = {};
+      // Validar con Zod
+      const validatedData = profileSchema.parse({
+        name: formData.name,
+        lastname: formData.lastname,
+        email: formData.email,
+        currentPass: formData.currentPass,
+        newPass: formData.newPass,
+        confirmPass: formData.confirmPass,
+      });
 
-      body.name = z.string()
-        .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .max(50, 'El nombre no puede superar los 50 caracteres')
-        .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El nombre solo puede contener letras y espacios')
-        .parse(formData.name);
+      // Construir body para la petición
+      const body: Record<string, string> = {
+        name: validatedData.name,
+        lastname: validatedData.lastname,
+        email: validatedData.email,
+      };
 
-      body.lastname = z.string()
-        .min(3, 'El apellido debe tener al menos 3 caracteres')
-        .max(50, 'El apellido no puede superar los 50 caracteres')
-        .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El apellido solo puede contener letras y espacios')
-        .parse(formData.lastname);
-
-      body.email = z.string()
-        .email('Correo electrónico inválido')
-        .min(5, 'El email es demasiado corto')
-        .max(100, 'El email es demasiado largo')
-        .toLowerCase()
-        .parse(formData.email);
-
-      if (formData.newPass || formData.currentPass || formData.confirmPass) {
-        if (!formData.currentPass) {
-          toast.error('Debes ingresar tu contraseña actual');
-          return false;
-        }
-        if (!formData.newPass) {
-          toast.error('Debes ingresar una nueva contraseña');
-          return false;
-        }
-        if (formData.newPass !== formData.confirmPass) {
-          toast.error('Las contraseñas nuevas no coinciden');
-          return false;
-        }
-        body.currentPass = formData.currentPass;
-        body.pass = z.string()
-          .max(50, 'La contraseña es demasiado larga')
-          .regex(
-            /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).*$/,
-            'La contraseña debe incluir una mayúscula, un número y un caracter especial'
-          )
-          .parse(formData.newPass);
+      // Si se está cambiando la contraseña
+      if (validatedData.newPass) {
+        body.currentPass = validatedData.currentPass!;
+        body.pass = validatedData.newPass;
       }
 
       toastId = toast.loading('Actualizando perfil...');
@@ -119,20 +158,39 @@ export const useProfile = () => {
 
       toast.dismiss(toastId);
       toast.success('Perfil actualizado exitosamente');
+      
+      // Limpiar campos de contraseña después de actualizar exitosamente
+      setFormData(prev => ({
+        ...prev,
+        currentPass: '',
+        newPass: '',
+        confirmPass: '',
+      }));
+      
       return true;
+      
     } catch (error) {
       if (toastId) toast.dismiss(toastId);
 
       if (error instanceof z.ZodError) {
-        const first = error.issues[0];
-        toast.error(first.message);
-      } else {
-        toast.error('Error al actualizar perfil');
+        // Formatear errores de Zod para los inputs
+        const formattedErrors = error.issues.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }));
+        
+        setValidationErrors(formattedErrors);
       }
+
       return false;
     } finally {
       setSaving(false);
     }
+  };
+
+  // Función para obtener errores de un campo específico (para usar en los TextField)
+  const getFieldError = (field: string) => {
+    return validationErrors.find(err => err.field === field)?.message;
   };
 
   return {
@@ -141,9 +199,11 @@ export const useProfile = () => {
     loading,
     saving,
     showPasswords,
+    validationErrors,
     getUserCreatedAt,
     handleChange,
     updateProfile,
     toggleShowPassword,
+    getFieldError, // Exportar esta función helper
   };
 };

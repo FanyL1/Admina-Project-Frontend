@@ -1,4 +1,3 @@
-// components/Hero.tsx
 import React from 'react';
 import { Box, Container, Typography, useTheme, alpha, Stack, Button } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -125,7 +124,7 @@ export const Hero: React.FC = () => {
           >
             <Box
               component="img"
-              src="/Log-AIS.svg"
+              src="/Log-AIS-transp.svg"
               alt="AIS Logo"
               sx={{
                 height: { xs: 70, sm: 90, md: 110 },
@@ -177,7 +176,7 @@ export const Hero: React.FC = () => {
               lineHeight: 1.4,
             }}
           >
-            La alianza estratégica que simplifica la administración educativa
+            Alianza que simplifica la administración educativa
           </Typography>
         </Box>
       </Container>

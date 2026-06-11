@@ -44,7 +44,18 @@ const roleGradients: Record<string, string> = {
 };
 
 export default function ProfilePage() {
-  const { sessionUser, formData, saving, showPasswords, getUserCreatedAt, handleChange, updateProfile, toggleShowPassword } = useProfile();
+const { 
+  formData, 
+  saving, 
+  sessionUser,
+  showPasswords, 
+  validationErrors,
+  handleChange, 
+  updateProfile, 
+  toggleShowPassword,
+  getUserCreatedAt,
+  getFieldError 
+} = useProfile();  
   const [editing, setEditing] = useState(false);
 
   const handleSave = async () => {
@@ -260,6 +271,8 @@ export default function ProfilePage() {
                       fullWidth
                       variant="outlined"
                       size="small"
+                      error={!!getFieldError('name')}
+                      helperText={getFieldError('name')}
                     />
                     <TextField
                       label="Apellidos"
@@ -268,6 +281,8 @@ export default function ProfilePage() {
                       fullWidth
                       variant="outlined"
                       size="small"
+                      error={!!getFieldError('lastname')}
+                      helperText={getFieldError('lastname')}
                     />
                     <TextField
                       label="Correo Electrónico"
@@ -277,6 +292,8 @@ export default function ProfilePage() {
                       variant="outlined"
                       size="small"
                       type="email"
+                      error={!!getFieldError('email')}
+                      helperText={getFieldError('email')}
                     />
 
                     <Box sx={{ borderTop: '1px solid', borderColor: 'grey.200', pt: 2 }}>
@@ -297,6 +314,8 @@ export default function ProfilePage() {
                         size="small"
                         type={showPasswords.current ? 'text' : 'password'}
                         placeholder="Ingresa tu contraseña actual"
+                        error={!!getFieldError('currentPass')}
+                        helperText={getFieldError('currentPass')}
                         slotProps={{
                           input: {
                             endAdornment: (
@@ -320,6 +339,8 @@ export default function ProfilePage() {
                           size="small"
                           type={showPasswords.new ? 'text' : 'password'}
                           placeholder="Mín. 8 caracteres, 1 mayúscula, 1 número, 1 especial"
+                          error={!!getFieldError('newPass')}
+                          helperText={getFieldError('newPass')}
                           slotProps={{
                             input: {
                               endAdornment: (
@@ -341,6 +362,8 @@ export default function ProfilePage() {
                           size="small"
                           type={showPasswords.confirm ? 'text' : 'password'}
                           placeholder="Repite la nueva contraseña"
+                          error={!!getFieldError('confirmPass')}
+                          helperText={getFieldError('confirmPass')}
                           slotProps={{
                             input: {
                               endAdornment: (

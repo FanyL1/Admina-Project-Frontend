@@ -431,7 +431,7 @@ export default function DataTable({
                               </Tooltip>
                             )}
                             {onToggleStatus && (
-                              <Tooltip title={row.status === 'active' ? 'Activar' : 'Inactivar'}>
+                              <Tooltip title={row.status === 'active' ? 'Inactivar' : 'Activar'}>
                                 <IconButton onClick={() => onToggleStatus(row)} size="small">
                                   {row.status === 'active' ? 
                                     <BlockIcon sx={{ color: theme.palette.error.main }} /> : 

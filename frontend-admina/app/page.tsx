@@ -1,13 +1,12 @@
 'use client';
 import { useRef, useEffect, useState } from 'react';
-import { Box, Container, Grid, Card, CardContent, Typography, alpha, useMediaQuery } from '@mui/material';
+import { Box, Container, Grid, Card, CardContent, Typography, alpha, useMediaQuery, CardMedia } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import SchoolIcon from '@mui/icons-material/School';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import EmailIcon from '@mui/icons-material/Email';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { Navbar } from '../components/Shared/Navbar/navbar';
 import { Hero } from '../components/UX/Header/header';
@@ -15,7 +14,9 @@ import { Buttons } from '../components/UX/Buttons/buttons';
 import { fadeInLeft, fadeInRight, pulseSuave} from '../components/UX/Animation/animationHome';
 import { floatSuave } from '../components/UX/Animation/animation404';
 import { Copy } from '../components/UX/Copy/handleCopy';
+import Image from 'next/image';
 import theme from './theme';
+import {CircleWithIcon} from '@/components/UX/Circle/circleHome'
 
 
 
@@ -78,6 +79,39 @@ export default function HomePage() {
       icon: <EqualizerIcon sx={{ fontSize: 48, color: theme.palette.primary.main }} />,
       title: 'Avanzada y Dashboards Estadísticos',
       description: 'Los datos son procesados para generar paneles visuales y reportes estadísticos detallados.',
+    },
+  ];
+
+  const creditos = [
+    {
+      Image:'/C1.svg',
+      title: 'Nombre y Apellido',
+      description: 'Info de la persona',
+    },
+    {
+      Image:'/C2.svg',
+      title: 'Nombre y Apellido',
+      description: 'Info de la persona',
+    },
+    {
+      Image:'/C3.svg',
+      title: 'Nombre y Apellido',
+      description: 'Info de la persona',
+    },
+    {
+      Image:'/C1.svg',
+      title: 'Nombre y Apellido',
+      description: 'Info de la persona',
+    },
+    {
+      Image:'/C2.svg',
+      title: 'Nombre y Apellido',
+      description: 'Info de la persona',
+    },
+    {
+      Image:'/C3.svg',
+      title: 'Nombre y Apellido',
+      description: 'Info de la persona',
     },
   ];
 
@@ -185,7 +219,7 @@ export default function HomePage() {
           left: '-200px',
         }}
       />
-      <Box
+      {!isMobile && (<Box
         sx={{
           position: 'absolute',
           width: '350px',
@@ -196,24 +230,14 @@ export default function HomePage() {
           opacity: 0.1,
           right: '-100px',
         }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          width: '250px',
-          height: '250px',
-          opacity: 0.1,
-          borderRadius: '50%',
-          border: `2px solid ${theme.palette.primary.main}`,
-          top: '30%',
-          left: '10%',
-        }}
-      />
+      />)}
+      
 
       <Container maxWidth="lg">
-        <Grid spacing={6} sx={{ display: 'flex', alignItems: 'center' }} container>
-          {/* Texto a la izquierda */}
-          <Grid sx={{ width: { xs: '100%', sm: '50%', md: '50%' } }}>
+        {/*AREA DE TEXTO E ICONOS*/}
+        <Grid sx={{ display: 'flex', alignItems: 'center', gap:{md:10}, [theme.breakpoints.between(900, 1000)]: {gap:4} }} container>
+          {/*AREA DE TEXTO */}
+          <Grid sx={{ width: { xs: '100%', sm: '100%', md: '50%' } }}>
             <Box
               sx={{
                 animation: isVisible ? `${fadeInLeft} 0.8s ease-out` : 'none',
@@ -254,8 +278,21 @@ export default function HomePage() {
                   textAlign: 'justify',
                 }}
               >
-                Somos una alianza estratégica entre <strong style={{ color: theme.palette.primary.main }}>Admina</strong> y <strong style={{ color: theme.palette.primary.main }}>AIS</strong>, 
-                uniendo experiencia y tecnología para ofrecer soluciones integrales de gestión empresarial.
+                Somos una alianza entre <strong style={{ color: theme.palette.primary.main }}>Admina</strong> y el <strong style={{ color: theme.palette.primary.main }}>Area de Ingenieria de Sistemas</strong>, 
+                de la Universidada Nacional Experimental Romulo Gallegos, unimos la experiencia y tecnología para ofrecer una solucion integral para la gestión de procesos academicos en el area de estudio.
+              </Typography>
+
+              <Typography
+                variant="h2"
+                sx={{
+                  color: theme.palette.text.primary,
+                  lineHeight: 1.8,
+                  mb: 1,
+                  fontSize: "1.2rem",
+                  textAlign: 'justify',
+                }}
+              ><strong> De estudiantes para estudiantes.</strong>
+                
               </Typography>
 
               <Typography
@@ -263,86 +300,118 @@ export default function HomePage() {
                 sx={{
                   color: theme.palette.text.primary,
                   lineHeight: 1.8,
-                  mb: 3,
                   fontSize: '1rem',
                   textAlign: 'justify',
                 }}
               >
-                Nuestro equipo está conformado por profesionales apasionados por la tecnología 
+                Nuestro equipo está conformado por estudiantes de la carrera de Ingenieria en Informática apasionados por la tecnología 
                 y la excelencia, dedicados a crear soluciones que realmente marquen la diferencia.
               </Typography>
 
               <Typography
-                variant="body1"
+                variant="h2"
                 sx={{
                   color: theme.palette.text.primary,
                   lineHeight: 1.8,
-                  fontSize: '1rem',
+                  mt: 3,
+                  fontSize: "1.2rem",
                   textAlign: 'justify',
-                }}
-              >
-                Con más de una década de experiencia, hemos ayudado a cientos de empresas 
-                a alcanzar sus objetivos digitales.
+                }}>
+                <strong> Colaboradores.</strong>        
               </Typography>
             </Box>
           </Grid>
 
 
           {/* ÁREA DE ANIMACIÓN */}
-          {!isMobile && (<Grid>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: { xs: 400, md: 500 },
-                animation: isVisible ? `${fadeInRight} 0.8s ease-out` : 'none',
-                position: 'relative',
-              }}
-            >
-              {/* Círculo base */}
+          {!isMobile && (
+            <Grid container sx={{ width: 'auto', justifyContent: 'center', alignItems: 'center' }}>
               <Box
                 sx={{
-                  width: { xs: 280, sm: 350, md: 400 },
-                  height: { xs: 280, sm: 350, md: 400 },
-                  borderRadius: '50%',
-                  border: `2px dashed ${alpha(theme.palette.primary.main,0.3)})}`,
-                  position: 'relative',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: { sm: 2 },
                 }}
               >
-                {/* Círculo interno */}
+                {/* Círculo superior */}
                 <Box
                   sx={{
-                    width: { xs: 180, sm: 220, md: 250 },
-                    height: { xs: 180, sm: 220, md: 250 },
-                    borderRadius: '50%',
-                    border: `1px solid ${alpha(theme.palette.primary.main , 0.2)}`,
                     display: 'flex',
+                    justifyContent: 'center',
                     alignItems: 'center',
+                    animation: isVisible ? `${fadeInRight} 0.6s ease-out` : 'none',
+                  }}
+                >
+                  <CircleWithIcon imageSrc="/Log-unerg.svg" imageSize="180%" altText="Icono superior"  />
+                </Box>
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      width: '250px',
+                      height: '250px',
+                      opacity: 0.1,
+                      borderRadius: '50%',
+                      border: `2px solid ${theme.palette.primary.main}`,
+                      top: '30%',
+                      left: '10%',
+                    }}
+                  />
+                {/* Dos círculos inferiores */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: { xs: 2, sm: 4 },
                     justifyContent: 'center',
                   }}
                 >
-                  {/* Ícono central - MÁS GRANDE */}
-                  <Box
-                    sx={{
-                      animation: `${pulseSuave} 2s ease-in-out infinite`,
-                    }}
-                  >
-                    <SchoolIcon
-                      sx={{
-                        fontSize: { xs: 70, sm: 90, md: 160},
-                        color: theme.palette.primary.main,
-                        filter: `drop-shadow(0 0 20px ${alpha(theme.palette.primary.main, 0.5)})`,
-                      }}
-                    />
+                  <Box sx={{ animation: isVisible ? `${fadeInRight} 0.6s ease-out 0.1s` : 'none' }}>
+                    <CircleWithIcon imageSrc="/Log-AIS-transp.svg" imageSize="75%" altText="Icono izquierdo" />
+                  </Box>
+                  <Box sx={{ animation: isVisible ? `${fadeInRight} 0.6s ease-out 0.2s` : 'none' }}>
+                    <CircleWithIcon imageSrc="/Log-A.svg" imageSize="72%" altText="Icono derecho"  />
                   </Box>
                 </Box>
               </Box>
-            </Box>
-          </Grid>)}
+            </Grid>
+          )}
+        </Grid>
+
+        {/*AREA DE CREDITOS */}
+        <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center', mt:3 }}>
+          {creditos.map((person, index) => (
+              <Grid sx={{ display: 'flex', flexDirection: 'column', width: { xs: '100%', sm: '50%', md: '32%' } }} key={index}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    textAlign: 'center',
+                    transition: 'transform 0.3s, box-shadow 0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.1)',
+                    }
+                  }}
+                >
+                  <CardContent sx={{display:'flex',justifyContent:'center', alignContent:"center", flexDirection:'column'}}>
+                    <CardMedia
+                      component="img"
+                      height="100"
+                      width='100'
+                      sx={{borderRadius:'50%', objectFit:'contain'}}
+                      image={person.Image}
+                      alt="Paella dish"
+                    />
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                      {person.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {person.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}     
         </Grid>
       </Container>
      </Box>

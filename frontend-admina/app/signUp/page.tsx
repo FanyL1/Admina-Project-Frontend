@@ -1,9 +1,10 @@
-// app/signUp/page.tsx
 'use client';
-
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TextField, Paper, Typography, Box, Link } from '@mui/material';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { useSignUp } from './useSingUp';
 import { Buttons } from '@/components/UX/Buttons/buttons';
@@ -12,9 +13,11 @@ import { Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/Shared/Navbar/navbar';
 import theme from '@/app/theme';
 
+
 export default function SignUpPage() {
   const router = useRouter();
   const { register, loading, validationErrors } = useSignUp();
+  const [showPassword, setShowPassword] = React.useState(false);
   const [formData, setFormData] = useState({
     name: '',
     lastname: '',
@@ -177,7 +180,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         <TextField
           name="pass"
           label="Contraseña"
-          type="password"
+          type={showPassword ? "text" : "password"}
           value={formData.pass}
           onChange={handleChange}
           required
@@ -186,6 +189,17 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           sx={{ mb: 2 }}
           error={!!validationErrors.find(e => e.field === 'pass')}  // Coloca el borde rojo
           helperText={validationErrors.find(e => e.field === 'pass')?.message}  // Coloca el texto
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
         <Box sx={{ textAlign: 'center'}}>
           <Typography variant="body2" color="text.secondary">

@@ -8,11 +8,12 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DataTable from '@/components/UX/Table/Table';
 import { ProcedureTypeData } from '@/app/type';
+import { useGetAlltype} from './useGetType';
 
 export default function ManagementRequestPage() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [searchFields, setSearchFields] = React.useState({ name: true, status: true });
-
+  const  {types} = useGetAlltype()
   const procedures: ProcedureTypeData[] = [];
 
   const columns = [

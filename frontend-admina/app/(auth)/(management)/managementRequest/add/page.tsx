@@ -9,12 +9,11 @@ import toast, { Toaster } from 'react-hot-toast';
 import ProcedureForm from '@/components/UX/Form/Procedure/ProcedureForm';
 import { ProcedureTypeFormData } from '@/app/type';
 import { createProcedureType } from './useProcedureType';
-import { useGetAlltype} from './useGetType';
+
 
 export default function AddProcedurePage() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
-
 
   const handleSubmit = async (values: ProcedureTypeFormData) => {
     setLoading(true);

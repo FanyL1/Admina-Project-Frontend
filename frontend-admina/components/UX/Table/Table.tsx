@@ -34,6 +34,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import InboxIcon from '@mui/icons-material/Inbox';
 import { visuallyHidden } from '@mui/utils';
 import { Order, DataTableProps } from '@/app/type';
 
@@ -42,6 +43,10 @@ export default function DataTable({
   data,
   columns,
   title = "Datos",
+  toolbarActions,
+  emptyTitle = "No hay datos registrados",
+  emptyDescription = "Cuando existan registros, aparecerán listados en esta tabla.",
+  emptyAction,
   loading = false,
   error = null,
   isEmpty = false,
@@ -263,11 +268,11 @@ export default function DataTable({
                   size="small"
                 />
               }
-              label={field.charAt(0).toUpperCase() + field.slice(1)}
+              label={filterFields.searchLabels?.[field] || field.charAt(0).toUpperCase() + field.slice(1)}
             />
           ))}
           <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
-            <strong>Total de regitros:</strong>  {filteredData.length}
+            <strong>Total de registros:</strong>  {filteredData.length}
           </Typography>
         </Box>
       </Box>
@@ -333,11 +338,12 @@ export default function DataTable({
 
   return (
     <Box sx={{ width: '100%', p: 2 }}>
-      <Paper sx={{ width: '100%', mb: 2, overflow: 'hidden' }}>
-        <Toolbar sx={{ backgroundColor: theme.palette.primary.dark, color: theme.palette.primary.contrastText }}>
+      <Paper sx={{ width: '100%', mb: 2, overflow: 'hidden', borderRadius: 3, boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.05)' }}>
+        <Toolbar sx={{ backgroundColor: theme.palette.primary.dark, color: theme.palette.primary.contrastText, gap: 2 }}>
           <Typography variant="h6" component="div" sx={{ flex: '1 1 100%' }}>
             {selected.length > 0 ? `${selected.length} seleccionado(s)` : title}
           </Typography>
+          {toolbarActions}
         </Toolbar>
         
         {renderFilterBar()}
@@ -387,11 +393,31 @@ export default function DataTable({
                   <TableCell 
                     align="center" 
                     colSpan={columns.length + 2}
-                    sx={{ py: 4 }}
+                    sx={{ py: 7 }}
                   >
-                    <Typography variant="body1" color="textSecondary">
-                      No hay datos registrados
-                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, maxWidth: 420, mx: 'auto' }}>
+                      <Box
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 2,
+                          bgcolor: 'secondary.main',
+                          color: 'primary.main',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <InboxIcon />
+                      </Box>
+                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                        {emptyTitle}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {emptyDescription}
+                      </Typography>
+                      {emptyAction && <Box sx={{ mt: 1 }}>{emptyAction}</Box>}
+                    </Box>
                   </TableCell>
                 </TableRow>
               ) : (

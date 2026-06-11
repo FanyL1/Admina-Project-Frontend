@@ -1,10 +1,12 @@
 import { Box, Card, Grid} from "@mui/material";
+import { Children } from "react";
 
-export const CardRequest = ()=>{
+
+
+export const Cards = ({ children, sx }: { children?: React.ReactNode; sx?: any })=>{
 
     return(
         <Box>
-            <Grid sx={{ display: 'flex', flexDirection: 'column', width: { xs: '100%', sm: '50%', md: '32%' } }}>
                 <Card
                   sx={{
                     height: '100%',
@@ -13,11 +15,12 @@ export const CardRequest = ()=>{
                     '&:hover': {
                       transform: 'translateY(-8px)',
                       boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.1)',
+                      borderColor: 'linear-gradient(90deg, #32539A, #B2C2E6, #B2C2E6)'
                     }
                   }}
                 >
+                    {children}
                 </Card>
-              </Grid>
         </Box>
     )
 }

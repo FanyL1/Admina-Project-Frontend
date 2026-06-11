@@ -84,6 +84,10 @@ export interface DataTableProps {
   data: any[];
   columns: Column[];
   title?: string;
+  toolbarActions?: React.ReactNode;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  emptyAction?: React.ReactNode;
   loading?: boolean;
   error?: string | null;
   isEmpty?: boolean;
@@ -103,6 +107,7 @@ export interface DataTableProps {
     onSearchTermChange: (term: string) => void;
     rolOptions?: Array<{ value: string; label: string }>;
     estadoOptions?: Array<{ value: string; label: string }>;
+    searchLabels?: { [key: string]: string };
   };
 }
 
@@ -138,6 +143,28 @@ export interface DegreeData {
 
 export interface GetAllResquest {
   id: string;
-  name: string;
+  user_id: String;
+  createByname: string;
+  type_id: string;
+  carrera_id: string;
+  observation: string;
   status?: 'active' | 'inactive';
+}
+export interface ProcedureRequirements {
+  documents: string[];
+  [key: string]: unknown;
+}
+
+export interface ProcedureTypeData {
+  id: string;
+  name: string;
+  requirements: ProcedureRequirements;
+  status?: 'active' | 'inactive';
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProcedureTypeFormData {
+  name: string;
+  requirements: ProcedureRequirements;
 }

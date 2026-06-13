@@ -38,26 +38,6 @@ interface Category {
   name: string;
 }
 
-const typeProcedure =[
-  {
-        id: 'certificado-estudios',
-        name: 'Certificado de Estudios',
-        category: 'Solicitud de certificado de estudios cursados',
-        requirements: ['DNI', 'Constancia de alumno regular', 'Pago de arancel'],
-      },
-      {
-        id: 'titulo-universitario',
-        name: 'Título Universitario',
-        category: 'Trámite de título profesional universitario',
-        requirements: ['DNI', 'Certificado de estudios completos', 'Fotos carnet'],
-      },
-      {
-        id: 'beca-estudio',
-        name: 'Solicitud de Beca',
-        category: 'Postulación a becas de estudio',
-        requirements: ['DNI', 'Certificado de notas', 'Carta de motivación'],
-      },
-]
 // Mapa de iconos por categoría (puedes personalizarlo)
 const categoryIcons: Record<string, React.ReactNode> = {
   'Educación': <School />,
@@ -68,10 +48,40 @@ const categoryIcons: Record<string, React.ReactNode> = {
   'Documentación': <Description />,
   // Agrega más según tus categorías
 };
-
-interface TramitesSelectorProps {
-  onSelectTramite?: (tramite: Type) => void;
-}
+const getAllRequirements = (requirements: any): string[] => {
+  if (!requirements) return [];
+  
+  const allRequirements: string[] = [];
+  
+  if (Array.isArray(requirements)) {
+    return requirements;
+  }
+  
+  if (typeof requirements === 'object') {
+    Object.entries(requirements).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        if (key === 'documents') {
+          allRequirements.push(...value);
+        } else {
+          value.forEach((item) => {
+            if (item !== 0) { //esto es nuevo
+              allRequirements.push(`${key}: ${item}`);
+            }   
+          });
+        }
+      } else if (typeof value === 'string') {
+        allRequirements.push(`${key}: ${value}`);
+      } else if (typeof value === 'object' && value !== null) {
+        const nested = getAllRequirements(value);
+        nested.forEach((item) => {
+          allRequirements.push(`${key}: ${item}`);
+        });
+      }
+    });
+  }
+  
+  return allRequirements;
+};
 
 export const CardRequest = () => {
   const { categories } = useGetAllCategory();
@@ -139,51 +149,55 @@ export const CardRequest = () => {
                 <Stack spacing={2}>
                   {/* Aquí mapeas los tipos (trámites) */}
                   {types.map((type) => (
-                    <>
-                    { category.id == type.category_id && <Box
-                      key={type.id}
-                      sx={{
-                        p: 2,
-                        border: 1,
-                        borderColor: 'divider',
-                        borderRadius: 2,
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                          bgcolor: 'action.hover',
-                          borderColor: 'primary.main',
-                        },
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                        <Box>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                            {type.name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {/* Si tienes descripción, agrega aquí */}
-                            Trámite de {category.name}
-                          </Typography>
+                    < Box  key={type.id}>
+                      { category.id == type.category_id && <Box
+                        key={type.id}
+                        sx={{
+                          p: 2,
+                          border: 1,
+                          borderColor: 'divider',
+                          borderRadius: 2,
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            bgcolor: 'action.hover',
+                            borderColor: 'primary.main',
+                          },
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                          <Box>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                              {type.name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {/* Si tienes descripción, agrega aquí */}
+                              Trámite de {category.name}
+                            </Typography>
+                          </Box>
+                          <Buttons
+                            variant="contained"
+                            size="small"
+                            onClick={() => handleSelectype(type.id)}
+                            sx={{ ml: 2 }}
+                          >
+                            Solicitar
+                          </Buttons>
                         </Box>
-                        <Buttons
-                          variant="contained"
-                          size="small"
-                          onClick={() => handleSelectype(type.id)}
-                          sx={{ ml: 2 }}
-                        >
-                          Solicitar
-                        </Buttons>
-                      </Box>
 
-                      <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
-                        <Chip
-                          label={`📄 ${type.requirements}`}
-                          size="small"
-                          variant="outlined"
-                        />
-                        {/* Agrega más chips según los datos que tengas */}
-                      </Box>
-                    </Box>}
-                    </>
+                        <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
+                          
+                          {type.requirements && getAllRequirements(type.requirements).map((requeriment, index) =>(
+                            <Chip
+                            key={index}
+                            label={`📄 ${requeriment}`}
+                            size="small"
+                            variant="outlined"
+                          />
+                          ))}
+
+                        </Box>
+                      </Box>}
+                    </Box>
                   ))}
                 </Stack>
               </Box>

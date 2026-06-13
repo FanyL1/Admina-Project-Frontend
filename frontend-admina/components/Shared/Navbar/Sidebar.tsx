@@ -28,11 +28,11 @@ const getMenuItems = (role: string) => {
 
   const roleItems: Record<string, any[]> = {
     Estudiante: [
-      { label: 'Tramites', href: '/request', icon: <SchoolIcon /> },
-      { label: 'Mis Tramites', href: '/myRequest', icon: <TurnedInIcon /> },
+      { label: 'Solicitudes', href: '/request', icon: <SchoolIcon /> },
+      { label: 'Mis Solicitudes', href: '/myRequest', icon: <TurnedInIcon /> },
     ],
     Administrativo: [
-      { label: 'Lista de Tramites', href: '/ListRequest', icon: <AdminPanelSettingsIcon /> },
+      { label: 'Lista de Solicitudes', href: '/ListRequest', icon: <AdminPanelSettingsIcon /> },
       { label: 'Gestión de Tramites', href: '/managementRequest', icon: <TableRowsIcon /> },
       { label: 'Gestión de Estudiantes', href: '/managementStudiants', icon: <GroupIcon /> },
       { label: 'Gestión de Categorias', href: '/managementCategory', icon: <StyleIcon /> },
@@ -44,8 +44,9 @@ const getMenuItems = (role: string) => {
       { label: 'Gestión de Estudiantes', href: '/managementStudiants', icon: <GroupIcon /> },
       { label: 'Gestión de Roles (Solo Para desarrollo)', href: '/role', icon: <AdminPanelSettingsIcon /> },
       { label: 'Gestión de Carreras', href: '/managementDegree', icon: <SquareFootIcon /> },
-      { label: 'Gestión de Tramites', href: '/managementRequest', icon: <TableRowsIcon /> },
       { label: 'Gestión de Categorias', href: '/managementCategory', icon: <StyleIcon /> },
+      { label: 'Lista de Solicitudes', href: '/ListRequest', icon: <AdminPanelSettingsIcon /> },      
+      { label: 'Gestión de Tramites', href: '/managementRequest', icon: <TableRowsIcon /> },
       { label: 'Estadisticas', href: '/statistics', icon: <EqualizerIcon /> },
       { label: 'Reportes', href: '/reports', icon: <TrackChangesIcon /> },
 

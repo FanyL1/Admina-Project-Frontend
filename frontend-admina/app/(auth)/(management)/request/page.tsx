@@ -38,7 +38,7 @@ export default function TramitesPage() {
       />
 
       <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3, fontWeight: 'bold' }}>
-        Trámites Disponibles
+        Solicitudes Disponibles
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
         Selecciona una categoría y solicita el trámite que necesitas

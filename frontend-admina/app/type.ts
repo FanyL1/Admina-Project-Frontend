@@ -175,3 +175,20 @@ export interface GetAllTypeResponse {
   message: string;
   data?: ProcedureTypeData[];
 }
+
+export interface LogsData{
+  id: string;
+  date: string;
+  user_id: string;
+  action: string;
+  request_id: string;
+  description: string;
+  message: string;
+  resource_id: string;
+  resource_type: string
+}
+export interface LogResponse {
+  success: boolean;
+  message: string;
+  data?: LogsData[]
+}

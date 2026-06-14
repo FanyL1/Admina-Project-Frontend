@@ -176,6 +176,42 @@ export interface GetAllTypeResponse {
   data?: ProcedureTypeData[];
 }
 
+export type RequestStatus = 'Enviado' | 'Revisando' | 'Pendiente' | 'Observado' | 'Aprobado' | 'Rechazado';
+
+export interface RequestUserData {
+  id: string;
+  name: string;
+  lastname: string;
+  dni?: string;
+  email?: string;
+}
+
+export interface RequestDocumentData {
+  id: string;
+  request_id: string;
+  name_requeriments: string;
+  name_file?: string;
+  router_file?: string;
+  size_bytes?: number;
+  status?: string;
+}
+
+export interface StudentRequestData {
+  id: string;
+  user_id: string;
+  createByname: string;
+  type_id: string;
+  carrera_id: string;
+  observation?: string | null;
+  status: RequestStatus;
+  created_at: string;
+  updated_at?: string;
+  user?: RequestUserData;
+  type_procedure?: ProcedureTypeData;
+  carrera?: OnlyNameData;
+  documents?: RequestDocumentData[];
+}
+
 export interface LogsData{
   id: string;
   date: string;

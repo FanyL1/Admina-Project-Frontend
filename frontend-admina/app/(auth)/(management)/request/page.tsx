@@ -101,9 +101,8 @@ export default function RequestPage() {
         user_id: sessionUser.id,
         type_id: selectedTypeId,
         carrera_id: degreeId,
-        createByname: externalApplicant
-          ? `${externalName.trim()} - Cedula: ${externalDni.trim()}`
-          : undefined,
+        createByname: externalName,
+        createByDNI: externalDni,
         observation: observationLines.length ? `Datos de requisitos: ${observationLines.join(' | ')}` : undefined,
       });
 

@@ -94,6 +94,7 @@ export const getRequestDocuments = async (requestId: string) => {
 export const createRequest = async (payload: {
   user_id: string;
   createByname?: string;
+  createByDNI?: string;
   type_id: string;
   carrera_id: string;
   observation?: string | null;

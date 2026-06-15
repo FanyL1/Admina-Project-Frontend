@@ -7,7 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import toast, { Toaster } from 'react-hot-toast';
 import ProcedureForm from '@/components/UX/Form/Procedure/ProcedureForm';
-import { ProcedureTypeFormData } from '@/app/type';
+import { ProcedureTypeData } from '@/app/type';
 import { createProcedureType } from './useProcedureType';
 
 
@@ -15,7 +15,7 @@ export default function AddProcedurePage() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = async (values: ProcedureTypeFormData) => {
+  const handleSubmit = async (values: ProcedureTypeData) => {
     setLoading(true);
 
     try {
@@ -57,7 +57,7 @@ export default function AddProcedurePage() {
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: 'rgba(255,255,255,0.82)' }}>
                 <AddTaskIcon fontSize="small" />
-                <Typography variant="body2">Nuevo tipo de tramite</Typography>
+                <Typography variant="body2" color='white'>Nuevo tipo de tramite</Typography>
               </Box>
               <Typography variant="h4" sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', md: '2.25rem' } }}>
                 Agregar tramite

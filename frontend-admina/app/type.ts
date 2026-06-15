@@ -145,6 +145,7 @@ export interface GetAllResquest {
   id: string;
   user_id: String;
   createByname: string;
+  createByDNI: string;
   type_id: string;
   carrera_id: string;
   observation: string;
@@ -152,6 +153,7 @@ export interface GetAllResquest {
 }
 export interface ProcedureRequirements {
   documents: string[];
+  promedio: string[];
   [key: string]: unknown;
 }
 
@@ -164,9 +166,9 @@ export interface ProcedureTypeData {
   created_at?: string;
   updated_at?: string;
 }
-
 export interface ProcedureTypeFormData {
   name: string;
+  category_id:string;
   requirements: ProcedureRequirements;
 }
 
@@ -199,7 +201,8 @@ export interface RequestDocumentData {
 export interface StudentRequestData {
   id: string;
   user_id: string;
-  createByname: string;
+  createByname?: string;
+  createByDNI?: string;
   type_id: string;
   carrera_id: string;
   observation?: string | null;

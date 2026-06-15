@@ -6,17 +6,30 @@ import { Box, Button, Chip, Container, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import DescriptionIcon from '@mui/icons-material/Description';
+
 import DataTable from '@/components/UX/Table/Table';
 import { ProcedureTypeData } from '@/app/type';
 import { useGetAlltype} from './useGetType';
+import { useGetAllCategory } from '../managementCategory/useCategory';
 
 export default function ManagementRequestPage() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [searchFields, setSearchFields] = React.useState({ name: true, status: true });
   const  {types} = useGetAlltype()
-  const procedures: ProcedureTypeData[] = [];
+  const typesActive = types.filter(col => col.status !== 'inactive');
+  const {categories} = useGetAllCategory()
+
+  const getCategoryName = (categoryId: string) => {
+    const category = categories?.find(cat => cat.id === categoryId)
+    return category?.name || 'Categoría no encontrada'
+  }
 
   const columns = [
+    { id: 'category_id', 
+      label: 'Categoria', 
+      numeric: false, 
+      render: (value: string) => getCategoryName(value) 
+    },
     { id: 'name', label: 'Nombre del trámite', numeric: false },
     {
       id: 'requirements',
@@ -68,7 +81,7 @@ export default function ManagementRequestPage() {
             </Box>
             <Box>
               <Typography variant="caption" color="text.secondary">Trámites registrados</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 800 }}>{procedures.length}</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 800 }}>{types.length}</Typography>
             </Box>
           </Paper>
 
@@ -77,16 +90,16 @@ export default function ManagementRequestPage() {
               <DescriptionIcon />
             </Box>
             <Box>
-              <Typography variant="caption" color="text.secondary">Requisitos configurados</Typography>
+              <Typography variant="caption" color="text.secondary">Tramites Activos</Typography>
               <Typography variant="h5" sx={{ fontWeight: 800 }}>
-                {procedures.reduce((total, procedure) => total + (procedure.requirements?.documents?.length || 0), 0)}
+                {typesActive.length}
               </Typography>
             </Box>
           </Paper>
         </Box>
 
         <DataTable
-          data={procedures}
+          data={types}
           columns={columns}
           title="Listado de trámites realizados"
           emptyTitle="Aún no hay trámites registrados"

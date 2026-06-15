@@ -42,7 +42,7 @@ const getMenuItems = (role: string) => {
     Superusuario: [
       { label: 'Gestión de Usuarios', href: '/managementUser', icon: <AdminPanelSettingsIcon /> },
       { label: 'Gestión de Estudiantes', href: '/managementStudiants', icon: <GroupIcon /> },
-      { label: 'Gestión de Roles (Solo Para desarrollo)', href: '/role', icon: <AdminPanelSettingsIcon /> },
+      //{ label: 'Gestión de Roles (Solo Para desarrollo)', href: '/role', icon: <AdminPanelSettingsIcon /> },
       { label: 'Gestión de Carreras', href: '/managementDegree', icon: <SquareFootIcon /> },
       { label: 'Gestión de Categorias', href: '/managementCategory', icon: <StyleIcon /> },
       { label: 'Lista de Solicitudes', href: '/ListRequest', icon: <AdminPanelSettingsIcon /> },      

@@ -117,6 +117,12 @@ export default function UsersPage() {
             searchTerm,
             onSearchTermChange: setSearchTerm,
             estadoOptions,
+            searchLabels: {
+              name: 'Nombre',
+              lastname: 'Apellido',
+              dni: 'Cedula',
+              status: 'Estado',
+            },
         }}
         />
     </Box>

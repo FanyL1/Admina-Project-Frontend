@@ -5,17 +5,18 @@ import { useRouter } from 'next/navigation';
 import { Box, Button, Container, Paper, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import ProcedureForm from '@/components/UX/Form/Procedure/ProcedureForm';
-import { ProcedureTypeData } from '@/app/type';
+import { ProcedureTypeFormData } from '@/app/type';
 import { createProcedureType } from './useProcedureType';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 
 export default function AddProcedurePage() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = async (values: ProcedureTypeData) => {
+  const handleSubmit = async (values: ProcedureTypeFormData) => {
     setLoading(true);
 
     try {
@@ -31,7 +32,7 @@ export default function AddProcedurePage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
-      <Toaster position="top-center" reverseOrder={false} />
+      <AppToaster />
 
       <Container maxWidth="lg">
         <Paper

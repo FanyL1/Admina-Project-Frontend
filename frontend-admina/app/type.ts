@@ -77,6 +77,8 @@ export interface Column {
   id: string;
   label: string;
   numeric: boolean;
+  editable?: boolean;
+  editOptions?: Array<{ value: string; label: string }>;
   render?: (value: any, row: any) => React.ReactNode;
 }
 
@@ -93,8 +95,10 @@ export interface DataTableProps {
   isEmpty?: boolean;
   onRefresh?: () => void;
   onEdit?: (row: any) => void;
+  onSaveEdit?: (row: any) => Promise<void> | void;
   onToggleStatus?: (row: any) => void;
   onRolChange?: (row: any, newRol: string) => void;
+  rowActions?: (row: any) => React.ReactNode;
   getRowId: (row: any) => string | number;
   filterFields?: {
     searchFields: { [key: string]: boolean };
@@ -153,7 +157,6 @@ export interface GetAllResquest {
 }
 export interface ProcedureRequirements {
   documents: string[];
-  promedio: string[];
   [key: string]: unknown;
 }
 

@@ -12,7 +12,7 @@ import { LoginData } from '../type';
 import { Buttons } from '@/components/UX/Buttons/buttons';
 import { Navbar } from '@/components/Shared/Navbar/navbar';
 import theme from '@/app/theme';
-import { Toaster } from 'react-hot-toast';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 const initialState: LoginData = {
     email: '',
@@ -60,31 +60,7 @@ export default function LoginPage() {
         p: { xs: 2, sm: 4, md: 6 },
       }}
     >
-      <Toaster 
-        position="top-center"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#363636',
-            color: '#fff',
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: '#4caf50',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            duration: 4000,
-            iconTheme: {
-              primary: '#f44336',
-              secondary: '#fff',
-            },
-          },
-        }}
-      />
+      <AppToaster />
       
       <Paper
         elevation={3}

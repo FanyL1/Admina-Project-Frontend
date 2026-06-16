@@ -4,8 +4,9 @@ import * as React from 'react';
 import  Table from '@/components/UX/Table/Table';
 import { useGetAllStudents } from './usePage';
 import { UserData } from '@/app/type';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { Box } from '@mui/material';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { updateStatus} from '../useManagement';
 
 export default function UsersPage() {
@@ -72,31 +73,7 @@ export default function UsersPage() {
 
   return (
     <Box>
-        <Toaster 
-            position="top-center"
-            reverseOrder={false}
-            toastOptions={{
-              duration: 3000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              },
-              success: {
-                duration: 3000,
-                iconTheme: {
-                  primary: '#4caf50',
-                  secondary: '#fff',
-                },
-              },
-              error: {
-                duration: 4000,
-                iconTheme: {
-                  primary: '#f44336',
-                  secondary: '#fff',
-                },
-              },
-            }}
-          />
+        <AppToaster />
         <Table
         data={users}
         columns={columns}

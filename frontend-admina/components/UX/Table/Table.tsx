@@ -29,6 +29,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import CircularProgress from '@mui/material/CircularProgress';
+import FormHelperText from '@mui/material/FormHelperText';
 import EditIcon from '@mui/icons-material/Edit';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -52,8 +53,10 @@ export default function DataTable({
   isEmpty = false,
   onRefresh,
   onEdit,
+  onSaveEdit,
   onToggleStatus,
   onRolChange,
+  rowActions,
   getRowId,
   filterFields,
 }: DataTableProps) {
@@ -67,7 +70,10 @@ export default function DataTable({
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [editModalOpen, setEditModalOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const editColumns = columns.filter(col => col.id !== 'status' && col.id !== 'role'); // Excluir columna de estado para edición
+  const [savingEdit, setSavingEdit] = React.useState(false);
+  const editColumns = columns.filter(col => (
+    col.editable !== false && col.id !== 'status' && col.id !== 'role'
+  ));
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -127,7 +133,15 @@ export default function DataTable({
     }
   };
 
-  const handleSaveEdit = (updatedRow: any) => {
+  const handleSaveEdit = async (updatedRow: any) => {
+    if (onSaveEdit) {
+      setSavingEdit(true);
+      try {
+        await onSaveEdit(updatedRow);
+      } finally {
+        setSavingEdit(false);
+      }
+    }
     setEditModalOpen(false);
     setSelectedRow(null);
   };
@@ -290,23 +304,45 @@ export default function DataTable({
         </DialogTitle>
         <DialogContent sx={{ mt: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            {editColumns.map((column) => (
-              <TextField
-                key={column.id}
-                fullWidth
-                label={column.label}
-                value={selectedRow[column.id] || ''}
-                onChange={(e) => setSelectedRow({ ...selectedRow, [column.id]: e.target.value })}
-              />
-            ))}
+            {editColumns.map((column) => {
+              if (column.editOptions) {
+                return (
+                  <FormControl key={column.id} fullWidth>
+                    <InputLabel>{column.label}</InputLabel>
+                    <Select
+                      label={column.label}
+                      value={selectedRow[column.id] || ''}
+                      onChange={(e) => setSelectedRow({ ...selectedRow, [column.id]: e.target.value })}
+                    >
+                      {column.editOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                      ))}
+                    </Select>
+                    {column.editOptions.length === 0 && (
+                      <FormHelperText>No hay opciones disponibles</FormHelperText>
+                    )}
+                  </FormControl>
+                );
+              }
+
+              return (
+                <TextField
+                  key={column.id}
+                  fullWidth
+                  label={column.label}
+                  value={selectedRow[column.id] || ''}
+                  onChange={(e) => setSelectedRow({ ...selectedRow, [column.id]: e.target.value })}
+                />
+              );
+            })}
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditModalOpen(false)} variant="outlined" color="error">
+          <Button onClick={() => setEditModalOpen(false)} variant="outlined" color="error" disabled={savingEdit}>
             Cancelar
           </Button>
-          <Button onClick={() => handleSaveEdit(selectedRow)} variant="contained" color="primary">
-            Guardar
+          <Button onClick={() => handleSaveEdit(selectedRow)} variant="contained" color="primary" disabled={savingEdit}>
+            {savingEdit ? 'Guardando...' : 'Guardar'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -479,6 +515,7 @@ export default function DataTable({
                                 </Select>
                               </FormControl>
                             )}
+                            {rowActions && rowActions(row)}
                           </Box>
                         </TableCell>
                       </TableRow>

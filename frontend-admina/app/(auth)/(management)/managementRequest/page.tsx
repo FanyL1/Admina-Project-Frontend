@@ -6,16 +6,19 @@ import { Box, Button, Chip, Container, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import DescriptionIcon from '@mui/icons-material/Description';
+import toast from 'react-hot-toast';
 
 import DataTable from '@/components/UX/Table/Table';
 import { ProcedureTypeData } from '@/app/type';
 import { useGetAlltype} from './useGetType';
 import { useGetAllCategory } from '../managementCategory/useCategory';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 export default function ManagementRequestPage() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [searchFields, setSearchFields] = React.useState({ name: true, status: true });
-  const  {types} = useGetAlltype()
+  const [estadoFilter, setEstadoFilter] = React.useState('todos');
+  const  {types, loading, error, updateTypesById, refreshtype} = useGetAlltype()
   const typesActive = types.filter(col => col.status !== 'inactive');
   const {categories} = useGetAllCategory()
 
@@ -24,10 +27,38 @@ export default function ManagementRequestPage() {
     return category?.name || 'Categoría no encontrada'
   }
 
+  const categoryOptions = categories.map((category) => ({
+    value: category.id,
+    label: category.name,
+  }));
+
+  const handleSaveEdit = async (row: ProcedureTypeData) => {
+    if (!row.name?.trim()) {
+      toast.error('El nombre del tramite es requerido');
+      return;
+    }
+
+    if (!row.category_id) {
+      toast.error('Selecciona una categoria');
+      return;
+    }
+
+    await updateTypesById(row.id, {
+      name: row.name.trim(),
+      category_id: row.category_id,
+    });
+  };
+
+  const handleToggleStatus = async (row: ProcedureTypeData) => {
+    const nextStatus = row.status === 'active' ? 'inactive' : 'active';
+    await updateTypesById(row.id, { status: nextStatus });
+  };
+
   const columns = [
     { id: 'category_id', 
       label: 'Categoria', 
       numeric: false, 
+      editOptions: categoryOptions,
       render: (value: string) => getCategoryName(value) 
     },
     { id: 'name', label: 'Nombre del trámite', numeric: false },
@@ -35,6 +66,7 @@ export default function ManagementRequestPage() {
       id: 'requirements',
       label: 'Requisitos',
       numeric: false,
+      editable: false,
       render: (value: ProcedureTypeData['requirements']) => (
         <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
           {value?.documents?.length ? value.documents.map((document) => (
@@ -72,6 +104,7 @@ export default function ManagementRequestPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
+      <AppToaster />
       <Container maxWidth="lg">
 
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2, mb: 3 }}>
@@ -101,6 +134,12 @@ export default function ManagementRequestPage() {
         <DataTable
           data={types}
           columns={columns}
+          loading={loading}
+          error={error}
+          onRefresh={refreshtype}
+          onSaveEdit={handleSaveEdit}
+          onEdit={() => {}}
+          onToggleStatus={handleToggleStatus}
           title="Listado de trámites realizados"
           emptyTitle="Aún no hay trámites registrados"
           emptyDescription="Agrega el primer trámite para configurar sus requisitos y comenzar a organizar el catálogo."
@@ -132,8 +171,8 @@ export default function ManagementRequestPage() {
             onSearchFieldsChange: setSearchFields,
             rolFilter: 'todos',
             onRolFilterChange: () => {},
-            estadoFilter: 'todos',
-            onEstadoFilterChange: () => {},
+            estadoFilter,
+            onEstadoFilterChange: setEstadoFilter,
             searchTerm,
             onSearchTermChange: setSearchTerm,
             estadoOptions: [

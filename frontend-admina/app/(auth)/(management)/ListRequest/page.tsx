@@ -7,20 +7,14 @@ import {
   Button,
   Chip,
   Container,
-  Paper,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { StudentRequestData } from '@/app/type';
 import { getRequests } from '@/app/services/requestService';
+import DataTable from '@/components/UX/Table/Table';
 
 const formatDate = (value: string) => new Date(value).toLocaleString('es-VE', {
   year: 'numeric',
@@ -34,6 +28,14 @@ export default function ListRequestPage() {
   const [requests, setRequests] = React.useState<StudentRequestData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [estadoFilter, setEstadoFilter] = React.useState('todos');
+  const [searchFields, setSearchFields] = React.useState({
+    applicantName: true,
+    typeName: true,
+    carreraName: true,
+    status: true,
+  });
 
   const loadRequests = React.useCallback(async () => {
     try {
@@ -52,6 +54,37 @@ export default function ListRequestPage() {
     void Promise.resolve().then(loadRequests);
   }, [loadRequests]);
 
+  const tableRows = React.useMemo(() => requests.map((request) => ({
+    ...request,
+    applicantName: `${request.user?.name || ''} ${request.user?.lastname || ''}`.trim() || request.user_id,
+    typeName: request.type_procedure?.name || request.type_id,
+    carreraName: request.carrera?.name || request.carrera_id,
+    dateLabel: formatDate(request.created_at),
+  })), [requests]);
+
+  const columns = [
+    { id: 'applicantName', label: 'Solicitante', numeric: false, editable: false },
+    { id: 'typeName', label: 'Tramite', numeric: false, editable: false },
+    { id: 'carreraName', label: 'Carrera', numeric: false, editable: false },
+    { id: 'dateLabel', label: 'Fecha', numeric: false, editable: false },
+    {
+      id: 'status',
+      label: 'Estado',
+      numeric: false,
+      editable: false,
+      render: (value: string) => <Chip label={value} size="small" />,
+    },
+  ];
+
+  const estadoOptions = [
+    { value: 'Enviado', label: 'Enviado' },
+    { value: 'Revisando', label: 'Revisando' },
+    { value: 'Pendiente', label: 'Pendiente' },
+    { value: 'Observado', label: 'Observado' },
+    { value: 'Aprobado', label: 'Aprobado' },
+    { value: 'Rechazado', label: 'Rechazado' },
+  ];
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
       <Container maxWidth="lg">
@@ -66,57 +99,39 @@ export default function ListRequestPage() {
             </Button>
           </Stack>
 
-          <Paper sx={{ overflow: 'hidden' }}>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ bgcolor: 'primary.main' }}>
-                    <TableCell sx={{ color: 'white', fontWeight: 800 }}>Solicitante</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 800 }}>Tramite</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 800 }}>Carrera</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 800 }}>Fecha</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 800 }}>Estado</TableCell>
-                    <TableCell sx={{ color: 'white', fontWeight: 800 }} align="center">Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {loading && (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center">Cargando...</TableCell>
-                    </TableRow>
-                  )}
-                  {!loading && error && (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center" sx={{ color: 'error.main' }}>{error}</TableCell>
-                    </TableRow>
-                  )}
-                  {!loading && !error && requests.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center">No hay solicitudes registradas.</TableCell>
-                    </TableRow>
-                  )}
-                  {!loading && !error && requests.map((request) => (
-                    <TableRow key={request.id} hover>
-                      <TableCell>
-                        {request.createByname && request.createByname !== 'Mismo Usuario'
-                          ? request.createByname
-                          : `${request.user?.name || ''} ${request.user?.lastname || ''}`.trim() || request.user_id}
-                      </TableCell>
-                      <TableCell>{request.type_procedure?.name || request.type_id}</TableCell>
-                      <TableCell>{request.carrera?.name || request.carrera_id}</TableCell>
-                      <TableCell>{formatDate(request.created_at)}</TableCell>
-                      <TableCell><Chip label={request.status} size="small" /></TableCell>
-                      <TableCell align="center">
-                        <Button component={Link} href={`/requests/${request.id}`} size="small" startIcon={<VisibilityIcon />}>
-                          Ver
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+          <DataTable
+            data={tableRows}
+            columns={columns}
+            title="Gestion de solicitudes"
+            loading={loading}
+            error={error}
+            onRefresh={loadRequests}
+            getRowId={(row) => row.id}
+            emptyTitle="No hay solicitudes registradas"
+            emptyDescription="Cuando existan solicitudes, apareceran listadas en esta tabla."
+            rowActions={(request) => (
+              <Button component={Link} href={`/requests/${request.id}`} size="small" startIcon={<VisibilityIcon />}>
+                Ver
+              </Button>
+            )}
+            filterFields={{
+              searchFields,
+              onSearchFieldsChange: setSearchFields,
+              rolFilter: 'todos',
+              onRolFilterChange: () => {},
+              estadoFilter,
+              onEstadoFilterChange: setEstadoFilter,
+              searchTerm,
+              onSearchTermChange: setSearchTerm,
+              estadoOptions,
+              searchLabels: {
+                applicantName: 'Solicitante',
+                typeName: 'Tramite',
+                carreraName: 'Carrera',
+                status: 'Estado',
+              },
+            }}
+          />
         </Stack>
       </Container>
     </Box>

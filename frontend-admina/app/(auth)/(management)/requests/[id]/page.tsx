@@ -23,7 +23,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
 import DescriptionIcon from '@mui/icons-material/Description';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useLogin } from '@/app/login/useLogin';
 import { RequestDocumentData, RequestStatus, StudentRequestData } from '@/app/type';
 import {
@@ -32,6 +32,7 @@ import {
   requestStatusOptions,
   updateRequestReview,
 } from '@/app/services/requestService';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 const formatDate = (value?: string) => value
   ? new Date(value).toLocaleString('es-VE', {
@@ -111,7 +112,7 @@ export default function RequestDetailPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
-      <Toaster position="top-center" reverseOrder={false} />
+      <AppToaster />
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Button startIcon={<ArrowBackIcon />} onClick={() => router.back()} sx={{ alignSelf: 'flex-start' }}>

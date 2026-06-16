@@ -23,7 +23,7 @@ import {
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import SendIcon from '@mui/icons-material/Send';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useLogin } from '@/app/login/useLogin';
 import { OnlyNameData, ProcedureTypeData } from '@/app/type';
 import {
@@ -32,6 +32,7 @@ import {
   getProcedureTypes,
   uploadRequestDocument,
 } from '@/app/services/requestService';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 const isAverageRequirement = (value: string) => value.toLowerCase().includes('promedio');
 
@@ -101,8 +102,8 @@ export default function RequestPage() {
         user_id: sessionUser.id,
         type_id: selectedTypeId,
         carrera_id: degreeId,
-        createByname: externalName,
-        createByDNI: externalDni,
+        createByname: externalApplicant ? externalName.trim() : undefined,
+        createByDNI: externalApplicant ? externalDni.trim() : undefined,
         observation: observationLines.length ? `Datos de requisitos: ${observationLines.join(' | ')}` : undefined,
       });
 
@@ -125,7 +126,7 @@ export default function RequestPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
-      <Toaster position="top-center" reverseOrder={false} />
+      <AppToaster />
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Box>

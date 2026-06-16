@@ -5,8 +5,12 @@ import {
   Box,
   Button,
   Divider,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   TextField,
   Typography,
 } from '@mui/material';
@@ -14,7 +18,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SaveIcon from '@mui/icons-material/Save';
-import { ProcedureTypeFormData } from '@/app/type';
+import { OnlyNameData, ProcedureTypeFormData } from '@/app/type';
+import { useGetAllCategory } from '@/app/(auth)/(management)/managementCategory/useCategory';
 
 interface ProcedureFormProps {
   initialValues?: ProcedureTypeFormData;
@@ -25,6 +30,7 @@ interface ProcedureFormProps {
 
 const emptyValues: ProcedureTypeFormData = {
   name: '',
+  category_id: '',
   requirements: {
     documents: [''],
   },
@@ -37,12 +43,14 @@ export default function ProcedureForm({
   onSubmit,
 }: ProcedureFormProps) {
   const [name, setName] = React.useState(initialValues.name);
+  const [categoryId, setCategoryId] = React.useState(initialValues.category_id);
   const [documents, setDocuments] = React.useState<string[]>(
     initialValues.requirements.documents.length > 0
       ? initialValues.requirements.documents
       : [''],
   );
-  const [errors, setErrors] = React.useState<{ name?: string; documents?: string }>({});
+  const [errors, setErrors] = React.useState<{ name?: string; category_id?: string; documents?: string }>({});
+  const { categories } = useGetAllCategory();
 
   const handleDocumentChange = (index: number, value: string) => {
     setDocuments((current) => current.map((item, itemIndex) => (
@@ -64,10 +72,14 @@ export default function ProcedureForm({
     event.preventDefault();
 
     const cleanedDocuments = documents.map((item) => item.trim()).filter(Boolean);
-    const nextErrors: { name?: string; documents?: string } = {};
+    const nextErrors: { name?: string; category_id?: string; documents?: string } = {};
 
     if (name.trim().length < 3) {
       nextErrors.name = 'El nombre debe tener al menos 3 caracteres';
+    }
+
+    if (!categoryId) {
+      nextErrors.category_id = 'Selecciona una categoria';
     }
 
     if (cleanedDocuments.length === 0) {
@@ -80,6 +92,7 @@ export default function ProcedureForm({
 
     await onSubmit({
       name: name.trim(),
+      category_id: categoryId,
       requirements: {
         documents: cleanedDocuments,
       },
@@ -114,6 +127,24 @@ export default function ProcedureForm({
           helperText={errors.name}
           disabled={loading}
         />
+
+        <FormControl fullWidth error={!!errors.category_id} disabled={loading}>
+          <InputLabel>Categoria</InputLabel>
+          <Select
+            label="Categoria"
+            value={categoryId}
+            onChange={(event) => setCategoryId(event.target.value)}
+          >
+            {categories.map((category: OnlyNameData) => (
+              <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+            ))}
+          </Select>
+          {errors.category_id && (
+            <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
+              {errors.category_id}
+            </Typography>
+          )}
+        </FormControl>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Divider />

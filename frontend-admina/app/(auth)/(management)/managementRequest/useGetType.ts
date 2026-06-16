@@ -1,4 +1,4 @@
-// hooks/useGetAllRoles.ts
+'use client';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { ProcedureTypeData, GetAllTypeResponse } from '@/app/type';

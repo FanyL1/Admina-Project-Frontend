@@ -36,7 +36,6 @@ const getMenuItems = (role: string) => {
       { label: 'Gestión de Tramites', href: '/managementRequest', icon: <TableRowsIcon /> },
       { label: 'Gestión de Estudiantes', href: '/managementStudiants', icon: <GroupIcon /> },
       { label: 'Gestión de Categorias', href: '/managementCategory', icon: <StyleIcon /> },
-      { label: 'Estadisticas', href: '/statistics', icon: <EqualizerIcon /> },
       { label: 'Reportes', href: '/reports', icon: <TrackChangesIcon /> },
     ],
     Superusuario: [

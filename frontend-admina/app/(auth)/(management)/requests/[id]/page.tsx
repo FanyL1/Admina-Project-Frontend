@@ -184,7 +184,9 @@ export default function RequestDetailPage() {
                               </Box>
                             </Stack>
                             {document.router_file && (
-                              <MuiLink href={`${process.env.NEXT_PUBLIC_BACKEND_URL}${document.router_file}`} target="_blank" rel="noreferrer">
+                              <MuiLink href={`${process.env.NEXT_PUBLIC_BACKEND_URL}${document.router_file}`}
+                               target="_blank" 
+                               rel="noreferrer">
                                 Ver documento
                               </MuiLink>
                             )}

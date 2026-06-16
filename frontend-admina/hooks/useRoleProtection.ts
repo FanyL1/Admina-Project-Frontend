@@ -1,4 +1,3 @@
-// hooks/useRoleProtection.ts
 'use client';
 
 import { useEffect } from 'react';

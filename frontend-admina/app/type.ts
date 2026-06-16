@@ -220,11 +220,9 @@ export interface LogsData{
   date: string;
   user_id: string;
   action: string;
-  request_id: string;
   description: string;
-  message: string;
-  resource_id: string;
-  resource_type: string
+  resourceId: string;
+  resourceType: string
 }
 export interface LogResponse {
   success: boolean;

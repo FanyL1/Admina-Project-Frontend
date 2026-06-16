@@ -100,7 +100,7 @@ export default function UsersPage() {
         <Table
         data={users}
         columns={columns}
-        title="Gestión de Usuarios"
+        title="Gestión de Estudiantes"
         loading={loading}
         error={error}
         onRefresh={refreshUsers}

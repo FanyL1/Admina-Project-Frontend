@@ -25,7 +25,7 @@ export default function StatisticsPage() {
 
   return (
     <Box sx={{ p: 0 }}>
-      <StatisticsDashboard requests={[]} students={[]}/>
+      <StatisticsDashboard requests={[]} students={[users]}/>
     </Box>
   );
 }

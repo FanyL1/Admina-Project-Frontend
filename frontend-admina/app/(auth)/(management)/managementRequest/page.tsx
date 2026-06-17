@@ -11,11 +11,13 @@ import DataTable from '@/components/UX/Table/Table';
 import { ProcedureTypeData } from '@/app/type';
 import { useGetAlltype} from './useGetType';
 import { useGetAllCategory } from '../managementCategory/useCategory';
+import { updateStatusType } from './useGetType';
+import toast from 'react-hot-toast';
 
 export default function ManagementRequestPage() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [searchFields, setSearchFields] = React.useState({ name: true, status: true });
-  const  {types} = useGetAlltype()
+  const  {types, refreshtype} = useGetAlltype()
   const typesActive = types.filter(col => col.status !== 'inactive');
   const {categories} = useGetAllCategory()
 
@@ -70,6 +72,19 @@ export default function ManagementRequestPage() {
     },
   ];
 
+  //Cambio de estado
+    const handleToggleStatus = async (row: ProcedureTypeData) => {
+      try {
+        const newStatus = row.status === 'active' ? 'inactive' : 'active';
+        await updateStatusType(row.id);
+        toast.success(`Carerra ${newStatus === 'active' ? 'inactive' : 'activado'} exitosamente`);
+        await refreshtype(); 
+      
+      } catch (error) {   
+        toast.error('Error al cambiar el estado');
+      }
+    };
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
       <Container maxWidth="lg">
@@ -104,6 +119,7 @@ export default function ManagementRequestPage() {
           title="Listado de trámites realizados"
           emptyTitle="Aún no hay trámites registrados"
           emptyDescription="Agrega el primer trámite para configurar sus requisitos y comenzar a organizar el catálogo."
+          onRefresh={refreshtype}
           emptyAction={
             <Button
               component={Link}
@@ -127,6 +143,7 @@ export default function ManagementRequestPage() {
             </Button>
           }
           getRowId={(row) => row.id}
+          onToggleStatus={handleToggleStatus}
           filterFields={{
             searchFields,
             onSearchFieldsChange: setSearchFields,

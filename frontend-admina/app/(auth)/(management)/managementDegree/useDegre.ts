@@ -126,6 +126,37 @@ export const updateDegree = async ( id: string,  updates: { name?: string; statu
   }
 };
 
+export const updateStatusDegree = async ( id: string): Promise<any> => {
+  
+  let toastId: string | undefined;
+  
+  try {
+    const token = localStorage.getItem('authToken');
+    
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/degree/status/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      toast.dismiss(toastId);
+      toast.error(data.error || 'Error al actualizar la carrera');  throw new Error(data.error || 'Error al actualizar la carrera');
+    }
+    
+    toast.dismiss(toastId);
+    toast.success('¡Carrera actualizada exitosamente!');
+    
+    return data;
+  } catch (error) {
+    toast.dismiss(toastId);
+    throw error;
+  }
+};
 
 // Hook personalizado para obtener carerras
 export const useGetAllDegree = () => {

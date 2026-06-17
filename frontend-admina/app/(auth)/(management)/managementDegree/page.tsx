@@ -4,10 +4,12 @@
 import * as React from 'react';
 import DataTable from '@/components/UX/Table/Table';
 import { useGetAllDegree } from './useDegre';
-import { DegreeData } from '@/app/type';
 import toast, { Toaster } from 'react-hot-toast';
 import {  Box,  Button,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+
+import { updateStatusDegree } from './useDegre';
+import { DegreeData } from '@/app/type';
 
 export default function CarrerasPage() {
   const { degrees,  loading,  error,  validationErrors, registerDegree, updateDegreeById, refreshDegrees } = useGetAllDegree();
@@ -51,6 +53,19 @@ export default function CarrerasPage() {
     setDegreeName(row.name); // Cargar nombre en el formulario
   };
 
+  //Cambio de estado
+    const handleToggleStatus = async (row: DegreeData) => {
+      try {
+        const newStatus = row.status === 'active' ? 'inactive' : 'active';
+        await updateStatusDegree(row.id);
+        toast.success(`Carerra ${newStatus === 'active' ? 'inactive' : 'activado'} exitosamente`);
+        await refreshDegrees(); 
+  
+      } catch (error) {   
+         toast.error('Error al cambiar el estado');
+      }
+    };
+    
   const handleSave = async () => {
     if (!degreeName.trim()) {
       toast.error('El nombre de la carrera es requerido');
@@ -151,6 +166,7 @@ export default function CarrerasPage() {
         error={error}
         onRefresh={refreshDegrees}
         onEdit={handleEdit}
+        onToggleStatus={handleToggleStatus}
         getRowId={(row) => row.id}
         filterFields={{
           searchFields,
@@ -161,7 +177,10 @@ export default function CarrerasPage() {
           onEstadoFilterChange: () => {},
           searchTerm,
           onSearchTermChange: setSearchTerm,
-          estadoOptions
+          estadoOptions,
+          searchLabels: {
+            name: 'Nombre',
+          },
         }}
       />
 

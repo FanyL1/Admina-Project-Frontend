@@ -9,6 +9,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import {  Box,  Button,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
+import { updateStatusCategory } from './useCategory';
+import { updateStatus } from '../useManagement';
 export default function CarrerasPage() {
   const { categories,  loading,  error,  validationErrors, registerCategory, updateCategoriesById, refreshCategory } = useGetAllCategory();
   
@@ -50,6 +52,21 @@ export default function CarrerasPage() {
     setEditingDegree(row);   //Guardar carrera a editar
     setDegreeName(row.name); // Cargar nombre en el formulario
   };
+
+
+  //Cambio de estado
+  const handleToggleStatus = async (row: DegreeData) => {
+    try {
+      const newStatus = row.status === 'active' ? 'inactive' : 'active';
+      await updateStatusCategory(row.id);
+      toast.success(`Carerra ${newStatus === 'active' ? 'inactive' : 'activado'} exitosamente`);
+      await refreshCategory(); 
+    
+    } catch (error) {   
+      toast.error('Error al cambiar el estado');
+    }
+  };
+
 
   const handleSave = async () => {
     if (!degreeName.trim()) {
@@ -152,6 +169,7 @@ export default function CarrerasPage() {
         error={error}
         onRefresh={refreshCategory}
         onEdit={handleEdit}
+        onToggleStatus={handleToggleStatus}
         getRowId={(row) => row.id}
         filterFields={{
           searchFields,
@@ -162,7 +180,10 @@ export default function CarrerasPage() {
           onEstadoFilterChange: () => {},
           searchTerm,
           onSearchTermChange: setSearchTerm,
-          estadoOptions
+          estadoOptions,
+          searchLabels: {
+            name: 'Nombre',
+          },
         }}
       />
 

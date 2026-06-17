@@ -88,7 +88,7 @@ export const createCategory= async (formData: OnlyNameData): Promise<any> =>{
     throw error;
   }
 };
-export const updateDegree = async ( id: string,  updates: { name?: string; status?: string }): Promise<any> => {
+export const updateCategory = async ( id: string,  updates: { name?: string; status?: string }): Promise<any> => {
   
   let toastId: string | undefined;
   
@@ -126,6 +126,37 @@ export const updateDegree = async ( id: string,  updates: { name?: string; statu
   }
 };
 
+export const updateStatusCategory = async ( id: string): Promise<any> => {
+  
+  let toastId: string | undefined;
+  
+  try {
+    const token = localStorage.getItem('authToken');
+    
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/status/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      toast.dismiss(toastId);
+      toast.error(data.error || 'Error al actualizar la categoria');  throw new Error(data.error || 'Error al actualizar la categoria');
+    }
+    
+    toast.dismiss(toastId);
+    toast.success('¡Categoria actualizada exitosamente!');
+    
+    return data;
+  } catch (error) {
+    toast.dismiss(toastId);
+    throw error;
+  }
+};
 
 // Hook personalizado para obtener carerras
 export const useGetAllCategory = () => {
@@ -189,7 +220,7 @@ export const useGetAllCategory = () => {
       onlyNameSchem.parse({ name: updates.name });
     }
     
-    const result = await updateDegree(id, updates);
+    const result = await updateCategory(id, updates);
     
     if (result && result.success !== false) {
       refreshCategory();

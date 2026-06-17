@@ -11,7 +11,7 @@ import { useGetAllUsers } from '../managementUser/usePage';
 import {useLogin} from '@/app/login/useLogin'
 import { useGetAllCategory } from '../managementCategory/useCategory';
 import { useGetAllDegree } from '../managementDegree/useDegre';
-import { useGetAlltype } from '../managementRequest/useGetType';
+import { useGetAlltype } from '../managementType/useGetType';
 import { Copy } from '@/components/UX/Copy/handleCopy';
 
 export default function ManagementRequestPage() {

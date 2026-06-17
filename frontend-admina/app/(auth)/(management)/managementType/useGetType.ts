@@ -54,12 +54,14 @@ export const getAlltype = async (): Promise<GetAllTypeResponse> => {
   }
 };
 
-export const updateType = async ( id: string,  updates: { name?: string; status?: string }): Promise<any> => {
+type ProcedureTypeUpdates = { name?: string; category_id?: string; status?: string };
+
+export const updateType = async ( id: string,  updates: ProcedureTypeUpdates): Promise<any> => {
   
   let toastId: string | undefined;
   
   try {
-    if (!updates.name && !updates.status) {
+    if (!updates.name && !updates.category_id && !updates.status) {
       toast.error('Debe proporcionar al menos un campo para actualizar');
       throw new Error('Debe proporcionar al menos un campo para actualizar');
     }
@@ -132,7 +134,7 @@ export const useGetAlltype = () => {
   const [refetch, setRefetch] = useState(0);
   const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]); // Estado para errores de validación
 
-  const updateTypesById = async (id: string, updates: { name?: string; status?: string }) => {
+  const updateTypesById = async (id: string, updates: ProcedureTypeUpdates) => {
   setLoading(true);
   setError(null);
   setValidationErrors([]);

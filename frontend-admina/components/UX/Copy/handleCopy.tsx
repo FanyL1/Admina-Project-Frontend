@@ -18,7 +18,7 @@ export const Copy = ({ children, text }: CopyProps) => {
   };
 
   return (
-    <Box onClick={handleCopy} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}>
+    <Box component="span" onClick={handleCopy} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}>
       {children}
       {copiado ? (
         <CheckCircleIcon sx={{ color: 'green', fontSize: '1rem' }} />

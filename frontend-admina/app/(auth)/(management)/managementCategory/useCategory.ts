@@ -1,7 +1,7 @@
 // hooks/useGetAllRoles.ts
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { GetAllResponseOnlyName, OnlyNameData } from '@/app/type';
+import { GetAllResponseOnlyName, OnlyNameData, OnlyNameResponse } from '@/app/type';
 import { onlyNameSchem } from "@/schemas/onlyNameSchem"; 
 import { z } from "zod";
 
@@ -160,7 +160,7 @@ export const updateStatusCategory = async ( id: string): Promise<any> => {
 
 // Hook personalizado para obtener carerras
 export const useGetAllCategory = () => {
-  const [categories, setCategories] = useState<OnlyNameData[]>([]);
+  const [categories, setCategories] = useState<OnlyNameResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refetch, setRefetch] = useState(0);
@@ -210,39 +210,39 @@ export const useGetAllCategory = () => {
     };
 
     const updateCategoriesById = async (id: string, updates: { name?: string; status?: string }) => {
-  setLoading(true);
-  setError(null);
-  setValidationErrors([]);
-  
-  try {
-    // Validar si el nombre está presente y es válido
-    if (updates.name) {
-      onlyNameSchem.parse({ name: updates.name });
-    }
-    
-    const result = await updateCategory(id, updates);
-    
-    if (result && result.success !== false) {
-      refreshCategory();
-      return result;
-    }
-  } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      const formattedErrors = error.issues.map(err => ({
-        field: err.path.join('.'),
-        message: err.message
-      }));
+      setLoading(true);
+      setError(null);
+      setValidationErrors([]);
       
-      setValidationErrors(formattedErrors);
-      setError('Por favor, corrige los errores del formulario');
-    } else {
-      setError(error.message || 'Error al actualizar la categoria');
-    }
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
+      try {
+        // Validar si el nombre está presente y es válido
+        if (updates.name) {
+          onlyNameSchem.parse({ name: updates.name });
+        }
+        
+        const result = await updateCategory(id, updates);
+        
+        if (result && result.success !== false) {
+          refreshCategory();
+          return result;
+        }
+      } catch (error: any) {
+        if (error instanceof z.ZodError) {
+          const formattedErrors = error.issues.map(err => ({
+            field: err.path.join('.'),
+            message: err.message
+          }));
+          
+          setValidationErrors(formattedErrors);
+          setError('Por favor, corrige los errores del formulario');
+        } else {
+          setError(error.message || 'Error al actualizar la categoria');
+        }
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const fetchCategory = async () => {
     setLoading(true);

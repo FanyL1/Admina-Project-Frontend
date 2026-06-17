@@ -1,15 +1,14 @@
-// app/carreras/page.tsx
 'use client';
-
 import * as React from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import {  Box,  Button,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  TextField } from '@mui/material';
+import toast from 'react-hot-toast';
+
 import DataTable from '@/components/UX/Table/Table';
 import { useGetAllDegree } from './useDegre';
-import toast, { Toaster } from 'react-hot-toast';
-import {  Box,  Button,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  TextField } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-
-import { updateStatusDegree } from './useDegre';
 import { DegreeData } from '@/app/type';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
+import { updateStatusDegree } from './useDegre';
 
 export default function CarrerasPage() {
   const { degrees,  loading,  error,  validationErrors, registerDegree, updateDegreeById, refreshDegrees } = useGetAllDegree();
@@ -126,31 +125,7 @@ export default function CarrerasPage() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Toaster 
-        position="top-center"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#363636',
-            color: '#fff',
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: '#4caf50',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            duration: 4000,
-            iconTheme: {
-              primary: '#f44336',
-              secondary: '#fff',
-            },
-          },
-        }}
-      />
+      <AppToaster />
       
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate}>

@@ -1,26 +1,25 @@
 'use client';
-
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Button, Container, Paper, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import ProcedureForm from '@/components/UX/Form/Procedure/ProcedureForm';
-import { ProcedureTypeData } from '@/app/type';
+import { ProcedureTypeFormData } from '@/app/type';
 import { createProcedureType } from './useProcedureType';
-
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 export default function AddProcedurePage() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = async (values: ProcedureTypeData) => {
+  const handleSubmit = async (values: ProcedureTypeFormData) => {
     setLoading(true);
 
     try {
       await createProcedureType(values);
-      router.push('/managementRequest');
+      router.push('/managementType');
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'No se pudo crear el tramite';
       toast.error(message);
@@ -31,7 +30,7 @@ export default function AddProcedurePage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
-      <Toaster position="top-center" reverseOrder={false} />
+      <AppToaster />
 
       <Container maxWidth="lg">
         <Paper
@@ -68,7 +67,7 @@ export default function AddProcedurePage() {
               variant="contained"
               color="secondary"
               startIcon={<ArrowBackIcon />}
-              onClick={() => router.push('/managementRequest')}
+              onClick={() => router.push('/managementType')}
             >
               Volver
             </Button>

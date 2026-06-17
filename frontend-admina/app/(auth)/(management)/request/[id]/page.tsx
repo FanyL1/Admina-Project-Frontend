@@ -23,7 +23,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
 import DescriptionIcon from '@mui/icons-material/Description';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useLogin } from '@/app/login/useLogin';
 import { RequestDocumentData, RequestStatus, StudentRequestData } from '@/app/type';
 import {
@@ -32,6 +32,7 @@ import {
   requestStatusOptions,
   updateRequestReview,
 } from '@/app/services/requestService';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 const formatDate = (value?: string) => value
   ? new Date(value).toLocaleString('es-VE', {
@@ -88,7 +89,7 @@ export default function RequestDetailPage() {
     }
 
     if ((status === 'Aprobado' || status === 'Rechazado') && nextObservation === previousObservation) {
-      toast.error('Para aprobar o rechazar, la observacion debe cambiar');
+      toast.error('Añadir observacion');
       return;
     }
 
@@ -107,11 +108,11 @@ export default function RequestDetailPage() {
     }
   };
 
-  const isExternal = Boolean(request?.createByname && request.createByname !== 'Mismo Usuario');
+  const isExternal = Boolean(request?.createByname && request.createByname == 'No aplica');
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
-      <Toaster position="top-center" reverseOrder={false} />
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 3 } }}>
+      <AppToaster />
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Button startIcon={<ArrowBackIcon />} onClick={() => router.back()} sx={{ alignSelf: 'flex-start' }}>
@@ -138,24 +139,36 @@ export default function RequestDetailPage() {
                   <Divider />
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                       <Typography variant="subtitle2" color="text.secondary">Solicitante</Typography>
                       {isExternal ? (
-                        <Typography sx={{ fontWeight: 700 }}>{request.createByname}</Typography>
+                        <Box>
+                          <Typography sx={{ fontWeight: 700 }}>
+                            {request.createByname}
+                          </Typography>
+                          <Typography >
+                            Cedula: {request.createByDNI || 'No disponible'}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Usuario de la cuenta: {request.user?.name} {request.user?.lastname}
+                          </Typography>
+                        </Box>
                       ) : (
-                        <Typography sx={{ fontWeight: 700 }}>
-                          {request.user?.name} {request.user?.lastname} - DNI: {request.user?.dni || 'No disponible'}
-                        </Typography>
+                        <Box>
+                          <Typography sx={{ fontWeight: 700 }}>
+                            {request.user?.name} {request.user?.lastname}
+                          </Typography>
+                          <Typography>
+                            Cedula: {request.user?.dni || 'No disponible'}
+                          </Typography>
+                        </Box>
                       )}
-                      <Typography variant="body2" color="text.secondary">
-                        Usuario de la cuenta: {request.user?.name} {request.user?.lastname}
-                      </Typography>
                     </Grid>
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                       <Typography variant="subtitle2" color="text.secondary">Carrera</Typography>
                       <Typography sx={{ fontWeight: 700 }}>{request.carrera?.name || request.carrera_id}</Typography>
                     </Grid>
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                       <Typography variant="subtitle2" color="text.secondary">Ultima actualizacion</Typography>
                       <Typography sx={{ fontWeight: 700 }}>{formatDate(request.updated_at)}</Typography>
                     </Grid>
@@ -168,9 +181,6 @@ export default function RequestDetailPage() {
                   <Paper sx={{ p: { xs: 2, md: 3 }, height: '100%' }}>
                     <Stack spacing={2}>
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>Requisitos y documentos</Typography>
-                      {request.observation && (
-                        <Alert severity="info">{request.observation}</Alert>
-                      )}
                       {documents.length === 0 ? (
                         <Typography color="text.secondary">No hay documentos cargados para esta solicitud.</Typography>
                       ) : documents.map((document) => (
@@ -198,7 +208,7 @@ export default function RequestDetailPage() {
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 5 }}>
-                  <Paper sx={{ p: { xs: 2, md: 3 } }}>
+                  {canReview ? (<Paper sx={{ p: { xs: 2, md: 3 }, width:'100%' }}>
                     <Stack spacing={2}>
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>Control de estado</Typography>
                       <FormControl fullWidth disabled={!canReview}>
@@ -217,7 +227,7 @@ export default function RequestDetailPage() {
                         value={observation}
                         onChange={(event) => setObservation(event.target.value)}
                         disabled={!canReview}
-                        helperText={status === 'Observado' ? 'Minimo 5 caracteres' : 'Requerida si apruebas o rechazas cambiando el texto anterior'}
+                        helperText={status === 'Observado' ? 'Minimo 5 caracteres' : 'Añadir observacion para poder cambiar el estado'}
                       />
                       {canReview ? (
                         <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} disabled={saving}>
@@ -227,7 +237,18 @@ export default function RequestDetailPage() {
                         <Alert severity="info">Solo administradores y superusuarios pueden cambiar el estado.</Alert>
                       )}
                     </Stack>
+                  </Paper>):(
+                  <Paper sx={{ p: { xs: 2, md: 3 } }}>
+                    <Typography  variant="h6" sx={{ fontWeight: 800 }}> Observaciones </Typography>
+                    {request.observation == 'Sin observaciones' && (
+                      <Alert severity="info">{request.observation}</Alert>
+                    )}
+                    {request.observation !== 'Sin observaciones' && (
+                      <Typography>{request.observation}</Typography>
+                    )}
+                    
                   </Paper>
+                )}
                 </Grid>
               </Grid>
             </>

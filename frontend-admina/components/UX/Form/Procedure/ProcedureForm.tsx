@@ -5,8 +5,12 @@ import {
   Box,
   Button,
   Divider,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   TextField,
   Typography,
 } from '@mui/material';
@@ -14,7 +18,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SaveIcon from '@mui/icons-material/Save';
-import { ProcedureTypeFormData } from '@/app/type';
+import { OnlyNameData, ProcedureTypeFormData } from '@/app/type';
+import { useGetAllCategory } from '@/app/(auth)/(management)/managementCategory/useCategory';
 
 interface ProcedureFormProps {
   initialValues?: ProcedureTypeFormData;
@@ -25,8 +30,10 @@ interface ProcedureFormProps {
 
 const emptyValues: ProcedureTypeFormData = {
   name: '',
+  category_id: '',
   requirements: {
     documents: [''],
+    promedio: 0,
   },
 };
 
@@ -37,12 +44,15 @@ export default function ProcedureForm({
   onSubmit,
 }: ProcedureFormProps) {
   const [name, setName] = React.useState(initialValues.name);
+  const [categoryId, setCategoryId] = React.useState(initialValues.category_id);
+  const [promedio, setpromedio] = React.useState<string>('');
   const [documents, setDocuments] = React.useState<string[]>(
     initialValues.requirements.documents.length > 0
       ? initialValues.requirements.documents
       : [''],
   );
-  const [errors, setErrors] = React.useState<{ name?: string; documents?: string }>({});
+  const [errors, setErrors] = React.useState<{ name?: string; category_id?: string; documents?: string; promedio?: number }>({});
+  const { categories } = useGetAllCategory();
 
   const handleDocumentChange = (index: number, value: string) => {
     setDocuments((current) => current.map((item, itemIndex) => (
@@ -59,29 +69,34 @@ export default function ProcedureForm({
       current.length === 1 ? [''] : current.filter((_, itemIndex) => itemIndex !== index)
     ));
   };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const cleanedDocuments = documents.map((item) => item.trim()).filter(Boolean);
-    const nextErrors: { name?: string; documents?: string } = {};
+    const nextErrors: { name?: string; category_id?: string; documents?: string } = {};
 
     if (name.trim().length < 3) {
       nextErrors.name = 'El nombre debe tener al menos 3 caracteres';
     }
 
+    const promedioNumber = promedio === '' ? 0 : Number(promedio);
+    const promedioFinal = Math.min(Math.max(promedioNumber, 0), 10);
+
+    if (!categoryId) {
+      nextErrors.category_id = 'Selecciona una categoria';
+    }
+
     if (cleanedDocuments.length === 0) {
       nextErrors.documents = 'Agrega al menos un requisito';
     }
-
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) return;
-
     await onSubmit({
       name: name.trim(),
+      category_id: categoryId,
       requirements: {
         documents: cleanedDocuments,
+        promedio: promedioFinal
       },
     });
   };
@@ -114,6 +129,24 @@ export default function ProcedureForm({
           helperText={errors.name}
           disabled={loading}
         />
+
+        <FormControl fullWidth error={!!errors.category_id} disabled={loading}>
+          <InputLabel>Categoria</InputLabel>
+          <Select
+            label="Categoria"
+            value={categoryId}
+            onChange={(event) => setCategoryId(event.target.value)}
+          >
+            {categories.map((category: OnlyNameData) => (
+              <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+            ))}
+          </Select>
+          {errors.category_id && (
+            <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
+              {errors.category_id}
+            </Typography>
+          )}
+        </FormControl>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Divider />
@@ -172,7 +205,18 @@ export default function ProcedureForm({
             </Box>
           ))}
         </Box>
-
+        <Divider />
+          <TextField
+          fullWidth
+          label="Promedio minimo para opctar por el tramite (Opcional)"
+          type='number'
+          value={promedio}
+          onChange={(event) => setpromedio(event.target.value)}
+          error={!!errors.promedio}
+          helperText={errors.promedio}
+          disabled={loading}
+        />
+        <Divider />
         <Button
           type="submit"
           variant="contained"

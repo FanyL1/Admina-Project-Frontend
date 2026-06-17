@@ -1,29 +1,12 @@
 'use client';
-
 import { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Chip,
-  Stack,
-  IconButton,
-  Collapse,
-  Grid,
-} from '@mui/material';
-import {
-  ExpandMore,
-  ExpandLess,
-  School,
-  Work,
-  AccountBalance,
-  HealthAndSafety,
-  Home,
-  Description,
-} from '@mui/icons-material';
+import Router from 'next/router';
+import {Box,Typography, Chip, Stack, IconButton, Collapse, Grid, Alert,} from '@mui/material';
+import { ExpandMore, ExpandLess, School, Work, AccountBalance, HealthAndSafety, Home, Description,} from '@mui/icons-material';
 import { Cards } from '@/components/UX/Card/card';
 import { Buttons } from '@/components/UX/Buttons/buttons';
 import { useGetAllCategory } from '@/app/(auth)/(management)/managementCategory/useCategory';
-import { useGetAlltype } from '@/app/(auth)/(management)/managementRequest/useGetType';
+import { useGetAlltype } from '@/app/(auth)/(management)/managementType/useGetType';
 
 // Definición de tipos
 interface Type {
@@ -87,29 +70,29 @@ export const CardRequest = () => {
   const { categories } = useGetAllCategory();
   const {types} = useGetAlltype();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-
   const toggleCategory = (categoryId: string) => {
     setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
   };
+  const activeCategories = categories?.filter(
+    (category) => category.status === 'active'
+  ) ?? [];
 
-  const handleSelectype = (id: string) => {
-    console.log(id)
-  };
+  const activeTypes = types?.filter(
+    (type) => type.status === 'active'
+  ) ?? [];
 
   // Si no hay categorías, muestra un mensaje
-  if (!categories || categories.length === 0) {
+  if (!activeCategories || activeCategories.length === 0) {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography variant="body1" color="text.secondary">
-          No hay categorías disponibles
-        </Typography>
+      <Box sx={{ p: 3, textAlign: 'center', width:'100%' }}>
+        <Alert severity="error"> No hay categorías disponibles</Alert>
       </Box>
     );
   }
 
   return (
     <Grid container spacing={3}>
-      {categories.map((category: Category) => (
+      {activeCategories.map((category: Category) => (
         <Grid size={12} key={category.id}>
           <Cards>
             {/* Header de categoría */}
@@ -148,7 +131,7 @@ export const CardRequest = () => {
               <Box sx={{ p: 2 }}>
                 <Stack spacing={2}>
                   {/* Aquí mapeas los tipos (trámites) */}
-                  {types.map((type) => (
+                  {activeTypes.map((type) => (
                     < Box  key={type.id}>
                       { category.id == type.category_id && <Box
                         key={type.id}
@@ -174,14 +157,14 @@ export const CardRequest = () => {
                               Trámite de {category.name}
                             </Typography>
                           </Box>
-                          <Buttons
-                            variant="contained"
-                            size="small"
-                            onClick={() => handleSelectype(type.id)}
-                            sx={{ ml: 2 }}
-                          >
-                            Solicitar
-                          </Buttons>
+                            <Buttons
+                              variant="contained"
+                              size="small"
+                              onClick={()=> Router.push(`/request/${type.id}/Form`)}
+                              sx={{ ml: 2 }}
+                            >
+                              Solicitar
+                            </Buttons>
                         </Box>
 
                         <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>

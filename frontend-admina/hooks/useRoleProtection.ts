@@ -7,7 +7,7 @@ import { useLogin } from '../app/login/useLogin';
 // Rutas por cada rol
 const roleRoutes = {
   Estudiante: [ '/profile','/request', '/myRequest', ],
-  Administrativo: ['/profile', '/ListRequest', '/managementRequest', '/managementStudiants', '/managementCategory', '/statistics', '/reports', ],
+  Administrativo: ['/profile', '/ListRequest', '/managementType','/request', '/managementStudiants', '/managementCategory', '/statistics', '/reports', ],
   Superusuario: [ '/profile', '/managementUser', '/managementDegree', '/ListRequest', '/managementRequest', '/managementStudiants', '/managementCategory', '/statistics', '/reports' ]
 };
 

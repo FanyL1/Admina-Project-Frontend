@@ -29,9 +29,7 @@ const parseResponse = async <T>(res: Response): Promise<ApiResult<T>> => {
 };
 
 export const requestStatusOptions: RequestStatus[] = [
-  'Enviado',
   'Revisando',
-  'Pendiente',
   'Observado',
   'Aprobado',
   'Rechazado',

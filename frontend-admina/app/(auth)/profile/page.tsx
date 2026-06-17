@@ -30,7 +30,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import theme from '../../theme';
 import { useProfile } from './useProfile';
 import toast from 'react-hot-toast';
-import { Toaster } from 'react-hot-toast';
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 
 const statusColors: Record<string, string> = {
   active: '#4CAF50',
@@ -79,7 +79,7 @@ const {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+      <AppToaster />
 
       {/* Header decorativo */}
       <Box sx={{ py: { xs: 5, sm: 2, md: 0 } }}>

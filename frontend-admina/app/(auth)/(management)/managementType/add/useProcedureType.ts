@@ -3,7 +3,7 @@ import { ProcedureTypeFormData } from '@/app/type';
 
 export const createProcedureType = async (formData: ProcedureTypeFormData) => {
   const token = localStorage.getItem('authToken');
-
+console.log('Datos a enviar:', formData);
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/procedure-types`, {
     method: 'POST',
     headers: {

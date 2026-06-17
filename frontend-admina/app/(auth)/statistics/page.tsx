@@ -4,8 +4,9 @@ import { StatisticsDashboard  } from '@/components/UX/Dashboard/StatisticsDashbo
 //import { useGetAllRequests } from '@../';
 import { useGetAllUsers } from '../(management)/managementUser/usePage';
 import { useGetAlltype } from '@/app/(auth)/(management)/managementRequest/useGetType';
-
+import AppToaster from '@/components/UX/Toaster/AppToaster';
 export default function StatisticsPage() {
+  
  // const { requests } = useGetAllRequests();
   const { users } = useGetAllUsers();
   const { types } = useGetAlltype();
@@ -25,6 +26,7 @@ export default function StatisticsPage() {
 
   return (
     <Box sx={{ p: 0 }}>
+      <AppToaster/>
       <StatisticsDashboard requests={[]} students={[users]}/>
     </Box>
   );

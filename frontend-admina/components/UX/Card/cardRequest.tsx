@@ -3,10 +3,12 @@ import { useState } from 'react';
 import Router from 'next/router';
 import {Box,Typography, Chip, Stack, IconButton, Collapse, Grid, Alert,} from '@mui/material';
 import { ExpandMore, ExpandLess, School, Work, AccountBalance, HealthAndSafety, Home, Description,} from '@mui/icons-material';
+
 import { Cards } from '@/components/UX/Card/card';
 import { Buttons } from '@/components/UX/Buttons/buttons';
 import { useGetAllCategory } from '@/app/(auth)/(management)/managementCategory/useCategory';
 import { useGetAlltype } from '@/app/(auth)/(management)/managementType/useGetType';
+import { link } from 'fs';
 
 // Definición de tipos
 interface Type {
@@ -157,10 +159,10 @@ export const CardRequest = () => {
                               Trámite de {category.name}
                             </Typography>
                           </Box>
-                            <Buttons
+                            <Buttons                     
                               variant="contained"
                               size="small"
-                              onClick={()=> Router.push(`/request/${type.id}/Form`)}
+                              href={`/request/${type.id}/formRequest`}
                               sx={{ ml: 2 }}
                             >
                               Solicitar

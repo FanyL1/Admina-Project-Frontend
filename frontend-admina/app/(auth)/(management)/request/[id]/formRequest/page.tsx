@@ -2,37 +2,20 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  Chip,
-  Container,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Checkbox, Chip, Container, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper,
+  Select, Stack, TextField, Typography} from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SendIcon from '@mui/icons-material/Send';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import toast from 'react-hot-toast';
+import { useParams } from 'next/navigation';
+
 import { useLogin } from '@/app/login/useLogin';
 import { OnlyNameData, ProcedureTypeData } from '@/app/type';
-import {
-  createRequest,
-  getDegrees,
-  getProcedureTypes,
-  uploadRequestDocument,
-} from '@/app/services/requestService';
+import { createRequest, getDegrees, getProcedureTypes, uploadRequestDocument,} from '@/app/services/requestService';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
+import { PromedioExtractor } from '@/components/UX/Buttons/promedioExtractor';
 
 const isAverageRequirement = (value: string) => value.toLowerCase().includes('promedio');
 
@@ -50,6 +33,14 @@ export default function RequestPage() {
   const [requirementFiles, setRequirementFiles] = React.useState<Record<string, File | null>>({});
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const params = useParams<{ id: string }>();
+  const idUrl = params.id;
+  const [promedioStudent, setPromedioStudent] = React.useState<number | null>(null);
+  const [errorPromedio, seterrorPromedio] = React.useState('')
+  
+  const tramite = types?.filter(
+    (selecType) => selecType.id === idUrl
+  ) ?? [];
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -66,8 +57,9 @@ export default function RequestPage() {
     void Promise.resolve().then(loadData);
   }, []);
 
-  const selectedType = types.find((item) => item.id === selectedTypeId);
-  const requirements = selectedType?.requirements?.documents || [];
+  const requirements = tramite[0]?.requirements.documents || [];
+  const promedio = tramite[0]?.requirements.promedio;
+  
 
   const handleSelectType = (id: string) => {
     setSelectedTypeId(id);
@@ -78,12 +70,19 @@ export default function RequestPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!sessionUser?.id) return toast.error('No hay usuario en sesion');
-    if (!selectedTypeId) return toast.error('Selecciona un tramite');
     if (!degreeId) return toast.error('Selecciona una carrera');
     if (externalApplicant && (externalName.trim().length < 3 || externalDni.trim().length < 6)) {
       return toast.error('Completa nombre y cedula del solicitante');
     }
-
+    if (promedio !== null) {
+      if (promedioStudent !== null) {
+        if (promedioStudent < promedio) {
+          seterrorPromedio('No puedes enviar la solicitud porque tu promedio es inferior al requerido.');
+          return;
+        }
+      }
+    }
+    
     for (const requirement of requirements) {
       if (isAverageRequirement(requirement)) {
         if (!requirementValues[requirement]) return toast.error(`Completa ${requirement}`);
@@ -129,47 +128,16 @@ export default function RequestPage() {
       <AppToaster />
       <Container maxWidth="lg">
         <Stack spacing={3}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 800 }}>Solicitar tramite</Typography>
-            <Typography color="text.secondary">Selecciona un tramite y completa sus requisitos.</Typography>
-          </Box>
+          <Button startIcon={<ArrowBackIcon />} onClick={() => router.back()} sx={{ alignSelf: 'flex-start' }}>
+            Volver
+          </Button>
 
           {error && <Alert severity="error">{error}</Alert>}
 
-          <Grid container spacing={2}>
-            {types.map((type) => (
-              <Grid key={type.id} size={{ xs: 12, md: 6 }}>
-                <Paper
-                  role="button"
-                  onClick={() => handleSelectType(type.id)}
-                  sx={{
-                    p: 2.5,
-                    cursor: 'pointer',
-                    border: '1px solid',
-                    borderColor: selectedTypeId === type.id ? 'primary.main' : 'grey.200',
-                    bgcolor: selectedTypeId === type.id ? 'primary.light' : 'background.paper',
-                    color: selectedTypeId === type.id ? 'primary.contrastText' : 'text.primary',
-                  }}
-                >
-                  <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-                    <AssignmentIcon />
-                    <Box>
-                      <Typography sx={{ fontWeight: 800 }}>{type.name}</Typography>
-                      <Typography variant="body2">
-                        {(type.requirements?.documents || []).length} requisito(s)
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-
-          {selectedType && (
             <Paper component="form" onSubmit={handleSubmit} sx={{ p: { xs: 2, md: 3 } }}>
               <Stack spacing={3}>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 800 }}>{selectedType.name}</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 800 }}>{tramite[0]?.name}</Typography>
                   <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 1 }}>
                     {requirements.map((requirement) => (
                       <Chip key={requirement} label={requirement} size="small" />
@@ -177,6 +145,60 @@ export default function RequestPage() {
                   </Stack>
                 </Box>
 
+                <Paper variant="outlined" sx={{ p: 2 }}>
+                  {externalApplicant ? (
+                    <Grid container spacing={2} sx={{ mt: 1 }}>
+                      <Grid size={{ xs: 12, md: 8 }}>
+                        <TextField 
+                          fullWidth 
+                          label="Nombre completo del solicitante"
+                          placeholder='Ej. Juan Luis Rodriguez Herrera' 
+                          value={externalName} 
+                          onChange={(event) => setExternalName(event.target.value)} 
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <TextField fullWidth 
+                        type='number'
+                        label="Cedula" 
+                        value={externalDni} 
+                        onChange={(event) => setExternalDni(event.target.value)} />
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    <Typography variant="body2" sx={{fontSize:'18px'}} color="text.secondary">
+                      <strong>Solicitante:</strong> {sessionUser?.name} {sessionUser?.lastname} - Cedula: {sessionUser?.dni}
+                    </Typography>
+                  )}
+                  <FormControlLabel
+                    control={<Checkbox checked={externalApplicant} onChange={(event) => setExternalApplicant(event.target.checked)} />}
+                    label="No soy el solicitante"
+                  />
+                </Paper>
+
+                  <PromedioExtractor
+                    promedioMin={promedio}
+                    onDNIextraido={(dniLeido) => {
+                      if (externalDni !== dniLeido) {
+                        if (sessionUser?.dni !== dniLeido) {
+                          console.log({dniLeido, externalDni,})
+                          console.log(sessionUser?.dni);
+                          seterrorPromedio('Los datos de la constancia de notas no coinciden con los datos del solicitante')
+                        }else{
+                          seterrorPromedio('');
+                          console.log({dniLeido, externalDni})
+                          console.log(sessionUser?.dni);
+                        }
+                      }else{
+                        seterrorPromedio('');
+                        console.log({dniLeido, externalDni})
+                        console.log(sessionUser?.dni);
+                        
+                      }
+                    }}
+                    onPromedioExtraido={(valor) => setPromedioStudent(valor)}
+                    cedula={errorPromedio}
+                  />
                 <FormControl fullWidth>
                   <InputLabel>Carrera</InputLabel>
                   <Select value={degreeId} label="Carrera" onChange={(event) => setDegreeId(event.target.value)}>
@@ -185,27 +207,6 @@ export default function RequestPage() {
                     ))}
                   </Select>
                 </FormControl>
-
-                <Paper variant="outlined" sx={{ p: 2 }}>
-                  <FormControlLabel
-                    control={<Checkbox checked={externalApplicant} onChange={(event) => setExternalApplicant(event.target.checked)} />}
-                    label="No soy el solicitante"
-                  />
-                  {externalApplicant ? (
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                      <Grid size={{ xs: 12, md: 8 }}>
-                        <TextField fullWidth label="Nombre completo del solicitante" value={externalName} onChange={(event) => setExternalName(event.target.value)} />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 4 }}>
-                        <TextField fullWidth label="Cedula" value={externalDni} onChange={(event) => setExternalDni(event.target.value)} />
-                      </Grid>
-                    </Grid>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      Solicitante: {sessionUser?.name} {sessionUser?.lastname} - DNI: {sessionUser?.dni}
-                    </Typography>
-                  )}
-                </Paper>
 
                 <Stack spacing={2}>
                   {requirements.map((requirement) => (
@@ -242,7 +243,7 @@ export default function RequestPage() {
                 </Button>
               </Stack>
             </Paper>
-          )}
+
         </Stack>
       </Container>
     </Box>

@@ -99,7 +99,7 @@ export default function RequestPage() {
 
       const request = await createRequest({
         user_id: sessionUser.id,
-        type_id: selectedTypeId,
+        type_id: idUrl,
         carrera_id: degreeId,
         createByname: externalApplicant ? externalName.trim() : undefined,
         createByDNI: externalApplicant ? externalDni.trim() : undefined,
@@ -175,8 +175,7 @@ export default function RequestPage() {
                     label="No soy el solicitante"
                   />
                 </Paper>
-
-                  <PromedioExtractor
+                {promedio !== 0 && <PromedioExtractor
                     promedioMin={promedio}
                     onDNIextraido={(dniLeido) => {
                       if (externalDni !== dniLeido) {
@@ -198,7 +197,8 @@ export default function RequestPage() {
                     }}
                     onPromedioExtraido={(valor) => setPromedioStudent(valor)}
                     cedula={errorPromedio}
-                  />
+                  />}
+                  
                 <FormControl fullWidth>
                   <InputLabel>Carrera</InputLabel>
                   <Select value={degreeId} label="Carrera" onChange={(event) => setDegreeId(event.target.value)}>

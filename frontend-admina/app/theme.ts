@@ -6,6 +6,15 @@ declare module '@mui/material/Button' {
     tertiary: true;
   }
 }
+export const statusColor = (status: string) => {
+    switch (status) {
+      case 'Aprobado': return '#4caf50';
+      case 'Rechazado': return '#f44336';
+      case 'Pendiente': return '#ff9800';
+      case 'Observado': return '#dbcf1d';
+      default: return '#2196f3';
+    }
+};
 
 const theme = createTheme({
   typography: {

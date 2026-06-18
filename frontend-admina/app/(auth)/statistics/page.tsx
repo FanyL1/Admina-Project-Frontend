@@ -1,7 +1,8 @@
 'use client';
 import { Box } from '@mui/material';
+
 import { StatisticsDashboard  } from '@/components/UX/Dashboard/StatisticsDashboard';
-import { getRequests } from '@/app/services/requestService';
+import { useGetAllRequest } from '@/app/(auth)/(management)//request/useRequest';
 import { useGetAllUsers } from '../(management)/managementUser/usePage';
 import { useGetAlltype } from '@/app/(auth)/(management)/managementType/useGetType';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
@@ -10,7 +11,7 @@ export default function StatisticsPage() {
  // const { requests } = useGetAllRequests();
   const { users } = useGetAllUsers();
   const { types } = useGetAlltype();
-  const {} = getRequests()
+  const {request} = useGetAllRequest()
 
   // Años disponibles para el filtro
 //   const years = Array.from(

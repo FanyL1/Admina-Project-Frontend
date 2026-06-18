@@ -108,7 +108,7 @@ export default function RequestDetailPage() {
     }
   };
 
-  const isExternal = Boolean(request?.createByname && request.createByname == 'No aplica');
+  const isExternal = Boolean(request?.createByname && request.createByname !== 'No aplica');
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 3 } }}>

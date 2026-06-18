@@ -85,7 +85,6 @@ export const useGetAllLogs = () => {
     fetchLogs();
   }, [refetch]);
 
-  console.log(logs)
   return { 
     logs,
     loading, 

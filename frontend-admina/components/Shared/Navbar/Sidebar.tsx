@@ -90,13 +90,15 @@ export default function Sidebar() {
 
       {/* Perfil del usuario */}
       {open && (
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, borderBottom: 1, borderColor: 'divider' }}>
-          <Avatar sx={{ bgcolor: 'primary.main' }}>{sessionUser?.name?.[0]}</Avatar>
-          <Box>
-            <Typography variant="body2" sx={{fontWeight:600}}>{sessionUser?.name} {sessionUser?.lastname}</Typography>
-            <Typography variant="caption" color="textSecondary">{sessionUser?.role?.name}</Typography>
+        <Link href="/Inicio" style={{ textDecoration: 'none' }}>
+          <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, borderBottom: 1, borderColor: 'divider' }}>
+            <Avatar sx={{ bgcolor: 'primary.main' }}>{sessionUser?.name?.[0]}</Avatar>
+            <Box>
+              <Typography variant="body2" sx={{fontWeight:600}}>{sessionUser?.name} {sessionUser?.lastname}</Typography>
+              <Typography variant="caption" color="textSecondary">{sessionUser?.role?.name}</Typography>
+            </Box>
           </Box>
-        </Box>
+        </Link>
       )}
 
       {/* Menú */}

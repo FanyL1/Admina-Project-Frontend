@@ -225,6 +225,13 @@ export interface StudentRequestData {
   documents?: RequestDocumentData[];
 }
 
+export interface RequestResponse {
+  success: boolean;
+  message: string;
+  data?: StudentRequestData[]
+}
+
+
 export interface LogsData{
   id: string;
   date: string;

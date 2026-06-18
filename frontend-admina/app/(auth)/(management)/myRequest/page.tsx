@@ -22,6 +22,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useLogin } from '@/app/login/useLogin';
 import { StudentRequestData } from '@/app/type';
 import { getRequestsByUser } from '@/app/services/requestService';
+import { statusColor } from '@/app/theme';
 
 const formatDate = (value: string) => new Date(value).toLocaleString('es-VE', {
   year: 'numeric',
@@ -101,7 +102,7 @@ export default function MyRequestPage() {
                       <TableCell>{request.type_procedure?.name || request.type_id}</TableCell>
                       <TableCell>{request.carrera?.name || request.carrera_id}</TableCell>
                       <TableCell>{formatDate(request.created_at)}</TableCell>
-                      <TableCell><Chip label={request.status} size="small" /></TableCell>
+                      <TableCell><Chip label={request.status} size="small" sx={{background:statusColor(request.status), color:'white'}} suppressHydrationWarning/></TableCell>
                       <TableCell align="center">
                         <Button component={Link} href={`/request/${request.id}`} size="small" startIcon={<VisibilityIcon />}>
                           Ver

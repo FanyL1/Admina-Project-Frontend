@@ -4,10 +4,12 @@ import { Container, Box, Typography, Grid as Grid } from '@mui/material';
 import { Assignment, CheckCircle, Pending, Schedule } from '@mui/icons-material';
 import { StatsCard } from '@/components/UX/Dashboard/StatsCard';
 import { RecentActivity } from '@/components/UX/Dashboard/RecentActivity';
-import { WelcomeBanner } from '@/components/UX/Dashboard/WelcomeBanner';
 
+import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest';
+import {useLogin} from '@/app/login/useLogin'
 export default function StudentDashboard() {
-  const [loading, setLoading] = useState(true);
+
+  const {requestUser, loading} = useGetAllRequest()
   const [stats, setStats] = useState({
     activeRequests: 0,
     pendingRequests: 0,
@@ -15,32 +17,13 @@ export default function StudentDashboard() {
     processingRequests: 0
   });
   const [recentResolved, setRecentResolved] = useState([]);
-  const [userName, setUserName] = useState('Usuario');
+  const {sessionUser} = useLogin()
 
-  useEffect(() => {
-    // Simular carga de datos - Reemplazar con API real
-    const fetchData = async () => {
-      setLoading(true);
-      // Aquí irían las llamadas a tu API
-      setTimeout(() => {
-        setStats({
-          activeRequests: 5,
-          pendingRequests: 2,
-          completedRequests: 12,
-          processingRequests: 3
-        });
-        setRecentResolved([
-         
-        ]);
-        setLoading(false);
-      }, 1000);
-    };
-    fetchData();
-  }, []);
+
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>      
-      {/* Estadísticas principales */}
+      {/* 
       <Box sx={{ mb: 4 }}>
         <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
           Resumen de Solicitudes
@@ -84,17 +67,11 @@ export default function StudentDashboard() {
             />
           </Grid>
         </Grid>
-      </Box>
+      </Box> */}
 
       {/* Solicitudes recientes resueltas */}
-      <RecentActivity activities={recentResolved} title="Últimas Solicitudes Resueltas" />
+      <RecentActivity title="Solicitudes Recientes" />
 
-      {/* Indicador de novedades */}
-      <Box sx={{ mt: 3, p: 2, bgcolor: '#e3f2fd', borderRadius: 2 }}>
-        <Typography variant="body2" color="primary">
-          📢 Desde tu última visita (ayer): 2 solicitudes fueron respondidas, 1 nueva solicitud creada
-        </Typography>
-      </Box>
     </Container>
   );
 }

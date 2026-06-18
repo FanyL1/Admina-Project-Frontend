@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
+
 import { StudentRequestData } from '@/app/type';
 import { getRequests } from '@/app/services/requestService';
 import DataTable from '@/components/UX/Table/Table';
@@ -77,7 +78,7 @@ export default function ListRequestPage() {
   ];
 
   const estadoOptions = [
-    { value: 'Enviado', label: 'Enviado' },
+    { value: 'Enviado', label: 'Enviado',},
     { value: 'Revisando', label: 'Revisando' },
     { value: 'Pendiente', label: 'Pendiente' },
     { value: 'Observado', label: 'Observado' },

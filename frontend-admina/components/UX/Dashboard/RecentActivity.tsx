@@ -1,6 +1,9 @@
-import { Box, Typography, List, ListItem, ListItemText, Chip, Divider, Paper, CircularProgress } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemText, Chip, Divider, Paper, CircularProgress, Button, Link } from '@mui/material';
 import { AccessTime, CheckCircle, Cancel, Pending } from '@mui/icons-material';
-import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest'; // Ajusta la ruta de tu hook según tu proyecto
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
+
+import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest';
 import { statusColor } from '@/app/theme';
 
 interface RecentActivityProps {
@@ -8,13 +11,10 @@ interface RecentActivityProps {
 }
 
 export const RecentActivity = ({ title }: RecentActivityProps) => {
-  // 1. Obtenemos los datos desde tu hook personalizado de Admina
-  const { requestUser, loading } = useGetAllRequest();
-  // 2. Filtramos y extraemos únicamente las últimas 3 solicitudes
-  // Si tu backend ya las trae ordenadas de la más nueva a la más vieja, basta con el .slice(0, 3)
-  // Si vienen al revés, puedes hacer: [...requestUser].reverse().slice(0, 3)
-  const recentRequests = requestUser ? requestUser.slice(0, 3) : [];
 
+  const { requestUser, loading } = useGetAllRequest();
+  const recentRequests = requestUser ? requestUser.slice(0, 3) : [];
+  console.log(requestUser)
   return (
     <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
       <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
@@ -22,7 +22,6 @@ export const RecentActivity = ({ title }: RecentActivityProps) => {
       </Typography>
       <Divider sx={{ mb: 2 }} />
 
-      {/* 3. Manejo del estado de carga */}
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 4 }}>
           <CircularProgress size={24} />
@@ -36,24 +35,36 @@ export const RecentActivity = ({ title }: RecentActivityProps) => {
           {recentRequests.map((activity, index) => (
             <Box key={activity.id}>
               <ListItem sx={{ px: 0, py: 1.5 }}>
-                <ListItemText
-                  primary={
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {/* Adaptado a los campos de tu tipo StudentRequestData */}
-                      {activity.type_procedure?.name || 'Solicitud de Trámite'}
-                    </Typography>
-                  }
-                  secondary={
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
-                      <Typography variant="caption" color="text.secondary" suppressHydrationWarning>
-                        {activity.updated_at 
-                          ? new Date(activity.updated_at).toLocaleDateString() 
-                          : 'Fecha no disponible'}
+                <Box sx={{display: 'flex', justifyContent:'space-between', width:"100%"}}>
+                    <Box sx={{display:'flex', flexDirection:'column'}}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                       <strong> {activity.type_procedure?.name || 'Solicitud de Trámite'}</strong>
                       </Typography>
-                      <Chip label={activity.status} size="small" sx={{color:'white', backgroundColor:statusColor(activity.status), height: 20, fontSize: '0.7rem' }} suppressHydrationWarning/>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        Revisor asignado: {activity?.revisor_id?.name || 'No asignado'} {activity?.revisor_id?.lastname}
+                      </Typography>
                     </Box>
-                  }
-                />
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {activity.updated_at 
+                          ? new Date(activity.updated_at).toLocaleString('es-VE', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true
+                            }) : 'Fecha no disponible'}
+                      </Typography>
+                    </Box>
+                    <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 0.5 }}>
+                     
+                      <Chip label={activity.status} size="small" sx={{color:'white', ml:'5px', backgroundColor:statusColor(activity.status), height: 20, fontSize: '0.7rem' }}/>
+                      <Button component={Link} href={`/request/${activity.id}`} size="small" startIcon={<VisibilityIcon />}>
+                        Ver
+                      </Button>
+                    </Box>
+                </Box>
               </ListItem>
               {index < recentRequests.length - 1 && <Divider />}
             </Box>

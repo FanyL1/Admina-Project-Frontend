@@ -7,7 +7,6 @@ import DashboardEstudiante from '@/components/UX/Dashboard/Estudiante'
 import AdminDashboard from '@/components/UX/Dashboard/Administrativo';
 import { SuperUserDashboard } from '@/components/UX/Dashboard/Superusuario';
 import {WelcomeBanner }from '@/components/UX/Dashboard/WelcomeBanner'
-//PRUEBA DE INICIO DE SESSION
 
 export default function HomePage() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -15,7 +14,7 @@ export default function HomePage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Box sx={{ py: { xs: 2, sm: 2, md: 0.5}, }}>
+      <Box sx={{ py: { xs: 6, sm: 4, md: 0.5}, }}>
         <Container maxWidth="lg">
          
         <WelcomeBanner/>
@@ -23,20 +22,8 @@ export default function HomePage() {
           <Box>
             {sessionUser?.role?.name == 'Estudiante' && <DashboardEstudiante/>}
             {sessionUser?.role?.name == 'Administrativo' && <AdminDashboard/>}
-            {sessionUser?.role?.name == 'Superusuario' && <SuperUserDashboard activeUsers={{
-              total: 30,
-              students: 29,
-              admins: 1
-            }} inactiveUsers={{
-              total: 5,
-              students: 4,
-              admins: 1
-            }} successRate={{
-              approved:100,
-              rejected: 20,
-              pending: 150,
-              total: 270
-            }}/>}
+            {sessionUser?.role?.name == 'Superusuario' && <SuperUserDashboard/>}
+
           </Box>
            
         </Container>

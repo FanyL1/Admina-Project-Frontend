@@ -190,6 +190,7 @@ export interface GetAllTypeResponse {
 
 export type RequestStatus = 'Enviado' | 'Revisando' | 'Pendiente' | 'Observado' | 'Aprobado' | 'Rechazado';
 
+
 export interface RequestUserData {
   id: string;
   name: string;
@@ -223,6 +224,7 @@ export interface StudentRequestData {
   type_procedure?: ProcedureTypeData;
   carrera?: OnlyNameData;
   documents?: RequestDocumentData[];
+  revisor_id: RequestUserData;
 }
 
 export interface RequestResponse {

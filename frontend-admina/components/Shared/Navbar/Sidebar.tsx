@@ -15,6 +15,7 @@ import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import GroupIcon from '@mui/icons-material/Group';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 import { useLogin } from '../../../app/login/useLogin';
 import Image from 'next/image';
@@ -23,7 +24,7 @@ import Link from 'next/link';
 // Opciones según el rol
 const getMenuItems = (role: string) => {
   const baseItems = [
-    { label: 'Mi Perfil', href: '/profile', icon: <PersonIcon /> },
+    { label: 'Inicio', href: '/Inicio', icon: <DashboardIcon /> },
   ];
 
   const roleItems: Record<string, any[]> = {
@@ -90,7 +91,7 @@ export default function Sidebar() {
 
       {/* Perfil del usuario */}
       {open && (
-        <Link href="/Inicio" style={{ textDecoration: 'none' }}>
+        <Link href="/profile" style={{ textDecoration: 'none' }}>
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, borderBottom: 1, borderColor: 'divider' }}>
             <Avatar sx={{ bgcolor: 'primary.main' }}>{sessionUser?.name?.[0]}</Avatar>
             <Box>

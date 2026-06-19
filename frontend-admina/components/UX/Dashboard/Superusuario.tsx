@@ -1,33 +1,32 @@
 import { Box, Typography, Paper, Chip, Divider, List, ListItem, ListItemText, LinearProgress, Card, CardContent } from '@mui/material';
 import { People, PersonOff, TrendingUp, TrendingDown, CheckCircle, Cancel, PieChart } from '@mui/icons-material';
 
-interface SuperUserDashboardProps {
-  activeUsers: {
-    total: number;
-    students: number;
-    admins: number;
-  };
-  inactiveUsers: {
-    total: number;
-    students: number;
-    admins: number;
-  };
-  successRate: {
-    approved: number;
-    rejected: number;
-    pending: number;
-    total: number;
-  };
-}
 
-export const SuperUserDashboard = ({ activeUsers, inactiveUsers, successRate }: SuperUserDashboardProps) => {
-  const totalUsers = activeUsers.total + inactiveUsers.total;
-  const successPercentage = successRate.total > 0 
-    ? ((successRate.approved + successRate.rejected) / successRate.total) * 100 
-    : 0;
+import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest';
+import { useGetAllUsers } from '@/app/(auth)/(management)/managementUser/usePage';
+export const SuperUserDashboard = () => {
+  
+  const {users}= useGetAllUsers()
+  const {request}= useGetAllRequest()
+
+  const activeUsers = users.filter(
+    (userActive) => userActive.status == 'active'
+  ) ?? []
+  const inactiveUsers = users.filter(
+    (send) => send.status == 'inactive'
+  )??[]
+  const sendRequest = request.filter(
+    (send) => send.status == 'Enviado'
+  )??[]
+  const processRequest = request.filter(
+    (process) => process.status == 'Revisando' || process.status == 'Pendiente' || process.status == 'Observado'
+  )??[]
+  const completRequest = request.filter(
+    (complet) => complet.status == 'Aprobado' || complet.status == 'Rechazado'
+  )??[]
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 1 }}>
       {/* Tarjetas de Usuarios */}
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 4 }}>
         <Paper
@@ -48,14 +47,17 @@ export const SuperUserDashboard = ({ activeUsers, inactiveUsers, successRate }: 
                 Usuarios Activos
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {activeUsers.total}
+                {activeUsers.length}
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
                 <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                  Estudiantes: {activeUsers.students}
+                  Estudiantes: {activeUsers.filter(  (student) => student.role?.name == "Estudiante" ).length}
                 </Typography>
                 <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                  Administrativos: {activeUsers.admins}
+                  Administrativos: {activeUsers.filter((admin)=> admin.role?.name == 'Administrativo').length}
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  Super Usuarios: {activeUsers.filter((superUser)=> superUser.role?.name == 'Superusuario').length}
                 </Typography>
               </Box>
             </Box>
@@ -92,14 +94,17 @@ export const SuperUserDashboard = ({ activeUsers, inactiveUsers, successRate }: 
                 Usuarios Inactivos
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                {inactiveUsers.total}
+                {inactiveUsers.length}
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
                 <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                  Estudiantes: {inactiveUsers.students}
+                  Estudiantes: {inactiveUsers.filter((student)=> student.role?.name == 'Estudiante').length}
                 </Typography>
                 <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                  Administrativos: {inactiveUsers.admins}
+                  Administrativos: {inactiveUsers.filter((admin)=> admin.role?.name == 'Administrativo').length}
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  Super Usuario: {inactiveUsers.filter((superUser)=> superUser.role?.name == 'Superusuario').length}
                 </Typography>
               </Box>
             </Box>
@@ -127,7 +132,6 @@ export const SuperUserDashboard = ({ activeUsers, inactiveUsers, successRate }: 
           borderRadius: 2,
           border: '1px solid',
           borderColor: 'divider',
-          mb: 4
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
@@ -136,80 +140,53 @@ export const SuperUserDashboard = ({ activeUsers, inactiveUsers, successRate }: 
               Tasa de Éxito del Sistema
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {successRate.total} solicitudes procesadas
+              {request.length} solicitudes totoales
             </Typography>
           </Box>
           <PieChart color="primary" sx={{ fontSize: 32 }} />
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
-          {/* Aprobadas */}
+
+          {/* Enviadas */}
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-              <Typography variant="body2">Aprobadas</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600, color: '#2e7d32' }}>
-                {successRate.approved} ({successRate.total > 0 ? ((successRate.approved / successRate.total) * 100).toFixed(1) : 0}%)
+              <Typography variant="body2">Enviadas</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600, color: '#2e3a7d' }}>
+                {sendRequest.length} ({request.length > 0 ? ((sendRequest.length / request.length) * 100).toFixed(1) : 0}%)
               </Typography>
             </Box>
             <LinearProgress
               variant="determinate"
-              value={successRate.total > 0 ? (successRate.approved / successRate.total) * 100 : 0}
+              value={request.length > 0 ? (sendRequest.length / request.length) * 100 : 0}
               sx={{
                 height: 8,
                 borderRadius: 4,
                 bgcolor: '#e8f5e9',
                 '& .MuiLinearProgress-bar': {
-                  bgcolor: '#2e7d32'
+                  bgcolor: '#2e3a7d'
                 }
               }}
             />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-              <CheckCircle sx={{ fontSize: 16, color: '#2e7d32' }} />
+              <CheckCircle sx={{ fontSize: 16, color: '#2e3a7d' }} />
               <Typography variant="caption" color="text.secondary">
-                Solicitudes exitosas
+                Solicitudes enviadas por los estudiantes
               </Typography>
             </Box>
           </Box>
 
-          {/* Rechazadas */}
+          {/* En Proceso*/}
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-              <Typography variant="body2">Rechazadas</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600, color: '#c62828' }}>
-                {successRate.rejected} ({successRate.total > 0 ? ((successRate.rejected / successRate.total) * 100).toFixed(1) : 0}%)
-              </Typography>
-            </Box>
-            <LinearProgress
-              variant="determinate"
-              value={successRate.total > 0 ? (successRate.rejected / successRate.total) * 100 : 0}
-              sx={{
-                height: 8,
-                borderRadius: 4,
-                bgcolor: '#ffebee',
-                '& .MuiLinearProgress-bar': {
-                  bgcolor: '#c62828'
-                }
-              }}
-            />
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-              <Cancel sx={{ fontSize: 16, color: '#c62828' }} />
-              <Typography variant="caption" color="text.secondary">
-                Solicitudes rechazadas
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Pendientes */}
-          <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-              <Typography variant="body2">Pendientes</Typography>
+              <Typography variant="body2">En Proceso</Typography>
               <Typography variant="body2" sx={{ fontWeight: 600, color: '#e65100' }}>
-                {successRate.pending} ({successRate.total > 0 ? ((successRate.pending / successRate.total) * 100).toFixed(1) : 0}%)
+                {processRequest.length} ({request.length > 0 ? ((processRequest.length / request.length) * 100).toFixed(1) : 0}%)
               </Typography>
             </Box>
             <LinearProgress
               variant="determinate"
-              value={successRate.total > 0 ? (successRate.pending / successRate.total) * 100 : 0}
+              value={request.length > 0 ? (processRequest.length / request.length) * 100 : 0}
               sx={{
                 height: 8,
                 borderRadius: 4,
@@ -219,10 +196,40 @@ export const SuperUserDashboard = ({ activeUsers, inactiveUsers, successRate }: 
                 }
               }}
             />
+            
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-              <TrendingDown sx={{ fontSize: 16, color: '#e65100' }} />
+              <Cancel sx={{ fontSize: 16, color: '#c62828' }} />
               <Typography variant="caption" color="text.secondary">
-                Solicitudes estancadas
+                Solicitudes en revision
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Completadas */}
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+              <Typography variant="body2">Resueltas</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600, color: '#30a73a' }}>
+                {completRequest.length} ({request.length > 0 ? ((completRequest.length / request.length) * 100).toFixed(1) : 0}%)
+              </Typography>
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={request.length > 0 ? (completRequest.length / request.length) * 100 : 0}
+              sx={{
+                height: 8,
+                borderRadius: 4,
+                bgcolor: '#fff3e0',
+                '& .MuiLinearProgress-bar': {
+                  bgcolor: '#30a73a'
+                }
+              }}
+            />
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+              <Cancel sx={{ fontSize: 16, color: '#22802a' }} />
+              <Typography variant="caption" color="text.secondary">
+                Solicitudes aprovadas y rechazadas
               </Typography>
             </Box>
           </Box>
@@ -244,15 +251,10 @@ export const SuperUserDashboard = ({ activeUsers, inactiveUsers, successRate }: 
             Tasa de éxito general
           </Typography>
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            {successPercentage.toFixed(1)}%
+            {sendRequest.length.toFixed(1)}%
           </Typography>
         </Box>
       </Paper>
-
-      {/* Últimos usuarios activos (opcional) */}
-      <Typography variant="subtitle2" color="text.secondary" sx={{ textAlign: 'center' }}>
-        {totalUsers} usuarios totales • {activeUsers.total} activos • {inactiveUsers.total} inactivos
-      </Typography>
     </Box>
   );
 };

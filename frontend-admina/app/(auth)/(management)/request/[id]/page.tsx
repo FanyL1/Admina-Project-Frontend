@@ -33,6 +33,7 @@ import {
   updateRequestReview,
 } from '@/app/services/requestService';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
+import { Copy } from '@/components/UX/Copy/handleCopy';
 
 const formatDate = (value?: string) => value
   ? new Date(value).toLocaleString('es-VE', {
@@ -48,6 +49,7 @@ export default function RequestDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { sessionUser } = useLogin();
+  const revisorId = sessionUser?.id;
   const [request, setRequest] = React.useState<StudentRequestData | null>(null);
   const [documents, setDocuments] = React.useState<RequestDocumentData[]>([]);
   const [status, setStatus] = React.useState<RequestStatus>('Enviado');
@@ -95,7 +97,7 @@ export default function RequestDetailPage() {
 
     setSaving(true);
     try {
-      const updated = await updateRequestReview(request.id, {
+      const updated = await updateRequestReview(request.id, revisorId, {
         status,
         observation: nextObservation || null,
       });
@@ -132,6 +134,8 @@ export default function RequestDetailPage() {
                         {request.type_procedure?.name || 'Solicitud'}
                       </Typography>
                       <Typography color="text.secondary">Creada el {formatDate(request.created_at)}</Typography>
+                      <Typography color="black">N. Soliditud: <strong>{request.id}</strong> &nbsp;<Copy children text={request.id}/></Typography>
+
                     </Box>
                     <Chip label={request.status} color="primary" sx={{ alignSelf: { xs: 'flex-start', sm: 'center' } }} />
                   </Stack>

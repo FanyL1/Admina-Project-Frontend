@@ -13,11 +13,6 @@ export default function StatisticsPage() {
   const { types } = useGetAlltype();
   const {request} = useGetAllRequest()
 
-  // Años disponibles para el filtro
-//   const years = Array.from(
-//     new Set(requests?.map(r => new Date(r.created_at).getFullYear()) || [])
-//   ).sort();
-
   return (
     <Box sx={{ p: 0 }}>
       <AppToaster/>

@@ -28,7 +28,7 @@ const parseResponse = async <T>(res: Response): Promise<ApiResult<T>> => {
   return data;
 };
 
-export const requestStatusOptions: RequestStatus[] = [
+export const requestStatusOptions = [
   'Revisando',
   'Observado',
   'Aprobado',
@@ -124,10 +124,15 @@ export const uploadRequestDocument = async (requestId: string, requirementName: 
 };
 
 export const updateRequestReview = async (
-  requestId: string,
+  requestId: string | undefined,
+  revisorId: string | undefined,
   payload: { status: RequestStatus; observation?: string | null },
 ) => {
-  const res = await fetch(`${backendUrl()}/api/requests/${requestId}`, {
+
+  if (revisorId == undefined) return
+  if (requestId == undefined) return
+  
+  const res = await fetch(`${backendUrl()}/api/requests/${requestId}/admin/${revisorId}`, {
     method: 'PATCH',
     headers: authHeaders(),
     body: JSON.stringify(payload),

@@ -1,90 +1,63 @@
 'use client';
 import { useState, useMemo } from 'react';
-import {
-  Box,
-  Typography,
-  Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Card,
-  CardContent,
-  SelectChangeEvent,
-  LinearProgress,
-  Chip,
-  Divider
-} from '@mui/material';
-import {
-  LineChart,
-  BarChart,
-  PieChart
-} from '@mui/x-charts';
-import {
-  TrendingUp,
-  TrendingDown,
-  Assignment,
-  CheckCircle,
-  Cancel,
-  Pending,
-  Assessment
-} from '@mui/icons-material';
+import {Box, Typography, Paper, FormControl,InputLabel,Select, MenuItem, Card, CardContent, SelectChangeEvent, LinearProgress, Chip, Divider} from '@mui/material';
+import { LineChart, BarChart,PieChart} from '@mui/x-charts';
+import {TrendingUp,TrendingDown,  Assignment, CheckCircle, Cancel, Pending, Assessment} from '@mui/icons-material';
 
-interface StatisticsDashboardProps {
-  requests: any[];
-  students: any[];
-}
+import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest';
 
-export const StatisticsDashboard = ({ requests, students }: StatisticsDashboardProps) => {
+export const StatisticsDashboard = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-
+  const {request} = useGetAllRequest()
   // Años disponibles
   const years = useMemo(() => {
-    const yearSet = new Set(requests.map(r => new Date(r.created_at).getFullYear()));
+    const yearSet = new Set(request.map(r => new Date(r.created_at).getFullYear()));
     return Array.from(yearSet).sort();
-  }, [requests]);
+  }, [request]);
 
-  // 1. Datos de frecuencia mensual
+  // 1. Datos de frecuencia mensua
   const monthlyData = useMemo(() => {
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     return months.map((month, index) => {
-      const count = requests.filter(r => {
+      const count = request.filter(r => {
         const date = new Date(r.created_at);
         return date.getFullYear() === selectedYear && date.getMonth() === index;
       }).length;
       return { month, count };
     });
-  }, [requests, selectedYear]);
+  }, [request, selectedYear]);
 
   // 2. Datos del embudo (como barras)
   const funnelData = useMemo(() => {
-    const total = requests.length;
-    const inReview = requests.filter(r => r.status === 'En revisión' || r.status === 'Pendiente').length;
-    const approved = requests.filter(r => r.status === 'Aprobada').length;
-    const rejected = requests.filter(r => r.status === 'Rechazada').length;
-    const completed = requests.filter(r => r.status === 'Completada' || r.status === 'Finalizada').length;
+    const total = request.length;
+    const send = request.filter(r => r.status === 'Enviado').length;
+    const inReview = request.filter(r => r.status === 'Revisando' || r.status === 'Pendiente').length;
+    const approved = request.filter(r => r.status === 'Aprobado').length;
+    const rejected = request.filter(r => r.status === 'Rechazado').length;
+    const observation = request.filter(r => r.status === 'Observado').length;
 
     return [
-      { stage: 'Creadas', count: total, color: '#1976d2' },
+      { stage: 'Creadas', count: total, color: '#71c0c0' },
+      { stage: 'Enviadas', count: send, color: '#1976d2' },
       { stage: 'En Revisión', count: inReview, color: '#ed6c02' },
       { stage: 'Aprobadas', count: approved, color: '#2e7d32' },
       { stage: 'Rechazadas', count: rejected, color: '#c62828' },
-      { stage: 'Completadas', count: completed, color: '#9c27b0' }
+      { stage: 'Con Observacion', count: observation, color: '#9c27b0' }
     ];
-  }, [requests]);
+  }, [request]);
 
   // 3. Top de trámites
   const topRequests = useMemo(() => {
     const counts: Record<string, number> = {};
-    requests.forEach(req => {
-      const name = req.type?.name || req.name || 'Sin categoría';
+    request.forEach(req => {
+      const name = req.type_procedure?.name || 'Sin categoría';
       counts[name] = (counts[name] || 0) + 1;
     });
     return Object.entries(counts)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-  }, [requests]);
+  }, [request]);
 
   const handleYearChange = (event: SelectChangeEvent<number>) => {
     setSelectedYear(Number(event.target.value));
@@ -131,7 +104,7 @@ export const StatisticsDashboard = ({ requests, students }: StatisticsDashboardP
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box>
                 <Typography variant="caption" color="text.secondary">Total Solicitudes</Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>{requests.length}</Typography>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>{request.length}</Typography>
               </Box>
               <Assignment sx={{ color: '#1976d2', fontSize: 32 }} />
             </Box>
@@ -143,8 +116,8 @@ export const StatisticsDashboard = ({ requests, students }: StatisticsDashboardP
               <Box>
                 <Typography variant="caption" color="text.secondary">Tasa de Éxito</Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: '#2e7d32' }}>
-                  {requests.length > 0 
-                    ? Math.round((requests.filter(r => r.status === 'Aprobada' || r.status === 'Completada').length / requests.length) * 100)
+                  {request.length > 0 
+                    ? Math.round((request.filter(r => r.status === 'Aprobado' || r.status === 'Rechazado').length / request.length) * 100)
                     : 0}%
                 </Typography>
               </Box>
@@ -158,7 +131,7 @@ export const StatisticsDashboard = ({ requests, students }: StatisticsDashboardP
               <Box>
                 <Typography variant="caption" color="text.secondary">Pendientes</Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: '#ed6c02' }}>
-                  {requests.filter(r => r.status === 'Pendiente' || r.status === 'En revisión').length}
+                  {request.filter(r => r.status === 'Pendiente' || r.status === 'Revisando').length}
                 </Typography>
               </Box>
               <Pending sx={{ color: '#ed6c02', fontSize: 32 }} />
@@ -303,8 +276,8 @@ export const StatisticsDashboard = ({ requests, students }: StatisticsDashboardP
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {topRequests.map((item, index) => {
-            const percentage = requests.length > 0 
-              ? Math.round((item.count / requests.length) * 100) 
+            const percentage = request.length > 0 
+              ? Math.round((item.count / request.length) * 100) 
               : 0;
             const colors = ['#1976d2', '#2e7d32', '#ed6c02', '#c62828', '#9c27b0'];
             

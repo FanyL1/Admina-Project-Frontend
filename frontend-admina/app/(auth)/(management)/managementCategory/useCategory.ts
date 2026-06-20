@@ -34,7 +34,7 @@ export const getAllcategory = async (): Promise<GetAllResponseOnlyName> => {
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Categorias obtenidas exitosamente!');
+    //toast.success('¡Categorias obtenidas exitosamente!');
     console.log(data.data);
     
     return {

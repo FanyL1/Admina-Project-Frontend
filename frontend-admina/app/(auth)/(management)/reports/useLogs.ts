@@ -32,7 +32,7 @@ export const getAllLogs = async (): Promise<LogResponse> => {
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Logs obtenidas exitosamente!');
+    //toast.success('¡Logs obtenidas exitosamente!');
     console.log(data.data);
     
     return {

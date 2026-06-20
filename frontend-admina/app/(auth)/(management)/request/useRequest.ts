@@ -32,7 +32,7 @@ export const getAllRequest = async (): Promise<RequestResponse> => {
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Solicitudes obtenidas exitosamente!');
+    //toast.success('¡Solicitudes obtenidas exitosamente!');
     
     return {
       success: true,
@@ -82,7 +82,7 @@ export const getAllRequestByUserLogeado = async (userId: string | undefined): Pr
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Solicitudes obtenidas exitosamente!');
+    //toast.success('¡Solicitudes obtenidas exitosamente!');
     console.log(data.data);
     
     return {
@@ -132,7 +132,7 @@ export const getAllRequestByRevisor = async (userId: string | undefined): Promis
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Solicitudes obtenidas exitosamente!');
+    //toast.success('¡Solicitudes obtenidas exitosamente!');
     console.log(data.data);
     
     return {

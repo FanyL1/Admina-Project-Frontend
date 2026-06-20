@@ -33,7 +33,7 @@ export const getAlltype = async (): Promise<GetAllTypeResponse> => {
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Tramite obtenidas exitosamente!');
+    //toast.success('¡Tramite obtenidas exitosamente!');
     console.log(data.data);
     
     return {

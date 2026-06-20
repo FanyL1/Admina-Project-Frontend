@@ -34,7 +34,7 @@ export const getAllDegree = async (): Promise<GetAllResponseOnlyName> => {
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Carreras obtenidas exitosamente!');
+    //toast.success('¡Carreras obtenidas exitosamente!');
     console.log(data.data);
     
     return {

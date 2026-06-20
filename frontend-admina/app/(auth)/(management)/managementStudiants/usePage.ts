@@ -34,7 +34,7 @@ export const getAllStudents = async (): Promise<GetAllUsersResponse> => {
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Estudiantes obtenidos exitosamente!');
+    //toast.success('¡Estudiantes obtenidos exitosamente!');
     
     return {
       success: true,

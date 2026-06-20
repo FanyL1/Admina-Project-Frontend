@@ -35,7 +35,7 @@ export const getAllUsers = async (): Promise<GetAllUsersResponse> => {
     }
 
     toast.dismiss(toastId);
-    toast.success('¡Usuarios obtenidos exitosamente!');
+    //toast.success('¡Usuarios obtenidos exitosamente!');
     
     return {
       success: true,

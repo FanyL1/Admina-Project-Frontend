@@ -44,6 +44,7 @@ export default function ManagementRequestPage() {
 
   const getCategoryName = (categoryId: string) => {
     const category = categories?.find(cat => cat.id === categoryId);
+    console.log(category?.name)
     return category?.name || 'Categoría no encontrada';
   };
 
@@ -108,7 +109,10 @@ export default function ManagementRequestPage() {
       label: 'Categoria', 
       numeric: false, 
       editOptions: categoryOptions,
-      render: (value: string) => getCategoryName(value) 
+      render: (value: string, row: ProcedureTypeData) => {
+        const id = value || row?.category_id;
+        return getCategoryName(id);
+      }
     },
     { id: 'name', label: 'Nombre del trámite', numeric: false },
     {
@@ -258,7 +262,7 @@ const handleRemoveDocument = (docToDelete: string) => {
         <DialogContent dividers>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 1 }}>
             <Typography variant="caption" color="text.secondary">
-              Determina qué datos extraerá y validará inteligentemente el sistema Admina sobre las constancias PDF.
+              Determina qué datos extraerá y validará el sistema en la Constancia de Notas.
             </Typography>
 
             <TextField

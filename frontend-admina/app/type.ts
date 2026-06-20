@@ -100,6 +100,7 @@ export interface DataTableProps {
   onRolChange?: (row: any, newRol: string) => void;
   rowActions?: (row: any) => React.ReactNode;
   getRowId: (row: any) => string | number;
+  renderAdditionalActions?: (row: any) => React.ReactNode;
   filterFields?: {
     searchFields: { [key: string]: boolean };
     onSearchFieldsChange: (fields: any) => void;
@@ -163,7 +164,11 @@ export interface GetAllResquest {
 }
 export interface ProcedureRequirements {
   documents: string[];
-  promedio: number | null;
+  promedio?:number | null;
+  UC?: number;
+  cohorte?: string;
+  conditionLiso?: boolean;
+  materia?: string;
   [key: string]: unknown;
 }
 
@@ -209,6 +214,13 @@ export interface RequestDocumentData {
   status?: string;
 }
 
+export interface AdditionalAcademicData {
+  promedio?: number | null;
+  uc?: number | null;
+  cohorte?: string | null;
+  conditionLiso?: boolean | null;
+}
+
 export interface StudentRequestData {
   id: string;
   user_id: string;
@@ -218,6 +230,7 @@ export interface StudentRequestData {
   carrera_id: string;
   observation?: string | null;
   status: RequestStatus;
+  additional?: AdditionalAcademicData | null;
   created_at: string;
   updated_at?: string;
   user?: RequestUserData;

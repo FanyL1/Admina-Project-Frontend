@@ -1,7 +1,7 @@
 // hooks/useGetAllRoles.ts
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { GetAllResponseOnlyName, OnlyNameData } from '@/app/type';
+import { GetAllResponseOnlyName, OnlyNameData, OnlyNameResponse } from '@/app/type';
 import { onlyNameSchem } from "@/schemas/onlyNameSchem"; 
 import { z } from "zod";
 
@@ -160,7 +160,7 @@ export const updateStatusDegree = async ( id: string): Promise<any> => {
 
 // Hook personalizado para obtener carerras
 export const useGetAllDegree = () => {
-  const [degrees, setDegrees] = useState<OnlyNameData[]>([]);
+  const [degrees, setDegrees] = useState<OnlyNameResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refetch, setRefetch] = useState(0);

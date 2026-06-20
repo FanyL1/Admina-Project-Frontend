@@ -60,6 +60,7 @@ export default function DataTable({
   rowActions,
   getRowId,
   filterFields,
+  renderAdditionalActions,
 }: DataTableProps) {
 
   const theme = useTheme();
@@ -166,8 +167,7 @@ export default function DataTable({
       filtered = filtered.filter(item => {
         let matches = false;
         Object.entries(filterFields.searchFields).forEach(([field, enabled]) => {
-          if (enabled && item[field] && 
-              String(item[field]).toLowerCase().includes(filterFields.searchTerm.toLowerCase())) {
+          if (enabled && item[field] &&  String(item[field]).toLowerCase().startsWith(filterFields.searchTerm.toLowerCase())){
             matches = true;
           }
         });
@@ -518,6 +518,7 @@ export default function DataTable({
                                 </Select>
                               </FormControl>
                             )}
+                            {renderAdditionalActions && renderAdditionalActions(row)}
                             {rowActions && rowActions(row)}
                           </Box>
                         </TableCell>

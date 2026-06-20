@@ -33,46 +33,12 @@ export default function AddProcedurePage() {
       <AppToaster />
 
       <Container maxWidth="lg">
-        <Paper
-          elevation={3}
-          sx={{
-            borderRadius: 4,
-            overflow: 'hidden',
-            mb: 3,
-          }}
-        >
-          <Box
-            sx={{
-              background: 'linear-gradient(135deg, #0c1527 0%, #32539A 55%, #6586CD 100%)',
-              color: 'white',
-              p: { xs: 3, md: 4 },
-              display: 'flex',
-              alignItems: { xs: 'flex-start', sm: 'center' },
-              justifyContent: 'space-between',
-              gap: 2,
-              flexDirection: { xs: 'column', sm: 'row' },
-            }}
-          >
-            <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: 'rgba(255,255,255,0.82)' }}>
-                <AddTaskIcon fontSize="small" />
-                <Typography variant="body2" color='white'>Nuevo tipo de tramite</Typography>
-              </Box>
-              <Typography variant="h4" sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', md: '2.25rem' } }}>
-                Agregar tramite
-              </Typography>
-            </Box>
-
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<ArrowBackIcon />}
-              onClick={() => router.push('/managementType')}
-            >
-              Volver
-            </Button>
-          </Box>
-        </Paper>
+        <Box
+          sx={{ overflow: 'hidden',mb: 3, }}>
+          <Button startIcon={<ArrowBackIcon />} onClick={() => router.back()} sx={{ alignSelf: 'flex-start' }}>
+            Volver
+          </Button>
+        </Box>
 
         <ProcedureForm
           loading={loading}

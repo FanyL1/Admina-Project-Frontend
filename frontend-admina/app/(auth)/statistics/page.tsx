@@ -13,10 +13,14 @@ export default function StatisticsPage() {
   const { types } = useGetAlltype();
   const {request} = useGetAllRequest()
 
+  const student = users.filter(
+    (t) => t.role.name == 'Estudiante'
+  ) ?? []
+
   return (
     <Box sx={{ p: 0 }}>
       <AppToaster/>
-      <StatisticsDashboard requests={[]} students={[users]}/>
+      <StatisticsDashboard/>
     </Box>
   );
 }

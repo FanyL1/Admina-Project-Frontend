@@ -248,10 +248,22 @@ export const SuperUserDashboard = () => {
           }}
         >
           <Typography variant="body2" color="text.secondary">
-            Tasa de éxito general
+            Tasa de Finalizacion
           </Typography>
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            {sendRequest.length.toFixed(1)}%
+          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+            Aprobadas {request.length > 0 
+            ? ((request.filter(r => r.status === 'Aprobado').length / request.length) * 100).toFixed(1)
+            : '0.0'}%
+          </Typography>
+          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+            Rechazadas {request.length > 0 
+            ? ((request.filter(r => r.status === 'Rechazado').length / request.length) * 100).toFixed(1)
+            : '0.0'}%
+          </Typography>
+          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+            Total {request.length > 0 
+            ? ((request.filter(r => r.status === 'Aprobado' || r.status === 'Rechazado').length / request.length) * 100).toFixed(1)
+            : '0.0'}%
           </Typography>
         </Box>
       </Paper>

@@ -1,40 +1,101 @@
 'use client';
 import { useState, useMemo } from 'react';
-import {Box, Typography, Paper, FormControl,InputLabel,Select, MenuItem, Card, CardContent, SelectChangeEvent, LinearProgress, Chip, Divider} from '@mui/material';
-import { LineChart, BarChart,PieChart} from '@mui/x-charts';
-import {TrendingUp,TrendingDown,  Assignment, CheckCircle, Cancel, Pending, Assessment} from '@mui/icons-material';
+import {
+  Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, 
+  Card, CardContent, LinearProgress, Chip, Button, TextField
+} from '@mui/material';
+import { BarChart, PieChart } from '@mui/x-charts';
+import { TrendingUp, Assignment, Pending, Assessment } from '@mui/icons-material';
 
 import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest';
 
+// Función Helper para agrupar por cohortes académicas venezolanas
+export const getAcademicPeriod = (dateString: string | Date): string => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // Enero es 0
+
+  // Periodo X-1: Marzo a Julio (incluidos)
+  if (month >= 3 && month <= 7) {
+    return `${year}-1`;
+  }
+  
+  // Periodo X-3: Agosto a Septiembre (incluidos)
+  if (month >= 8 && month <= 9) {
+    return `${year}-3`;
+  }
+
+  // Periodo X-2: Octubre a Febrero (Cruza de año)
+  if (month >= 10) {
+    return `${year}-2`;
+  } else {
+    return `${year - 1}-2`;
+  }
+};
+
 export const StatisticsDashboard = () => {
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const {request} = useGetAllRequest()
-  // Años disponibles
-  const years = useMemo(() => {
-    const yearSet = new Set(request.map(r => new Date(r.created_at).getFullYear()));
-    return Array.from(yearSet).sort();
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+  const { request = [] } = useGetAllRequest();
+
+  // 1. FILTRO CENTRALIZADO: Rango de fechas y periodos académicos
+  const filteredRequests = useMemo(() => {
+    return request.filter((r) => {
+      if (!r.created_at) return false;
+      
+      const requestDate = new Date(r.created_at);
+      
+      // Filtro Fecha Desde (00:00:00)
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        if (requestDate < start) return false;
+      }
+      
+      // Filtro Fecha Hasta (23:59:59)
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        if (requestDate > end) return false;
+      }
+
+      // Filtro por Periodo Académico Seleccionado
+      if (selectedPeriod) {
+        const requestPeriod = getAcademicPeriod(r.created_at); 
+        if (requestPeriod !== selectedPeriod) return false;
+      }
+      
+      return true;
+    });
+  }, [request, startDate, endDate, selectedPeriod]);
+
+  // 2. COHORTES DISPONIBLES: Genera las opciones del Select basadas en toda la data base
+  const academicPeriods = useMemo(() => {
+    const periodSet = new Set(request.map(r => getAcademicPeriod(r.created_at)));
+    return Array.from(periodSet).sort((a, b) => b.localeCompare(a)); 
   }, [request]);
 
-  // 1. Datos de frecuencia mensua
+  // 3. GRÁFICO 1: Frecuencia Mensual Reactiva
   const monthlyData = useMemo(() => {
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     return months.map((month, index) => {
-      const count = request.filter(r => {
+      const count = filteredRequests.filter(r => {
         const date = new Date(r.created_at);
-        return date.getFullYear() === selectedYear && date.getMonth() === index;
+        return date.getMonth() === index;
       }).length;
       return { month, count };
     });
-  }, [request, selectedYear]);
+  }, [filteredRequests]);
 
-  // 2. Datos del embudo (como barras)
+  // 4. GRÁFICO 2: Datos de Embudo Reactivo
   const funnelData = useMemo(() => {
-    const total = request.length;
-    const send = request.filter(r => r.status === 'Enviado').length;
-    const inReview = request.filter(r => r.status === 'Revisando' || r.status === 'Pendiente').length;
-    const approved = request.filter(r => r.status === 'Aprobado').length;
-    const rejected = request.filter(r => r.status === 'Rechazado').length;
-    const observation = request.filter(r => r.status === 'Observado').length;
+    const total = filteredRequests.length;
+    const send = filteredRequests.filter(r => r.status === 'Enviado').length;
+    const inReview = filteredRequests.filter(r => r.status === 'Revisando' || r.status === 'Pendiente').length;
+    const approved = filteredRequests.filter(r => r.status === 'Aprobado').length;
+    const rejected = filteredRequests.filter(r => r.status === 'Rechazado').length;
+    const observation = filteredRequests.filter(r => r.status === 'Observado').length;
 
     return [
       { stage: 'Creadas', count: total, color: '#71c0c0' },
@@ -42,14 +103,14 @@ export const StatisticsDashboard = () => {
       { stage: 'En Revisión', count: inReview, color: '#ed6c02' },
       { stage: 'Aprobadas', count: approved, color: '#2e7d32' },
       { stage: 'Rechazadas', count: rejected, color: '#c62828' },
-      { stage: 'Con Observacion', count: observation, color: '#9c27b0' }
+      { stage: 'Con Observación', count: observation, color: '#9c27b0' }
     ];
-  }, [request]);
+  }, [filteredRequests]);
 
-  // 3. Top de trámites
+  // 5. GRÁFICO 3: Top Trámites Reactivo
   const topRequests = useMemo(() => {
     const counts: Record<string, number> = {};
-    request.forEach(req => {
+    filteredRequests.forEach(req => {
       const name = req.type_procedure?.name || 'Sin categoría';
       counts[name] = (counts[name] || 0) + 1;
     });
@@ -57,15 +118,11 @@ export const StatisticsDashboard = () => {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-  }, [request]);
-
-  const handleYearChange = (event: SelectChangeEvent<number>) => {
-    setSelectedYear(Number(event.target.value));
-  };
+  }, [filteredRequests]);
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Filtros */}
+      {/* Sección de Filtros */}
       <Paper
         elevation={0}
         sx={{
@@ -84,40 +141,90 @@ export const StatisticsDashboard = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Assessment color="primary" />
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            Estadísticas
+            Estadísticas de Gestión
           </Typography>
         </Box>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>Año</InputLabel>
-          <Select value={selectedYear} onChange={handleYearChange} label="Año">
-            {years.map(year => (
-              <MenuItem key={year} value={year}>{year}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel id="select-periodo-label">Periodo Académico</InputLabel>
+            <Select
+              labelId="select-periodo-label"
+              id="select-periodo"
+              value={selectedPeriod}
+              label="Periodo Académico"
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+            >
+              <MenuItem value="">
+                <em>Todos los periodos</em>
+              </MenuItem>
+              {academicPeriods.map((period) => (
+                <MenuItem key={period} value={period}>
+                  Periodo {period}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <TextField
+            label="Fecha Desde"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            slotProps={{
+              inputLabel: { shrink: true },
+            }}
+            size="small"
+          />
+          
+          <TextField
+            label="Fecha Hasta"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            slotProps={{
+              inputLabel: { shrink: true },
+            }}
+            size="small"
+          />
+
+            <Button 
+              variant="outlined" 
+              color="error"
+              size="small"
+              onClick={() => { 
+                setStartDate(''); 
+                setEndDate(''); 
+                setSelectedPeriod(''); 
+              }}
+            >
+              Limpiar Filtros
+            </Button>
+        </Box>
       </Paper>
 
-      {/* Tarjetas de resumen */}
+      {/* Tarjetas de Resumen Dinámicas */}
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, mb: 3 }}>
         <Card sx={{ flex: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box>
                 <Typography variant="caption" color="text.secondary">Total Solicitudes</Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>{request.length}</Typography>
+                <Typography variant="h4" sx={{ fontWeight: 700 }}>{filteredRequests.length}</Typography>
               </Box>
               <Assignment sx={{ color: '#1976d2', fontSize: 32 }} />
             </Box>
           </CardContent>
         </Card>
+
         <Card sx={{ flex: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box>
                 <Typography variant="caption" color="text.secondary">Tasa de Éxito</Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: '#2e7d32' }}>
-                  {request.length > 0 
-                    ? Math.round((request.filter(r => r.status === 'Aprobado' || r.status === 'Rechazado').length / request.length) * 100)
+                  {filteredRequests.length > 0 
+                    ? Math.round((filteredRequests.filter(r => r.status === 'Aprobado' || r.status === 'Rechazado').length / filteredRequests.length) * 100)
                     : 0}%
                 </Typography>
               </Box>
@@ -125,13 +232,14 @@ export const StatisticsDashboard = () => {
             </Box>
           </CardContent>
         </Card>
+
         <Card sx={{ flex: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box>
                 <Typography variant="caption" color="text.secondary">Pendientes</Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: '#ed6c02' }}>
-                  {request.filter(r => r.status === 'Pendiente' || r.status === 'Revisando').length}
+                  {filteredRequests.filter(r => r.status === 'Pendiente' || r.status === 'Revisando').length}
                 </Typography>
               </Box>
               <Pending sx={{ color: '#ed6c02', fontSize: 32 }} />
@@ -141,16 +249,7 @@ export const StatisticsDashboard = () => {
       </Box>
 
       {/* Gráfico 1: Frecuencia mensual */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 3,
-          mb: 3,
-          borderRadius: 2,
-          border: '1px solid',
-          borderColor: 'divider'
-        }}
-      >
+      <Paper elevation={0} sx={{ p: 3, mb: 3, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
           Solicitudes por Mes
         </Typography>
@@ -171,17 +270,8 @@ export const StatisticsDashboard = () => {
         </Box>
       </Paper>
 
-      {/* Gráfico 2: Embudo (usando barras horizontales) */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 3,
-          mb: 3,
-          borderRadius: 2,
-          border: '1px solid',
-          borderColor: 'divider'
-        }}
-      >
+      {/* Gráfico 2: Embudo */}
+      <Paper elevation={0} sx={{ p: 3, mb: 3, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
           Flujo de Solicitudes (Embudo)
         </Typography>
@@ -202,7 +292,6 @@ export const StatisticsDashboard = () => {
             }]}
           />
         </Box>
-        {/* Detalle del embudo */}
         <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
           {funnelData.map((item) => (
             <Chip
@@ -220,16 +309,7 @@ export const StatisticsDashboard = () => {
       </Paper>
 
       {/* Gráfico 3: Top trámites */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 3,
-          mb: 3,
-          borderRadius: 2,
-          border: '1px solid',
-          borderColor: 'divider'
-        }}
-      >
+      <Paper elevation={0} sx={{ p: 3, mb: 3, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
           Trámites Más Solicitados
         </Typography>
@@ -242,42 +322,29 @@ export const StatisticsDashboard = () => {
                   value: item.count,
                   label: item.name
                 })),
-               
               }]}
               slotProps={{
-                legend: {
-                
-                  position: { vertical: 'middle', horizontal: 'end' },
-                  
-                }
+                legend: { position: { vertical: 'middle', horizontal: 'end' } }
               }}
               margin={{ right: 200 }}
             />
           </Box>
         ) : (
           <Typography color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-            No hay datos disponibles
+            No hay datos disponibles para los filtros seleccionados
           </Typography>
         )}
       </Paper>
 
       {/* Lista detallada de trámites */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 3,
-          borderRadius: 2,
-          border: '1px solid',
-          borderColor: 'divider'
-        }}
-      >
+      <Paper elevation={0} sx={{ p: 3, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
           Detalle de Trámites
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {topRequests.map((item, index) => {
-            const percentage = request.length > 0 
-              ? Math.round((item.count / request.length) * 100) 
+            const percentage = filteredRequests.length > 0 
+              ? Math.round((item.count / filteredRequests.length) * 100) 
               : 0;
             const colors = ['#1976d2', '#2e7d32', '#ed6c02', '#c62828', '#9c27b0'];
             

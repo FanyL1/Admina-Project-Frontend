@@ -44,22 +44,46 @@ const getAllRequirements = (requirements: any): string[] => {
   
   if (typeof requirements === 'object') {
     Object.entries(requirements).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        if (key === 'documents') {
-          allRequirements.push(...value);
-        } else {
-          value.forEach((item) => {
-            if (item !== 0) { //esto es nuevo
-              allRequirements.push(`${key}: ${item}`);
-            }   
-          });
+      // 1. Manejo exclusivo de la lista de documentos
+      if (key === 'documents' && Array.isArray(value)) {
+        allRequirements.push(...value);
+        return; // Salta a la siguiente iteración
+      }
+
+      // 2. Controlar valores vacíos, nulos o "No aplica" (0, false, null)
+      if (value === null || value === undefined || value === false || value === 0) {
+        return; 
+      }
+
+      // Diccionario para traducir las llaves técnicas a nombres limpios en español
+      const labelMap: Record<string, string> = {
+        promedio: 'Promedio mínimo',
+        UC: 'Unidades de Crédito Aprobadas (UA)',
+        cohorte: 'Filtro de cohorte',
+        liso: 'Condición de alumno',
+        materia: 'Requiere materia',
+      };
+
+      const label = labelMap[key] || key;
+
+      // 3. Evaluar los tipos de datos primitivos (string, number, boolean)
+      if (typeof value === 'string' || typeof value === 'number') {
+        allRequirements.push(`${label}: ${value}`);
+      } else if (typeof value === 'boolean') {
+        // Si cohorte o materia son true, mostramos un mensaje amigable
+        if (value === true) {
+          allRequirements.push(`${label}: Sí`);
         }
-      } else if (typeof value === 'string') {
-        allRequirements.push(`${key}: ${value}`);
-      } else if (typeof value === 'object' && value !== null) {
+      } else if (Array.isArray(value)) {
+        // Por si tienes algún otro array que no sea documentos
+        value.forEach((item) => {
+          if (item) allRequirements.push(`${label}: ${item}`);
+        });
+      } else if (typeof value === 'object') {
+        // Por si hay objetos anidados complejos
         const nested = getAllRequirements(value);
         nested.forEach((item) => {
-          allRequirements.push(`${key}: ${item}`);
+          allRequirements.push(`${label}: ${item}`);
         });
       }
     });

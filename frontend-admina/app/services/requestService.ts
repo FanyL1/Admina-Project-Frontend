@@ -96,6 +96,7 @@ export const createRequest = async (payload: {
   type_id: string;
   carrera_id: string;
   observation?: string | null;
+  additionalData?: Record<string, any> | null;
 }) => {
   const res = await fetch(`${backendUrl()}/api/requests`, {
     method: 'POST',

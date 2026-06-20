@@ -2,14 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Chip, Container, Stack, Typography,} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
@@ -32,9 +25,9 @@ export default function ListRequestPage() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [estadoFilter, setEstadoFilter] = React.useState('todos');
   const [searchFields, setSearchFields] = React.useState({
+    ID: true,
     applicantName: true,
     typeName: true,
-    carreraName: true,
     status: true,
   });
 
@@ -55,19 +48,37 @@ export default function ListRequestPage() {
     void Promise.resolve().then(loadRequests);
   }, [loadRequests]);
 
-  const tableRows = React.useMemo(() => requests.map((request) => ({
-    ...request,
-    applicantName: `${request.user?.name || ''} ${request.user?.lastname || ''}`.trim() || request.user_id,
-    typeName: request.type_procedure?.name || request.type_id,
-    carreraName: request.carrera?.name || request.carrera_id,
-    dateLabel: formatDate(request.created_at),
-  })), [requests]);
+  const tableRows = React.useMemo(() => requests.map((request: any) => {
+
+    const solicitante = request.createByname === 'No Aplica' || !request.createByname
+      ? `${request.user?.name || ''} ${request.user?.lastname || ''}`.trim() || 'Desconocido'
+      : request.createByname;
+
+    const dni = request.createByDNI === "0" || !request.createByDNI
+      ? request.user?.dni || 'N/A'
+      : request.createByDNI;
+
+    const revisor = request.revisor_id && request.revisor 
+      ? `${request.revisor.name || ''} ${request.revisor.lastname || ''}`.trim() || 'Asignado'
+      : 'No asignado';
+
+    return {
+      ...request,
+      ID: request.id, 
+      applicantName: solicitante,
+      applicantDNI: dni,
+      typeName: request.type_procedure?.name || request.type_id,
+      assignedUser: revisor,
+      dateLabel: formatDate(request.created_at),
+    };
+  }), [requests]);
 
   const columns = [
     { id: 'applicantName', label: 'Solicitante', numeric: false, editable: false },
+    { id: 'applicantDNI', label: 'Cedula', numeric: false, editable: false },
     { id: 'typeName', label: 'Tramite', numeric: false, editable: false },
-    { id: 'carreraName', label: 'Carrera', numeric: false, editable: false },
     { id: 'dateLabel', label: 'Fecha', numeric: false, editable: false },
+    { id: 'assignedUser', label: 'Asignado', numeric: false, editable: false },
     {
       id: 'status',
       label: 'Estado',
@@ -90,16 +101,6 @@ export default function ListRequestPage() {
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
       <Container maxWidth="lg">
         <Stack spacing={3}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'space-between' }}>
-            <Box>
-              <Typography variant="h4" sx={{ fontWeight: 800 }}>Gestion de solicitudes</Typography>
-              <Typography color="text.secondary">Solicitudes realizadas por estudiantes, ordenadas por fecha reciente.</Typography>
-            </Box>
-            <Button variant="outlined" startIcon={<RefreshIcon />} onClick={loadRequests} disabled={loading}>
-              Actualizar
-            </Button>
-          </Stack>
-
           <DataTable
             data={tableRows}
             columns={columns}
@@ -126,9 +127,9 @@ export default function ListRequestPage() {
               onSearchTermChange: setSearchTerm,
               estadoOptions,
               searchLabels: {
+                ID: 'ID', // Permite que el componente sepa cómo llamarlo en los selectores/filtros
                 applicantName: 'Solicitante',
                 typeName: 'Tramite',
-                carreraName: 'Carrera',
                 status: 'Estado',
               },
             }}

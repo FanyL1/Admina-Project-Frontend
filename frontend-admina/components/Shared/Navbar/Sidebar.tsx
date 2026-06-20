@@ -46,7 +46,7 @@ const getMenuItems = (role: string) => {
       //{ label: 'Gestión de Roles (Solo Para desarrollo)', href: '/role', icon: <AdminPanelSettingsIcon /> },
       { label: 'Gestión de Carreras', href: '/managementDegree', icon: <SquareFootIcon /> },
       { label: 'Gestión de Categorias', href: '/managementCategory', icon: <StyleIcon /> },
-      { label: 'Gestión de Tramites', href: '/managementRequest', icon: <TableRowsIcon /> },
+      { label: 'Gestión de Tramites', href: '/managementType', icon: <TableRowsIcon /> },
       { label: 'Estadisticas', href: '/statistics', icon: <EqualizerIcon /> },
       { label: 'Reportes', href: '/reports', icon: <TrackChangesIcon /> },
 

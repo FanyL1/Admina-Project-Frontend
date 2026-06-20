@@ -37,6 +37,9 @@ export default function RequestPage() {
   const idUrl = params.id;
   const [promedioStudent, setPromedioStudent] = React.useState<number | null>(null);
   const [errorPromedio, seterrorPromedio] = React.useState('')
+  const [ucStudent, setUcStudent] = React.useState<number | null>(null);
+  const [cohorteStudent, setCohorteStudent] = React.useState<string | null>(null);
+  const [isLisoStudent, setIsLisoStudent] = React.useState<boolean | null>(null);
   
   const tramite = types?.filter(
     (selecType) => selecType.id === idUrl
@@ -74,7 +77,7 @@ export default function RequestPage() {
     if (externalApplicant && (externalName.trim().length < 3 || externalDni.trim().length < 6)) {
       return toast.error('Completa nombre y cedula del solicitante');
     }
-    if (promedio !== null) {
+    if (promedio !== null && promedio !== undefined) {
       if (promedioStudent !== null) {
         if (promedioStudent < promedio) {
           seterrorPromedio('No puedes enviar la solicitud porque tu promedio es inferior al requerido.');
@@ -104,6 +107,12 @@ export default function RequestPage() {
         createByname: externalApplicant ? externalName.trim() : undefined,
         createByDNI: externalApplicant ? externalDni.trim() : undefined,
         observation: observationLines.length ? `Datos de requisitos: ${observationLines.join(' | ')}` : undefined,
+        additionalData: {
+          promedio: promedioStudent, 
+          UC: ucStudent, 
+          cohorte: cohorteStudent,  
+          conditionLiso: isLisoStudent,  
+        }
       });
 
       if (!request?.id) throw new Error('No se recibio el ID de la solicitud');
@@ -175,30 +184,24 @@ export default function RequestPage() {
                     label="No soy el solicitante"
                   />
                 </Paper>
-                {promedio !== 0 && <PromedioExtractor
-                    promedioMin={promedio}
-                    onDNIextraido={(dniLeido) => {
-                      if (externalDni !== dniLeido) {
-                        if (sessionUser?.dni !== dniLeido) {
-                          console.log({dniLeido, externalDni,})
-                          console.log(sessionUser?.dni);
-                          seterrorPromedio('Los datos de la constancia de notas no coinciden con los datos del solicitante')
-                        }else{
-                          seterrorPromedio('');
-                          console.log({dniLeido, externalDni})
-                          console.log(sessionUser?.dni);
-                        }
-                      }else{
-                        seterrorPromedio('');
-                        console.log({dniLeido, externalDni})
-                        console.log(sessionUser?.dni);
-                        
-                      }
-                    }}
-                    onPromedioExtraido={(valor) => setPromedioStudent(valor)}
-                    cedula={errorPromedio}
-                  />}
-                  
+                <PromedioExtractor
+                  requirementsRules={tramite[0]?.requirements || {}}
+                  onDNIextraido={(dniLeido) => {
+                    if (externalApplicant) {
+                      seterrorPromedio(externalDni !== dniLeido ? 'La cédula del documento no coincide con el solicitante.' : '');
+                    } else {
+                      seterrorPromedio(sessionUser?.dni !== dniLeido ? 'La cédula del documento no coincide con tu usuario.' : '');
+                    }
+                  }}
+                  onDataExtraida={(data) => {
+                    // Aquí recibes solo lo que el trámite solicitó. Lo demás vendrá como undefined.
+                    setPromedioStudent(data.promedio ?? null);
+                    setUcStudent(data.uc ?? null);
+                    setCohorteStudent(data.cohorte ?? null);
+                    setIsLisoStudent(data.isLiso ?? null);
+                  }}
+                  cedula={errorPromedio}
+                />
                 <FormControl fullWidth>
                   <InputLabel>Carrera</InputLabel>
                   <Select value={degreeId} label="Carrera" onChange={(event) => setDegreeId(event.target.value)}>

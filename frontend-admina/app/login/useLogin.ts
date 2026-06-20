@@ -206,25 +206,18 @@ export const useLogin = () => {
   };
 
   // Función para obtener la fecha de creación formateada
-  const getUserCreatedAt = (format: 'full' | 'date' | 'datetime' = 'full') => {
+  const getUserCreatedAt = (format: string) => {
     if (!session?.user?.created_at) return 'Fecha no disponible';
     
-    const date = new Date(session.user.created_at);
+    const date = new Date(session.user.created_at)
     
-    switch(format) {
-      case 'date':
-        return date.toLocaleDateString('es-ES');
-      case 'datetime':
-        return date.toLocaleString('es-ES');
-      default:
         return date.toLocaleDateString('es-ES', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
-        });
-    }
+        })
   };
   return { 
     loginUser, 

@@ -1,19 +1,6 @@
 'use client';
-
 import * as React from 'react';
-import {
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -25,7 +12,7 @@ interface ProcedureFormProps {
   initialValues?: ProcedureTypeFormData;
   loading?: boolean;
   submitLabel?: string;
-  onSubmit: (values: ProcedureTypeFormData) => Promise<void> | void;
+  onSubmit: (values: any) => Promise<void> | void;
 }
 
 const emptyValues: ProcedureTypeFormData = {
@@ -46,11 +33,17 @@ export default function ProcedureForm({
   const [name, setName] = React.useState(initialValues.name);
   const [categoryId, setCategoryId] = React.useState(initialValues.category_id);
   const [promedio, setpromedio] = React.useState<string>('');
+  const [UC, setUC] = React.useState<string>('');
+  const [cohorte, setCohorte] = React.useState<string>('false'); 
+  const [conditionalLiso, setConditionalLiso] = React.useState<string>('No aplica'); 
+  const [materia, setmateria] = React.useState<string>('');
+
   const [documents, setDocuments] = React.useState<string[]>(
     initialValues.requirements.documents.length > 0
       ? initialValues.requirements.documents
       : [''],
   );
+  
   const [errors, setErrors] = React.useState<{ name?: string; category_id?: string; documents?: string; promedio?: number }>({});
   const { categories } = useGetAllCategory();
 
@@ -69,6 +62,7 @@ export default function ProcedureForm({
       current.length === 1 ? [''] : current.filter((_, itemIndex) => itemIndex !== index)
     ));
   };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const cleanedDocuments = documents.map((item) => item.trim()).filter(Boolean);
@@ -78,9 +72,6 @@ export default function ProcedureForm({
       nextErrors.name = 'El nombre debe tener al menos 3 caracteres';
     }
 
-    const promedioNumber = promedio === '' ? 0 : Number(promedio);
-    const promedioFinal = Math.min(Math.max(promedioNumber, 0), 10);
-
     if (!categoryId) {
       nextErrors.category_id = 'Selecciona una categoria';
     }
@@ -88,15 +79,29 @@ export default function ProcedureForm({
     if (cleanedDocuments.length === 0) {
       nextErrors.documents = 'Agrega al menos un requisito';
     }
+    
     setErrors(nextErrors);
-
     if (Object.keys(nextErrors).length > 0) return;
+
+    const promedioNumber = promedio === '' ? 0 : Number(promedio);
+    const promedioFinal = Math.min(Math.max(promedioNumber, 0), 10);
+
+    // Mapeo solicitado para la propiedad Liso: pasar null, "Liso" o "No liso"
+    const lisoBackendValue = conditionalLiso === 'No aplica' ? null : conditionalLiso;
+    const requiereMateriaBackend = materia === 'true';
+    // Mapeo solicitado para Cohorte: string a booleano real
+    const cohorteBackendValue = cohorte === 'true';
+
     await onSubmit({
       name: name.trim(),
       category_id: categoryId,
       requirements: {
         documents: cleanedDocuments,
-        promedio: promedioFinal
+        promedio: promedioFinal,
+        UC: UC !== '' ? Number(UC) : undefined,
+        cohorte: cohorteBackendValue,
+        liso: lisoBackendValue,
+        materia: requiereMateriaBackend
       },
     });
   };
@@ -109,7 +114,10 @@ export default function ProcedureForm({
           sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <DescriptionIcon color="primary" />
-          Informacion del tramite
+          Agregar Tramite
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Configure los requisitos y documentos necesarios para solicitar el trámite
         </Typography>
       </Box>
 
@@ -148,15 +156,82 @@ export default function ProcedureForm({
           )}
         </FormControl>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <Divider />
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              Configuración de Requisitos Especiales
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.5 }}>
+            <TextField
+              fullWidth
+              label="Promedio mínimo requerido (Opcional)"
+              type="number"
+              value={promedio}
+              onChange={(event) => setpromedio(event.target.value)}
+              disabled={loading}
+            />
+
+            <TextField
+              fullWidth
+              label="Unidades de Crédito Aprobadas (UA) mínimas (Opcional)"
+              type="number"
+              value={UC}
+              onChange={(event) => setUC(event.target.value)}
+              disabled={loading}
+            />
+
+            {/* SELECT DE COHORTE (Retorna Booleano en submit) */}
+            <FormControl fullWidth disabled={loading}>
+              <InputLabel>Incluir cohorte</InputLabel>
+              <Select
+                label="Incluir filtro de cohorte"
+                value={cohorte}
+                onChange={(event) => setCohorte(event.target.value)}
+              >
+                <MenuItem value="true">Incluir</MenuItem>
+                <MenuItem value="false">No incluir</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* SELECT DE CONDICIÓN LISO (Mapea a null, Liso o No liso en submit) */}
+            <FormControl fullWidth disabled={loading}>
+              <InputLabel>Aprobo todo el semestre anteriror (Liso)</InputLabel>
+              <Select
+                label="Condición de alumno Regular (Liso)"
+                value={conditionalLiso}
+                onChange={(event) => setConditionalLiso(event.target.value)}
+              >
+                <MenuItem value="No aplica">No aplica</MenuItem>
+                <MenuItem value="Liso">Liso</MenuItem>
+                <MenuItem value="No liso">No liso</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <FormControl fullWidth disabled={loading}>
+            <InputLabel>¿Requiere especificar una materia?</InputLabel>
+            <Select
+              label="¿Requiere especificar una materia?"
+              value={materia} // Aquí guardará "true" o "false"
+              onChange={(event) => setmateria(event.target.value)}
+            >
+              <MenuItem value="true">Sí, el estudiante debe especificar una materia</MenuItem>
+              <MenuItem value="false">No aplica para este trámite</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Divider />
+          
           <Box sx={{ pt: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                Requisitos
+                Documentos
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Cada requisito se guardara como documento dentro del JSON del tramite.
+                Ingrese el nombre de los documentos requeridos en formato digital
               </Typography>
             </Box>
 
@@ -167,7 +242,7 @@ export default function ProcedureForm({
               onClick={handleAddDocument}
               disabled={loading}
             >
-              Agregar requisito
+              Agregar documento
             </Button>
           </Box>
 
@@ -187,7 +262,7 @@ export default function ProcedureForm({
             >
               <TextField
                 fullWidth
-                label={`Requisito ${index + 1}`}
+                label={`Requisito de Documento ${index + 1}`}
                 value={document}
                 onChange={(event) => handleDocumentChange(index, event.target.value)}
                 error={!!errors.documents && index === 0}
@@ -205,18 +280,9 @@ export default function ProcedureForm({
             </Box>
           ))}
         </Box>
+        
         <Divider />
-          <TextField
-          fullWidth
-          label="Promedio minimo para opctar por el tramite (Opcional)"
-          type='number'
-          value={promedio}
-          onChange={(event) => setpromedio(event.target.value)}
-          error={!!errors.promedio}
-          helperText={errors.promedio}
-          disabled={loading}
-        />
-        <Divider />
+          
         <Button
           type="submit"
           variant="contained"

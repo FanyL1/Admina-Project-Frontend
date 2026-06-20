@@ -31,7 +31,7 @@ export const PromedioExtractor = ({ requirementsRules, cedula, onDataExtraida, o
   const [loadingPdf, setLoadingPdf] = React.useState(false);
   const [errorExtractor, setErrorExtractor] = React.useState('');
   const [extractedData, setExtractedData] = React.useState<ExtractedStudentData | null>(null);
-
+  const [textoCompleto, setTextoCompleto] = React.useState('');
   const { promedio: reqPromedio, UC: reqUC, cohorte: reqCohorte, liso: reqLiso } = requirementsRules;
 
   const necesitaValidacion = (reqPromedio && reqPromedio > 0) || reqUC || reqCohorte || reqLiso;
@@ -51,6 +51,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
       toast.error('Por favor, selecciona un archivo PDF válido.');
       return;
     }
+    setTextoCompleto("");
 
     setLoadingPdf(true);
     setErrorExtractor('');
@@ -139,6 +140,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
       toast.error('Error al procesar el archivo PDF.');
     } finally {
       setLoadingPdf(false);
+      event.target.value = "";
     }
   };
 

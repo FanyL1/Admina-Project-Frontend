@@ -10,12 +10,14 @@ import SendIcon from '@mui/icons-material/Send';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import toast from 'react-hot-toast';
 import { useParams } from 'next/navigation';
+import { Category } from '@mui/icons-material';
 
 import { useLogin } from '@/app/login/useLogin';
 import { OnlyNameData, ProcedureTypeData } from '@/app/type';
 import { createRequest, getDegrees, getProcedureTypes, uploadRequestDocument,} from '@/app/services/requestService';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
-import { PromedioExtractor } from '@/components/UX/Buttons/promedioExtractor';
+import { PromedioExtractor } from '@/components/UX/Buttons/ExtractorData';
+import { useGetAllCategory } from '../../../managementCategory/useCategory';
 
 const isAverageRequirement = (value: string) => value.toLowerCase().includes('promedio');
 
@@ -24,7 +26,7 @@ export default function RequestPage() {
   const { sessionUser } = useLogin();
   const [types, setTypes] = React.useState<ProcedureTypeData[]>([]);
   const [degrees, setDegrees] = React.useState<OnlyNameData[]>([]);
-  const [selectedTypeId, setSelectedTypeId] = React.useState('');
+  const {categories} = useGetAllCategory()
   const [degreeId, setDegreeId] = React.useState('');
   const [externalApplicant, setExternalApplicant] = React.useState(false);
   const [externalName, setExternalName] = React.useState('');
@@ -45,6 +47,10 @@ export default function RequestPage() {
     (selecType) => selecType.id === idUrl
   ) ?? [];
 
+const categoryName = categories?.find(
+  (c) => c.id === tramite[0]?.category_id
+)?.name ?? 'Categoría no encontrada';
+
   React.useEffect(() => {
     const loadData = async () => {
       try {
@@ -63,13 +69,6 @@ export default function RequestPage() {
   const requirements = tramite[0]?.requirements.documents || [];
   const promedio = tramite[0]?.requirements.promedio;
   
-
-  const handleSelectType = (id: string) => {
-    setSelectedTypeId(id);
-    setRequirementValues({});
-    setRequirementFiles({});
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!sessionUser?.id) return toast.error('No hay usuario en sesion');
@@ -147,6 +146,7 @@ export default function RequestPage() {
               <Stack spacing={3}>
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 800 }}>{tramite[0]?.name}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{categoryName}</Typography>
                   <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 1 }}>
                     {requirements.map((requirement) => (
                       <Chip key={requirement} label={requirement} size="small" />

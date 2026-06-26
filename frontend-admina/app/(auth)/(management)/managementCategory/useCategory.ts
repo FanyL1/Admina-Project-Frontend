@@ -1,7 +1,7 @@
 // hooks/useGetAllRoles.ts
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { GetAllResponseOnlyName, OnlyNameData, OnlyNameResponse } from '@/app/type';
+import { GetAllResponseOnlyName, OnlyNameData} from '@/app/type';
 import { onlyNameSchem } from "@/schemas/onlyNameSchem"; 
 import { z } from "zod";
 
@@ -35,7 +35,6 @@ export const getAllcategory = async (): Promise<GetAllResponseOnlyName> => {
 
     toast.dismiss(toastId);
     //toast.success('¡Categorias obtenidas exitosamente!');
-    console.log(data.data);
     
     return {
       success: true,
@@ -88,12 +87,13 @@ export const createCategory= async (formData: OnlyNameData): Promise<any> =>{
     throw error;
   }
 };
-export const updateCategory = async ( id: string,  updates: { name?: string; status?: string }): Promise<any> => {
+
+export const updateCategoryById = async ( id: string,  updates: Partial<OnlyNameData>)=> {
   
   let toastId: string | undefined;
   
   try {
-    if (!updates.name && !updates.status) {
+    if (!updates.name) {
       toast.error('Debe proporcionar al menos un campo para actualizar');
       throw new Error('Debe proporcionar al menos un campo para actualizar');
     }
@@ -160,7 +160,7 @@ export const updateStatusCategory = async ( id: string): Promise<any> => {
 
 // Hook personalizado para obtener carerras
 export const useGetAllCategory = () => {
-  const [categories, setCategories] = useState<OnlyNameResponse[]>([]);
+  const [categories, setCategories] = useState<OnlyNameData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refetch, setRefetch] = useState(0);
@@ -209,7 +209,7 @@ export const useGetAllCategory = () => {
       return result;
     };
 
-    const updateCategoriesById = async (id: string, updates: { name?: string; status?: string }) => {
+    const updateCategories = async (id: string,  updates: Partial<OnlyNameData>) => {
       setLoading(true);
       setError(null);
       setValidationErrors([]);
@@ -220,10 +220,9 @@ export const useGetAllCategory = () => {
           onlyNameSchem.parse({ name: updates.name });
         }
         
-        const result = await updateCategory(id, updates);
+        const result = await updateCategoryById(id, updates);
         
         if (result && result.success !== false) {
-          refreshCategory();
           return result;
         }
       } catch (error: any) {
@@ -275,7 +274,7 @@ export const useGetAllCategory = () => {
     error, 
     validationErrors,
     registerCategory,
-    updateCategoriesById,
+    updateCategories,
     refreshCategory,
     refetch: fetchCategory 
   };

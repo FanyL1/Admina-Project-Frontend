@@ -1,7 +1,7 @@
 // hooks/useGetAllRoles.ts
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { GetAllResponseOnlyName, OnlyNameData, OnlyNameResponse } from '@/app/type';
+import { GetAllResponseOnlyName, OnlyNameData, DegreeData} from '@/app/type';
 import { onlyNameSchem } from "@/schemas/onlyNameSchem"; 
 import { z } from "zod";
 
@@ -35,7 +35,6 @@ export const getAllDegree = async (): Promise<GetAllResponseOnlyName> => {
 
     toast.dismiss(toastId);
     //toast.success('¡Carreras obtenidas exitosamente!');
-    console.log(data.data);
     
     return {
       success: true,
@@ -88,12 +87,13 @@ export const createDegree = async (formData: OnlyNameData): Promise<any> =>{
     throw error;
   }
 };
-export const updateDegree = async ( id: string,  updates: { name?: string; status?: string }): Promise<any> => {
+
+export const updateDegreeById = async ( id: string,  updates: Partial<OnlyNameData>) => {
   
   let toastId: string | undefined;
   
   try {
-    if (!updates.name && !updates.status) {
+    if (!updates.name) {
       toast.error('Debe proporcionar al menos un campo para actualizar');
       throw new Error('Debe proporcionar al menos un campo para actualizar');
     }
@@ -113,7 +113,8 @@ export const updateDegree = async ( id: string,  updates: { name?: string; statu
     
     if (!res.ok) {
       toast.dismiss(toastId);
-      toast.error(data.error || 'Error al actualizar la carrera');  throw new Error(data.error || 'Error al actualizar la carrera');
+      toast.error(data.error || 'Error al actualizar la carrera');  
+      throw new Error(data.error || 'Error al actualizar la carrera');
     }
     
     toast.dismiss(toastId);
@@ -160,7 +161,7 @@ export const updateStatusDegree = async ( id: string): Promise<any> => {
 
 // Hook personalizado para obtener carerras
 export const useGetAllDegree = () => {
-  const [degrees, setDegrees] = useState<OnlyNameResponse[]>([]);
+  const [degrees, setDegrees] = useState<DegreeData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refetch, setRefetch] = useState(0);
@@ -209,40 +210,39 @@ export const useGetAllDegree = () => {
       return result;
     };
 
-    const updateDegreeById = async (id: string, updates: { name?: string; status?: string }) => {
-  setLoading(true);
-  setError(null);
-  setValidationErrors([]);
-  
-  try {
-    // Validar si el nombre está presente y es válido
-    if (updates.name) {
-      onlyNameSchem.parse({ name: updates.name });
-    }
-    
-    const result = await updateDegree(id, updates);
-    
-    if (result && result.success !== false) {
-      refreshDegrees();
-      return result;
-    }
-  } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      const formattedErrors = error.issues.map(err => ({
-        field: err.path.join('.'),
-        message: err.message
-      }));
+    const updateDegree = async (id: string, updates:Partial<OnlyNameData>) => {
+      setLoading(true);
+      setError(null);
+      setValidationErrors([]);
       
-      setValidationErrors(formattedErrors);
-      setError('Por favor, corrige los errores del formulario');
-    } else {
-      setError(error.message || 'Error al actualizar la carrera');
-    }
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
+      try {
+        // Validar si el nombre está presente y es válido
+        if (updates.name) {
+          onlyNameSchem.parse({ name: updates.name });
+        }
+        
+        const result = await updateDegreeById(id, updates);
+        
+        if (result && result.success !== false) {
+          return result;
+        }
+      } catch (error: any) {
+        if (error instanceof z.ZodError) {
+          const formattedErrors = error.issues.map(err => ({
+            field: err.path.join('.'),
+            message: err.message
+          }));
+          
+          setValidationErrors(formattedErrors);
+          setError('Por favor, corrige los errores del formulario');
+        } else {
+          setError(error.message || 'Error al actualizar la carrera');
+        }
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const fetchDegrees = async () => {
     setLoading(true);
@@ -275,7 +275,7 @@ export const useGetAllDegree = () => {
     error, 
     validationErrors,
     registerDegree,
-    updateDegreeById,
+    updateDegree,
     refreshDegrees,
     refetch: fetchDegrees 
   };

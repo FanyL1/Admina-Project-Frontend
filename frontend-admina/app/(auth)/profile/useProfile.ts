@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { useLogin } from '../../login/useLogin';
+import { useGetAllUsers } from '../(management)/managementUser/usePage';
 
 export interface ProfileFormData {
   name: string;
@@ -72,6 +73,7 @@ const profileSchema = z.object({
 
 export const useProfile = () => {
   const { sessionUser, token, getUserCreatedAt } = useLogin();
+  const { users} = useGetAllUsers()
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]);
@@ -85,16 +87,19 @@ export const useProfile = () => {
     confirmPass: '',
   });
 
+  const currentUser = users.find((u) => u.id === sessionUser?.id);
+
   useEffect(() => {
-    if (sessionUser) {
+    if (currentUser) {
       setFormData((prev) => ({
         ...prev,
-        name: sessionUser.name || '',
-        lastname: sessionUser.lastname || '',
-        email: sessionUser.email || '',
+        name: currentUser.name || '',
+        lastname: currentUser.lastname || '',
+        email: currentUser.email || '',
       }));
+
     }
-  }, [sessionUser]);
+  }, [currentUser]);
 
   const handleChange = (field: keyof ProfileFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -106,9 +111,12 @@ export const useProfile = () => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const updateProfile = async (): Promise<boolean> => {
+  const updateProfile = async (id: string | undefined,  sessionUser: any): Promise<boolean> => {
     let toastId: string | undefined;
 
+    console.log('datos actuales', formData);
+    console.log('datos a modificar',sessionUser);
+    
     try {
       // Validar con Zod
       const validatedData = profileSchema.parse({
@@ -120,24 +128,36 @@ export const useProfile = () => {
         confirmPass: formData.confirmPass,
       });
 
-      // Construir body para la petición
-      const body: Record<string, string> = {
-        name: validatedData.name,
-        lastname: validatedData.lastname,
-        email: validatedData.email,
-      };
+      const body: Record<string, string> = {};
+
+      if (validatedData.name !== sessionUser.name) {
+        body.name = validatedData.name;
+      }
+      if (validatedData.lastname !== sessionUser.lastname) {
+        body.lastname = validatedData.lastname;
+      }
+      if (validatedData.email !== sessionUser.email) {
+        body.email = validatedData.email;
+      }
 
       // Si se está cambiando la contraseña
       if (validatedData.newPass) {
         body.currentPass = validatedData.currentPass!;
         body.pass = validatedData.newPass;
       }
+            
+      if (Object.keys(body).length === 0) {
+        toast.error('No se realizaron cambios');
+        return false;
+      }
 
       toastId = toast.loading('Actualizando perfil...');
       setSaving(true);
 
+      console.log('Body enviado al backend:', body);
+      
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profile/update`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/update/${id}`,
         {
           method: 'PATCH',
           headers: {

@@ -10,14 +10,17 @@ import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { updateStatus, updateRol } from '../useManagement';
 
 export default function UsersPage() {
-  const { users, loading, error, refreshUsers } = useGetAllUsers();
-
-  
-  // Estados para los filtros
+  const { users, update, loading, error, refreshUsers } = useGetAllUsers();
   const [searchFields, setSearchFields] = React.useState({ name: true, lastname: true, dni: true, email: true, });
   const [rolFilter, setRolFilter] = React.useState('todos');
   const [estadoFilter, setEstadoFilter] = React.useState('todos');
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [formValues, setFormValues] = React.useState<Partial<UserData>>({
+    name: '',
+    lastname: '',
+    dni: '',
+    email: ''
+  });
 
   // Definir columnas
   const columns = [
@@ -55,9 +58,36 @@ export default function UsersPage() {
   ];
 
   // Manejadores de acciones
-  const handleEdit = (row: UserData) => {
-    toast.success(`Editando usuario: ${row.name} ${row.lastname}`);
-  };
+const handleEdit = async (updatedRow: UserData) => {
+
+  const originalUser = users.find((u) => u.id === updatedRow.id);
+  if (!originalUser) {
+    toast.error('No se encontró el usuario original para comparar');
+    return;
+  }
+
+  const data: Partial<UserData> = {};
+  
+  if (updatedRow.name?.trim() && updatedRow.name.trim() !== originalUser.name) {
+    data.name = updatedRow.name.trim();
+  }
+  if (updatedRow.lastname?.trim() && updatedRow.lastname.trim() !== originalUser.lastname) {
+    data.lastname = updatedRow.lastname.trim();
+  }
+  if (updatedRow.dni?.trim() && updatedRow.dni.trim() !== originalUser.dni) {
+    data.dni = updatedRow.dni.trim();
+  }
+  if (updatedRow.email?.trim() && updatedRow.email.trim() !== originalUser.email) {
+    data.email = updatedRow.email.trim();
+  }
+    
+  try {
+    await update(updatedRow.id, data); 
+  } catch (error) {   
+    toast.error('Error al actualizar los datos');
+    throw error;
+  }
+};
 
   //Cambio de estado
   const handleToggleStatus = async (row: UserData) => {
@@ -72,6 +102,7 @@ export default function UsersPage() {
     }
   };
 
+  //Cambiar rol
   const handleRolChange = async (row: UserData, newRol: string) => {
     try {
       await updateRol(row.id, newRol)
@@ -103,7 +134,8 @@ export default function UsersPage() {
         loading={loading}
         error={error}
         onRefresh={refreshUsers}
-        onEdit={handleEdit}
+        onEdit={() => { /* Solo para activar el ícono */ }}
+        onSaveEdit={handleEdit}
         onToggleStatus={handleToggleStatus}
         onRolChange={handleRolChange}
         getRowId={(row) => row.id}

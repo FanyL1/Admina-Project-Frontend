@@ -8,30 +8,7 @@ import { BarChart, PieChart } from '@mui/x-charts';
 import { TrendingUp, Assignment, Pending, Assessment } from '@mui/icons-material';
 
 import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest';
-
-// Función Helper para agrupar por cohortes académicas venezolanas
-export const getAcademicPeriod = (dateString: string | Date): string => {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1; // Enero es 0
-
-  // Periodo X-1: Marzo a Julio (incluidos)
-  if (month >= 3 && month <= 7) {
-    return `${year}-1`;
-  }
-  
-  // Periodo X-3: Agosto a Septiembre (incluidos)
-  if (month >= 8 && month <= 9) {
-    return `${year}-3`;
-  }
-
-  // Periodo X-2: Octubre a Febrero (Cruza de año)
-  if (month >= 10) {
-    return `${year}-2`;
-  } else {
-    return `${year - 1}-2`;
-  }
-};
+import {getAcademicPeriod} from './utils'
 
 export const StatisticsDashboard = () => {
   const [startDate, setStartDate] = useState<string>('');
@@ -237,9 +214,9 @@ export const StatisticsDashboard = () => {
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box>
-                <Typography variant="caption" color="text.secondary">Pendientes</Typography>
+                <Typography variant="caption" color="text.secondary">Solicitudes Estancadas</Typography>
                 <Typography variant="h4" sx={{ fontWeight: 700, color: '#ed6c02' }}>
-                  {filteredRequests.filter(r => r.status === 'Pendiente' || r.status === 'Revisando').length}
+                  {filteredRequests.filter(r => r.status === 'Enviado').length}
                 </Typography>
               </Box>
               <Pending sx={{ color: '#ed6c02', fontSize: 32 }} />

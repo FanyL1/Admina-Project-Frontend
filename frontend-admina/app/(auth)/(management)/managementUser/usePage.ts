@@ -57,6 +57,58 @@ export const getAllUsers = async (): Promise<GetAllUsersResponse> => {
   }
 };
 
+// Actualizar usuario
+export const updateUser = async (id: string, userData: Partial<UserData>) => {
+  let toastId: string | undefined;
+
+  try {
+    console.log(userData)
+    toastId = toast.loading('Actualizando usuario...');
+    const token = localStorage.getItem('authToken');
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/update/${id}`, {
+      method: 'PATCH', 
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (!res.ok) {
+      toast.dismiss(toastId);
+      toast.error(data.error || 'Error al actualizar el usuario');
+      return {
+        success: false,
+        message: data.error || 'Error al actualizar el usuario',
+        details: data.details,
+      };
+    }
+
+    toast.dismiss(toastId);
+    toast.success(data.message || '¡Usuario actualizado exitosamente!');
+    
+    return {
+      success: true,
+      message: data.message || 'Usuario actualizado exitosamente',
+      data: data.data,
+    };
+
+  } catch (error: any) {
+    if (toastId) toast.dismiss(toastId);
+    toast.error('Error de conexión con el servidor');
+    
+    return {
+      success: false,
+      message: 'Error de conexión con el servidor',
+      details: [{ field: 'general', message: error.message }],
+    };
+  }
+};
+
 // Hook para obtener usuarios
 export const useGetAllUsers = () => {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -85,6 +137,14 @@ export const useGetAllUsers = () => {
     setRefetch(prev => prev + 1);
   };
 
+  const update = async (id: string, userData: Partial<UserData>) => {
+    const result = await updateUser(id, userData);
+    if (result.success) {
+      refreshUsers(); // Refresca la lista de usuarios automáticamente tras actualizar exitosamente
+    }
+    return result;
+  };
+
   useEffect(() => {
     fetchUsers();
   }, [refetch]);
@@ -93,37 +153,9 @@ export const useGetAllUsers = () => {
     users, 
     loading, 
     error, 
+    update,
     refreshUsers,
     refetch: fetchUsers 
   };
 };
 
-// Hook alternativo para modo manual
-export const useGetAllUsersManual = () => {
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchUsers = async () => {
-    setLoading(true);
-    setError(null);
-    
-    const result = await getAllUsers();
-    
-    if (result.success && result.data) {
-      setUsers(result.data);
-      return result;
-    } else {
-      setError(result.message);
-      setUsers([]);
-      return result;
-    }
-  };
-
-  return { 
-    users, 
-    loading, 
-    error, 
-    fetchUsers 
-  };
-};

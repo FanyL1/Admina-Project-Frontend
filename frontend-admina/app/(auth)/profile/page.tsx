@@ -1,17 +1,6 @@
 'use client';
 import { useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Avatar,
-  Chip,
-  Grid,
-  TextField,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
+import { Box, Container, Typography, Paper, Avatar, Chip, Grid, TextField, IconButton, Tooltip,} from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import BadgeIcon from '@mui/icons-material/Badge';
@@ -31,6 +20,9 @@ import theme from '../../theme';
 import { useProfile } from './useProfile';
 import toast from 'react-hot-toast';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
+import { Copy } from '@/components/UX/Copy/handleCopy';
+import { useGetAllUsers } from '../(management)/managementUser/usePage';
+import { refresh } from 'next/cache';
 
 const statusColors: Record<string, string> = {
   active: '#4CAF50',
@@ -57,21 +49,18 @@ const {
   getFieldError 
 } = useProfile();  
   const [editing, setEditing] = useState(false);
+  const {users, refreshUsers} = useGetAllUsers();
 
+  const userSession = users.find((u) => u.id === sessionUser?.id);
+  
   const handleSave = async () => {
-    const ok = await updateProfile();
+    const ok = await updateProfile(sessionUser?.id, userSession);
     if (ok) {
       setEditing(false);
-      setTimeout(() => window.location.reload(), 1000);
+      refreshUsers()
     }
   };
 
-  const handleCopyEmail = () => {
-    if (sessionUser?.email) {
-      navigator.clipboard.writeText(sessionUser.email);
-      toast.success('Correo copiado al portapapeles');
-    }
-  };
 
   const gradient =
     roleGradients[sessionUser?.role?.name || ''] ||
@@ -126,8 +115,8 @@ const {
                   mt: { xs: -6, sm: -10 },
                 }}
               >
-                {sessionUser?.name?.[0]?.toUpperCase()}
-                {sessionUser?.lastname?.[0]?.toUpperCase()}
+                {userSession?.name?.[0]?.toUpperCase()}
+                {userSession?.lastname?.[0]?.toUpperCase()}
               </Avatar>
 
               <Box
@@ -146,7 +135,7 @@ const {
                     wordBreak: 'break-word',
                   }}
                 >
-                  {sessionUser?.name} {sessionUser?.lastname}
+                  {userSession?.name} {userSession?.lastname}
                 </Typography>
                 <Box
                   sx={{
@@ -160,7 +149,7 @@ const {
                 >
                   <Chip
                     icon={<ShieldIcon sx={{ fontSize: 16 }} />}
-                    label={sessionUser?.role?.name}
+                    label={userSession?.role?.name}
                     size="small"
                     sx={{
                       background: gradient,
@@ -174,11 +163,11 @@ const {
                     <CircleIcon
                       sx={{
                         fontSize: 10,
-                        color: statusColors[sessionUser?.status || ''] || '#9E9E9E',
+                        color: statusColors[userSession?.status || ''] || '#9E9E9E',
                       }}
                     />
                     <Typography variant="caption" color="text.secondary">
-                      {sessionUser?.status === 'active' ? 'Activo' : 'Inactivo'}
+                      {userSession?.status === 'active' ? 'Activo' : 'Inactivo'}
                     </Typography>
                   </Box>
                 </Box>
@@ -381,18 +370,16 @@ const {
                   </Box>
                 ) : (
                   <>
-                    <InfoRow icon={<BadgeIcon />} label="Nombres" value={sessionUser?.name} />
-                    <InfoRow icon={<BadgeIcon />} label="Apellidos" value={sessionUser?.lastname} />
-                    <InfoRow icon={<BadgeIcon />} label="Cédula" value={sessionUser?.dni} />
+                    <InfoRow icon={<BadgeIcon />} label="Nombres" value={userSession?.name} />
+                    <InfoRow icon={<BadgeIcon />} label="Apellidos" value={userSession?.lastname} />
+                    <InfoRow icon={<BadgeIcon />} label="Cédula" value={userSession?.dni} />
                     <InfoRow
                       icon={<EmailIcon />}
                       label="Correo Electrónico"
-                      value={sessionUser?.email}
+                      value={userSession?.email}
                       action={
                         <Tooltip title="Copiar correo">
-                          <IconButton size="small" onClick={handleCopyEmail} sx={{ color: 'primary.main' }}>
-                            <ContentCopyIcon fontSize="small" />
-                          </IconButton>
+                          <Copy children text={`${userSession?.email}`} />
                         </Tooltip>
                       }
                     />
@@ -433,15 +420,15 @@ const {
                 <InfoRow
                   icon={<ShieldIcon />}
                   label="Rol"
-                  value={sessionUser?.role?.name}
+                  value={userSession?.role?.name}
                   chip
                   chipColor={gradient}
                 />
                 <InfoRow
-                  icon={<CircleIcon sx={{ color: statusColors[sessionUser?.status || ''] || '#9E9E9E' }} />}
+                  icon={<CircleIcon sx={{ color: statusColors[userSession?.status || ''] || '#9E9E9E' }} />}
                   label="Estado"
-                  value={sessionUser?.status === 'active' ? 'Activo' : 'Inactivo'}
-                  valueColor={statusColors[sessionUser?.status || ''] || '#9E9E9E'}
+                  value={userSession?.status === 'active' ? 'Activo' : 'Inactivo'}
+                  valueColor={statusColors[userSession?.status || ''] || '#9E9E9E'}
                 />
               </Paper>
             </Grid>

@@ -1,24 +1,25 @@
 'use client';
 import * as React from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import {  Box,  Button,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  TextField } from '@mui/material';
+import {  Box,  Button,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  TextField, Link } from '@mui/material';
 import toast from 'react-hot-toast';
 
 import DataTable from '@/components/UX/Table/Table';
 import { useGetAllDegree } from './useDegre';
-import { DegreeData } from '@/app/type';
+import { DegreeData, OnlyNameData } from '@/app/type';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { updateStatusDegree } from './useDegre';
+import { useState } from 'react';
 
 export default function CarrerasPage() {
-  const { degrees,  loading,  error,  validationErrors, registerDegree, updateDegreeById, refreshDegrees } = useGetAllDegree();
+  const { degrees,  loading,  error,  validationErrors, registerDegree, updateDegree, refreshDegrees } = useGetAllDegree();
   
-  const [openModal, setOpenModal] = React.useState(false);
-  const [editingDegree, setEditingDegree] = React.useState<DegreeData | null>(null);
-  const [degreeName, setDegreeName] = React.useState('');
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [searchFields, setSearchFields] = React.useState({ name: true });
-
+  const [openModal, setOpenModal] = useState(false);
+  const [editingDegree, setEditingDegree] = useState<DegreeData | null>(null);
+  const [degreeName, setDegreeName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchFields, setSearchFields] = useState({ name: true });
+  const [originalName, setOriginalName] = useState('')
   const columns = [
     { id: 'name', label: 'Nombre de la Carrera', numeric: false },
     { id: 'status', 
@@ -41,6 +42,7 @@ export default function CarrerasPage() {
     },
   ];
 
+  //Agregar
   const handleOpenCreate = () => {
     setEditingDegree(null);  // Modo creación
     setDegreeName('');       // Limpiar formulario
@@ -48,33 +50,35 @@ export default function CarrerasPage() {
   };
 
   const handleEdit = (row: DegreeData) => {
-    setEditingDegree(row);   //Guardar carrera a editar
-    setDegreeName(row.name); // Cargar nombre en el formulario
+    setEditingDegree({...row});   //Guardar carrera a editar
+    setDegreeName(row.name); // Cargar nombre
+    setOriginalName(row.name)
   };
 
-  //Cambio de estado
-    const handleToggleStatus = async (row: DegreeData) => {
-      try {
-        const newStatus = row.status === 'active' ? 'inactive' : 'active';
-        await updateStatusDegree(row.id);
-        toast.success(`Carerra ${newStatus === 'active' ? 'inactive' : 'activado'} exitosamente`);
-        await refreshDegrees(); 
-  
-      } catch (error) {   
-         toast.error('Error al cambiar el estado');
-      }
-    };
     
-  const handleSave = async () => {
-    if (!degreeName.trim()) {
+  const handleSave = async (updateRow?: any) => {
+
+    if(updateRow && typeof updateRow.preventDefault == 'function') {
+      updateRow.preventDefault();
+    }
+
+    const nameDegree = (updateRow && updateRow.name)?  updateRow.name.trim() : degreeName.trim();
+    if (!nameDegree) {
       toast.error('El nombre de la carrera es requerido');
       return;
     }
 
     try {
+      
       if (editingDegree) {
-        
-        await updateDegreeById(editingDegree.id, { name: degreeName });
+
+        const data: Partial<OnlyNameData> = {};
+          
+        if (nameDegree.trim() && nameDegree.trim() !== editingDegree.name) {
+          data.name = nameDegree.trim();
+        }
+
+        await updateDegree(editingDegree.id, data);
         
         setOpenModal(false);
         setDegreeName('');
@@ -83,24 +87,42 @@ export default function CarrerasPage() {
 
       } else {
 
-        console.log('Creando nueva carrera:', degreeName);
+        if (!degreeName.trim()) {
+          toast.error('El nombre de la carrera es requerido');
+          return;
+        }
+
         const result = await registerDegree({ name: degreeName, id: '' });
       
-
-       if (result && result.success === false) {
-         console.log('Error de validación:', result.details);
-        return; 
-      }
+        if (result && result.success === false) {
+          toast.error('Error de validación:', result.details);
+          return; 
+        }
         
         setOpenModal(false);
         setDegreeName('');
         toast.success('Carrera creada exitosamente');
       }
-      refreshDegrees();
+      setTimeout(()=>{
+        refreshDegrees();
+      }, 1000)
       
     } catch (error) {
-      console.error('Error en handleSave:', error);
+      toast.error('Error en handleSave');
       // El error ya se muestra en el hook con toast
+    }
+  };
+
+    //Cambio de estado
+  const handleToggleStatus = async (row: DegreeData) => {
+    try {
+      const newStatus = row.status === 'active' ? 'inactive' : 'active';
+      await updateStatusDegree(row.id);
+      toast.success(`Carerra ${newStatus === 'active' ? 'inactive' : 'activado'} exitosamente`);
+      await refreshDegrees(); 
+  
+    } catch (error) {   
+       toast.error('Error al cambiar el estado');
     }
   };
 
@@ -126,12 +148,6 @@ export default function CarrerasPage() {
   return (
     <Box sx={{ p: 3 }}>
       <AppToaster />
-      
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate}>
-          Nueva Carrera
-        </Button>
-      </Box>
 
       <DataTable
         data={degrees}
@@ -140,8 +156,30 @@ export default function CarrerasPage() {
         loading={loading}
         error={error}
         onRefresh={refreshDegrees}
-        onEdit={handleEdit}
+        onEdit={(row)=> handleEdit(row)}
+        onSaveEdit={handleSave}
         onToggleStatus={handleToggleStatus}
+        emptyTitle="Aún no hay carrera registrados"
+        emptyAction={
+          <Button
+            onClick={handleOpenCreate}
+            startIcon={<AddIcon />}
+            variant="contained"
+           >
+            Agregar Carrera
+          </Button>
+        }
+        toolbarActions={
+          <Button
+            onClick={handleOpenCreate}
+            variant="contained"
+            color="secondary"
+            startIcon={<AddIcon />}
+            sx={{ whiteSpace: 'nowrap' }}
+           >
+            Agregar Carrera
+          </Button>
+        }
         getRowId={(row) => row.id}
         filterFields={{
           searchFields,
@@ -161,7 +199,7 @@ export default function CarrerasPage() {
 
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {editingDegree ? 'Editar Carrera' : 'Nueva Carrera'}
+          Nueva Carrera
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -186,7 +224,7 @@ export default function CarrerasPage() {
             variant="contained" 
             disabled={loading || !degreeName.trim()}
           >
-            {loading ? 'Guardando...' : (editingDegree ? 'Actualizar' : 'Crear')}
+            {loading ? 'Guardando...' :  'Crear'}
           </Button>
         </DialogActions>
       </Dialog>

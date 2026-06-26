@@ -11,7 +11,8 @@ export const statusColor = (status: string) => {
       case 'Aprobado': return '#4caf50';
       case 'Rechazado': return '#f44336';
       case 'Pendiente': return '#ff9800';
-      case 'Observado': return '#dbcf1d';
+      case 'Observado': return '#ebcf32';
+      case 'Revisando': return '#1a5d94';
       default: return '#2196f3';
     }
 };

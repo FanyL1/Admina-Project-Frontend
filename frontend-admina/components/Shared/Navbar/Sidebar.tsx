@@ -69,6 +69,10 @@ export default function Sidebar() {
 
   const menuItems = getMenuItems(sessionUser?.role?.name || '');
 
+  const itemsFiltrados = isMobile 
+  ? menuItems.filter(item => item.label !== 'Estadisticas')
+  : menuItems;
+
   const handleLogout = async () => {
     await logout();
     router.push('/login');
@@ -104,7 +108,7 @@ export default function Sidebar() {
 
       {/* Menú */}
       <List sx={{ flex: 1, px: 1, py: 1 }}>
-        {menuItems.map((item) => (
+        {itemsFiltrados.map((item) => (
           <ListItem key={item.label} disablePadding sx={{ mb: 0.5}}>
             <ListItemButton
               component={Link}

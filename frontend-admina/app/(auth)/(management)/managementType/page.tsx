@@ -39,6 +39,7 @@ export default function ManagementRequestPage() {
     UC: 0,
     cohorte: false,
     liso: 'No aplica',
+    materia: 'No aplica',
     documents: [] as string[]
   });
 
@@ -63,6 +64,9 @@ export default function ManagementRequestPage() {
      liso: typeof procedure.requirements?.conditionLiso === 'boolean'
         ? (procedure.requirements.conditionLiso ? 'Liso' : 'No aplica')
         : (procedure.requirements?.conditionLiso || 'No aplica'),
+      materia: typeof procedure.requirements?.materia === 'string' 
+        ? (procedure.requirements.materia ? 'Incluir' : 'No aplica')
+        : (procedure.requirements?.materia || 'No aplica'),
       documents: procedure.requirements?.documents || []
     });
     setOpenModal(true);
@@ -127,6 +131,8 @@ export default function ManagementRequestPage() {
             {value?.UC ? <Chip label={`U.C: ≥${value.UC}`} size="small" color="primary" variant="outlined" /> : null}
             {value?.cohorte ? <Chip label="Exige Cohorte" size="small" color="info" variant="outlined" /> : null}
             {value?.liso && value.liso !== 'No aplica' ? <Chip label="Exige Liso" size="small" color="warning" variant="outlined" /> : null}
+            {value?.materia && value.materia !== 'No aplica' ? <Chip label="Exige Materia" size="small" color="warning" variant="outlined" /> : null}
+
           {value?.documents?.map((doc: string) => (
             <Chip 
               key={doc} 
@@ -229,6 +235,30 @@ const handleRemoveDocument = (docToDelete: string) => {
           loading={loading} 
           error={error}
           onRefresh={refreshtype} 
+          emptyTitle="Aún no hay trámites registrados"
+          emptyDescription="Agrega el primer trámite para configurar sus requisitos y comenzar a organizar el catálogo."
+          emptyAction={
+            <Button
+              component={Link}
+              href="/managementRequest/add"
+              variant="contained"
+              startIcon={<AddIcon />}
+            >
+              Agregar trámite
+            </Button>
+          }
+          toolbarActions={
+            <Button
+              component={Link}
+              href="/managementRequest/add"
+              variant="contained"
+              color="secondary"
+              startIcon={<AddIcon />}
+              sx={{ whiteSpace: 'nowrap' }}
+            >
+              Agregar trámite
+            </Button>
+          }
           renderAdditionalActions={(row: ProcedureTypeData) => (
             <Button 
               size="small" 
@@ -309,6 +339,15 @@ const handleRemoveDocument = (docToDelete: string) => {
                 />
               }
               label="Exigir condición de alumno Invicto/Liso"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox 
+                  checked={formRequirements.materia !== 'No aplica'} 
+                  onChange={(e) => setFormRequirements({ ...formRequirements, materia: e.target.checked ? 'Incluir' : 'No aplica' })}
+                />
+              }
+              label="El estudiante debe especificar la materia"
             />
 
             {/* SECCIÓN 2: DOCUMENTOS A CARGAR (ARRAY) */}

@@ -132,18 +132,14 @@ export interface GetAllRolesResponse {
 export interface OnlyNameData {
   id: string;
   name: string;
+  status?: string
 }
 
-export interface OnlyNameResponse {
-  id: string;
-  name: string;
-  status: string;
-}
 
 export interface GetAllResponseOnlyName {
   success: boolean;
   message: string;
-  data?: OnlyNameResponse[];
+  data?: DegreeData[];
 }
 
 export interface DegreeData {
@@ -166,9 +162,9 @@ export interface ProcedureRequirements {
   documents: string[];
   promedio?:number | null;
   UC?: number;
-  cohorte?: string;
+  cohorte?: string | boolean;
   conditionLiso?: boolean;
-  materia?: string;
+  materia?: string | null;
   [key: string]: unknown;
 }
 
@@ -216,9 +212,10 @@ export interface RequestDocumentData {
 
 export interface AdditionalAcademicData {
   promedio?: number | null;
-  uc?: number | null;
-  cohorte?: string | null;
+  UC?: number | null;
+  cohorte?: string | null | boolean;
   conditionLiso?: boolean | null;
+  materia: string | null | boolean;
 }
 
 export interface StudentRequestData {
@@ -230,14 +227,15 @@ export interface StudentRequestData {
   carrera_id: string;
   observation?: string | null;
   status: RequestStatus;
-  additional?: AdditionalAcademicData | null;
+  additionalData?: AdditionalAcademicData | null;
   created_at: string;
   updated_at?: string;
-  user?: RequestUserData;
+  revisor_id: string | null;
+  user?: UserData;
   type_procedure?: ProcedureTypeData;
   carrera?: OnlyNameData;
   documents?: RequestDocumentData[];
-  revisor_id: RequestUserData;
+  revisor?: UserData | null;
 }
 
 export interface RequestResponse {
@@ -260,4 +258,13 @@ export interface LogResponse {
   success: boolean;
   message: string;
   data?: LogsData[]
+}
+
+export interface ProfileFormData {
+  name: string;
+  lastname: string;
+  email: string;
+  currentPass: string;
+  newPass: string;
+  confirmPass: string;
 }

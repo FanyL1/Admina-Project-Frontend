@@ -2,38 +2,22 @@
 
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  Alert,
-  Box,
-  Button,
-  Chip,
-  Container,
-  Divider,
-  FormControl,
-  Grid,
-  InputLabel,
-  Link as MuiLink,
-  MenuItem,
-  Paper,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Chip, Container, Divider, FormControl, Grid, InputLabel, Link as MuiLink, MenuItem, Paper,
+  Select, Stack, TextField, Typography,} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
 import DescriptionIcon from '@mui/icons-material/Description';
 import toast from 'react-hot-toast';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+
 import { useLogin } from '@/app/login/useLogin';
-import { RequestDocumentData, RequestStatus, StudentRequestData } from '@/app/type';
-import {
-  getRequestById,
-  getRequestDocuments,
-  requestStatusOptions,
-  updateRequestReview,
-} from '@/app/services/requestService';
+import { RequestDocumentData, RequestStatus, StudentRequestData, UserData } from '@/app/type';
+import { getRequestById, getRequestDocuments, requestStatusOptions, updateRequestReview,} from '@/app/services/requestService';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { Copy } from '@/components/UX/Copy/handleCopy';
+import { DownloadRequest } from '@/components/UX/Buttons/download';
+import { useGetAllUsers } from '../../managementUser/usePage';
+import { statusColor } from '@/app/theme';
 
 const formatDate = (value?: string) => value
   ? new Date(value).toLocaleString('es-VE', {
@@ -53,6 +37,7 @@ export default function RequestDetailPage() {
   const [request, setRequest] = React.useState<StudentRequestData | null>(null);
   const [documents, setDocuments] = React.useState<RequestDocumentData[]>([]);
   const [status, setStatus] = React.useState<RequestStatus>('Enviado');
+  const {users} = useGetAllUsers();
   const [observation, setObservation] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -60,6 +45,14 @@ export default function RequestDetailPage() {
 
   const canReview = sessionUser?.role?.name === 'Administrativo' || sessionUser?.role?.name === 'Superusuario';
 
+    const searchRevisor = users.filter(
+      (u) => u.id === request?.revisor_id
+    )??[];
+
+    const nameRevisor = searchRevisor && searchRevisor.length > 0
+  ? `${searchRevisor[0].name} ${searchRevisor[0].lastname}`
+  : 'No asignado';
+  
   React.useEffect(() => {
     const loadRequest = async () => {
       try {
@@ -110,7 +103,25 @@ export default function RequestDetailPage() {
     }
   };
 
-  const isExternal = Boolean(request?.createByname && request.createByname !== 'No aplica');
+  const isExternal = Boolean(request?.createByname && request.createByname !== 'No Aplica');
+  
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+        <Typography>Cargando detalles de la solicitud...</Typography>
+      </Box>
+    );
+  }
+
+    if (error || !request) {
+      return (
+        <Box sx={{ p: 2 }}>
+          <Alert severity="error">
+            {error || 'No se pudo encontrar la información de esta solicitud.'}
+          </Alert>
+        </Box>
+      );
+    }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 3 } }}>
@@ -120,9 +131,6 @@ export default function RequestDetailPage() {
           <Button startIcon={<ArrowBackIcon />} onClick={() => router.back()} sx={{ alignSelf: 'flex-start' }}>
             Volver
           </Button>
-
-          {loading && <Typography>Cargando...</Typography>}
-          {error && <Alert severity="error">{error}</Alert>}
 
           {!loading && request && (
             <>
@@ -135,9 +143,21 @@ export default function RequestDetailPage() {
                       </Typography>
                       <Typography color="text.secondary">Creada el {formatDate(request.created_at)}</Typography>
                       <Typography color="black">N. Soliditud: <strong>{request.id}</strong> &nbsp;<Copy children text={request.id}/></Typography>
+                      <Typography color="black">Revisor Asignado: <strong>{nameRevisor}</strong></Typography>
 
                     </Box>
-                    <Chip label={request.status} color="primary" sx={{ alignSelf: { xs: 'flex-start', sm: 'center' } }} />
+                    <Box sx={{display:'flex', justifyContent:'center', alignContent:'center', alignItems:'center'}}>
+                      <Chip label={request.status} sx={{color:'white', backgroundColor:statusColor(request.status), alignItems: { xs: 'flex-center', sm: 'center' } }} />
+                      <PDFDownloadLink
+                        document={<DownloadRequest data={request} nameRevisor={nameRevisor} />}
+                        fileName={`Solicitud_${request.id}.pdf`}
+                        style={{ textDecoration: 'none' }} 
+                      >
+                        <Button variant='outlined' sx={{ ml: '10px', height: '50px', mt: { xs: '5px' } }}>
+                          Descargar Solicitud 
+                        </Button>
+                      </PDFDownloadLink>
+                    </Box>
                   </Stack>
 
                   <Divider />
@@ -177,6 +197,56 @@ export default function RequestDetailPage() {
                       <Typography sx={{ fontWeight: 700 }}>{formatDate(request.updated_at)}</Typography>
                     </Grid>
                   </Grid>
+                  
+                  {request.additionalData !== null && (<Box>
+                    <Divider />
+                    <Typography color="text.secondary" sx={{}}></Typography>
+                    <Grid container spacing={3} sx={{mt:'10px'}}>
+                      
+                      <Grid size={{ xs: 12, md: 6}}>
+                        {request.additionalData?.cohorte && request.additionalData?.cohorte !== null &&
+                          <Box>
+                            <Typography sx={{}}>
+                              Cohorte: <strong>{request.additionalData?.cohorte} </strong>
+                            </Typography>
+                          </Box>
+                        }
+                        {request.additionalData?.conditionLiso && request.additionalData?.conditionLiso !== null &&
+                          <Box>
+                            <Typography sx={{}}>
+                              Rendimiento: <strong>{request.additionalData?.conditionLiso == true ? 'Semestre anterior invicto (Liso)' : 'Posee materias reprobadas'}</strong>
+                            </Typography>
+                          </Box>
+                        }
+                        
+                        {request.additionalData?.promedio && request.additionalData?.promedio !== 0 &&
+                          <Box>
+                            <Typography sx={{}}>
+                              Promedio:  <strong>{request.additionalData?.promedio}</strong>
+                            </Typography>
+                          </Box>
+                        }
+                        
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        {request.additionalData?.UC && request.additionalData?.UC > 0 &&
+                          <Box>
+                            <Typography sx={{}}>
+                              Unidades de Credito Aprobadas (UA): <strong>{request.additionalData?.UC}</strong>
+                            </Typography>
+                          </Box>
+                        }
+                        {request.additionalData?.materia && request.additionalData?.materia !== '' &&
+                          <Box>
+                            <Typography sx={{}}>
+                              Materia:  <strong>{request.additionalData?.materia}</strong>
+                            </Typography>
+                          </Box>
+                        }
+                      </Grid>
+                    </Grid>
+                  </Box>)}
+
                 </Stack>
               </Paper>
 

@@ -5,7 +5,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import { useGetAllRequest } from '@/app/(auth)/(management)/request/useRequest';
 import { statusColor } from '@/app/theme';
-
+import { useGetAllUsers } from '@/app/(auth)/(management)/managementUser/usePage';
+import React from 'react';
 interface RecentActivityProps {
   title: string; 
 }
@@ -14,7 +15,22 @@ export const RecentActivity = ({ title }: RecentActivityProps) => {
 
   const { requestUser, loading } = useGetAllRequest();
   const recentRequests = requestUser ? requestUser.slice(0, 3) : [];
-  console.log(requestUser)
+  const {users} =  useGetAllUsers()
+
+const RequestRevisor = React.useMemo(() => {
+  return recentRequests.map((request) => {
+    const revisor = users.find((u) => u.id === request.revisor_id);
+
+    return {
+      ...request,
+      assignedUser: revisor 
+        ? `${revisor.name} ${revisor.lastname}`
+        : 'No asignado'
+    };
+  });
+}, [recentRequests, users]);
+  console.log(RequestRevisor);
+
   return (
     <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
       <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
@@ -32,7 +48,7 @@ export const RecentActivity = ({ title }: RecentActivityProps) => {
         </Typography>
       ) : (
         <List disablePadding>
-          {recentRequests.map((activity, index) => (
+          {RequestRevisor.map((activity, index) => (
             <Box key={activity.id}>
               <ListItem sx={{ px: 0, py: 1.5 }}>
                 <Box sx={{display: 'flex', justifyContent:'space-between', width:"100%"}}>
@@ -41,7 +57,7 @@ export const RecentActivity = ({ title }: RecentActivityProps) => {
                        <strong> {activity.type_procedure?.name || 'Solicitud de Trámite'}</strong>
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        Revisor asignado: {activity?.revisor_id?.name || 'No asignado'} {activity?.revisor_id?.lastname}
+                        Revisor asignado: {activity.assignedUser}
                       </Typography>
                     </Box>
                     <Box>

@@ -14,7 +14,8 @@ const saveSession = (session: Session) => {
     Cookies.set('userSession', JSON.stringify(session), { expires: 1 }); // 1 día
     Cookies.set('userRole', session.user?.role?.name || '', { expires: 1 });
     Cookies.set('userToken', session.token || '', { expires: 1 });
-     
+    Cookies.set('user', JSON.stringify(session.user), { expires: 1 }); 
+
     if (session.token) {
       localStorage.setItem('authToken', session.token);
     }
@@ -149,12 +150,32 @@ export const useLogin = () => {
   const [validationErrors, setValidationErrors] = useState<Array<{ field: string; message: string }>>([]);
   const [session, setSession] = useState<Session | null>(null);
 
-  // Cargar sesión al montar el componente
-  useEffect(() => {
+    // Cargar sesión al montar el componente
+  const refreshSession = () => {
     const savedSession = getSession();
     if (savedSession) {
       setSession(savedSession);
     }
+  }
+
+    useEffect(() => {
+    refreshSession();
+
+    const handleStorageChange = () => {
+      refreshSession();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange);
+      window.addEventListener('session-updated', handleStorageChange);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('session-updated', handleStorageChange);
+      }
+    };
   }, []);
 
   const loginUser = async (formData: LoginData) => {
@@ -194,6 +215,7 @@ export const useLogin = () => {
       }
     }
     
+    
     setLoading(false);
     return result;
   };
@@ -206,7 +228,7 @@ export const useLogin = () => {
   };
 
   // Función para obtener la fecha de creación formateada
-  const getUserCreatedAt = (format: string) => {
+  const getUserCreatedAt = () => {
     if (!session?.user?.created_at) return 'Fecha no disponible';
     
     const date = new Date(session.user.created_at)
@@ -230,5 +252,6 @@ export const useLogin = () => {
     sessionUser: session?.user,
     token: session?.token,
     getUserCreatedAt,
+    refreshSession
   };
 };

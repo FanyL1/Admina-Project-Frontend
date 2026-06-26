@@ -8,9 +8,11 @@ import toast from 'react-hot-toast';
 import { Box } from '@mui/material';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { updateStatus} from '../useManagement';
+import { useGetAllUsers } from '../managementUser/usePage';
 
 export default function UsersPage() {
   const { users, loading, error, refreshUsers } = useGetAllStudents();
+  const {update} =  useGetAllUsers()
 
   
   // Estados para los filtros
@@ -47,9 +49,37 @@ export default function UsersPage() {
   ];
 
   // Manejadores de acciones
-  const handleEdit = (row: UserData) => {
-    toast.success(`Editando usuario: ${row.name} ${row.lastname}`);
-  };
+const handleEdit = async (updatedRow: UserData) => {
+
+  const originalUser = users.find((u) => u.id === updatedRow.id);
+  if (!originalUser) {
+    toast.error('No se encontró el usuario original para comparar');
+    return;
+  }
+
+  const data: Partial<UserData> = {};
+  
+  if (updatedRow.name?.trim() && updatedRow.name.trim() !== originalUser.name) {
+    data.name = updatedRow.name.trim();
+  }
+  if (updatedRow.lastname?.trim() && updatedRow.lastname.trim() !== originalUser.lastname) {
+    data.lastname = updatedRow.lastname.trim();
+  }
+  if (updatedRow.dni?.trim() && updatedRow.dni.trim() !== originalUser.dni) {
+    data.dni = updatedRow.dni.trim();
+  }
+  if (updatedRow.email?.trim() && updatedRow.email.trim() !== originalUser.email) {
+    data.email = updatedRow.email.trim();
+  }
+    
+  try {
+    await update(updatedRow.id, data); 
+    await refreshUsers(); 
+  } catch (error) {   
+    toast.error('Error al actualizar los datos');
+    throw error;
+  }
+};
 
   //Cambio de estado
   const handleToggleStatus = async (row: UserData) => {
@@ -81,7 +111,8 @@ export default function UsersPage() {
         loading={loading}
         error={error}
         onRefresh={refreshUsers}
-        onEdit={handleEdit}
+        onEdit={() => { /* Solo para activar el ícono */ }}
+        onSaveEdit={handleEdit}
         onToggleStatus={handleToggleStatus}
         getRowId={(row) => row.id}
         filterFields={{

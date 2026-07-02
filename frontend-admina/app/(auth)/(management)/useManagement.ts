@@ -17,6 +17,7 @@ export const updateStatus = async (id: string) => {
     const data = await res.json();
 
     if (!res.ok) {
+      toast.error('¡Error al cambiar estado!');
       throw new Error(data.error || 'Error al actualizar el estado');
     }
 
@@ -25,6 +26,7 @@ export const updateStatus = async (id: string) => {
 
     return data;
   } catch (error) {
+    toast.error('¡Error al cambiar estado!');
     throw error;
   }
 };
@@ -47,6 +49,7 @@ export const updateRol = async (id: string,  roleName: string) => {
     const data = await res.json();
 
     if (!res.ok) {
+      toast.error('¡Error al cambiar rol!');
       throw new Error(data.error || 'Error al actualizar el rol');
     }
 
@@ -55,6 +58,8 @@ export const updateRol = async (id: string,  roleName: string) => {
 
     return data;
   } catch (error) {
+    if (toastId) toast.dismiss(toastId);
+    toast.error('Error de conexión con el servidor');
     throw error;
   }
 };

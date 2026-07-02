@@ -2,9 +2,12 @@ import { Box, Paper, Typography, Avatar, Chip } from '@mui/material';
 import { School, AdminPanelSettings, SupervisorAccount } from '@mui/icons-material';
 
 import { useLogin } from '@/app/login/useLogin';
+import { useGetAllUsers } from '@/app/(auth)/(management)/managementUser/usePage';
 
 export const WelcomeBanner = () => {
   const {sessionUser} = useLogin()
+  const {users} = useGetAllUsers()
+  const userSession = users.find((u) => u.id === sessionUser?.id);
   const roleGradients: Record<string, string> = {
     Estudiante: 'linear-gradient(135deg, #32539A, #6586CD)',
     Administrativo: 'linear-gradient(135deg, #0c1527, #32539A)',
@@ -29,10 +32,10 @@ export const WelcomeBanner = () => {
           </Avatar>
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-              ¡Bienvenido, {sessionUser?.name} {sessionUser?.lastname}!
+              ¡Bienvenido, {userSession?.name} {userSession?.lastname}!
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, color:'white' }}>
-              Rol: {sessionUser?.role?.name}
+              Rol: {userSession?.role?.name}
             </Typography>
           </Box>
         </Box>

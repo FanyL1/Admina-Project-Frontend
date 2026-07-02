@@ -34,7 +34,6 @@ export const getAlltype = async (): Promise<GetAllTypeResponse> => {
 
     toast.dismiss(toastId);
     //toast.success('¡Tramite obtenidas exitosamente!');
-    console.log(data.data);
     
     return {
       success: true,
@@ -193,7 +192,6 @@ export const useGetAlltype = () => {
     fetchtype();
   }, [refetch]);
 
-  console.log(types)
   return { 
     types, 
     loading, 

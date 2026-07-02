@@ -33,7 +33,7 @@ export default function ManagementRequestPage() {
   const [openModal, setOpenModal] = React.useState(false);
   const [selectedProcedure, setSelectedProcedure] = React.useState<ProcedureTypeData | null>(null);
   
-  // 💡 Estado dinámico que incluye TODAS las posibles configuraciones (incluso las nuevas)
+  // Estado dinámico que incluye TODAS las posibles configuraciones (incluso las nuevas)
   const [formRequirements, setFormRequirements] = React.useState({
     promedio: 0,
     UC: 0,
@@ -123,15 +123,15 @@ export default function ManagementRequestPage() {
       id: 'requirements',
       label: 'Requisitos Configurables',
       numeric: false,
-      // 💡 MAPEO VISUAL DE LOS REQUISITOS EN LA CELDA
+      // MAPEO VISUAL DE LOS REQUISITOS EN LA CELDA
       render: (value: ProcedureTypeData['requirements'], row: ProcedureTypeData) => (
         <Box sx={{ display: 'flex',flexDirection:'row', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
-            {value?.promedio ? <Chip label={`Promedio: ≥${value.promedio}`} size="small" color="primary" variant="outlined" /> : null}
-            {value?.UC ? <Chip label={`U.C: ≥${value.UC}`} size="small" color="primary" variant="outlined" /> : null}
-            {value?.cohorte ? <Chip label="Exige Cohorte" size="small" color="info" variant="outlined" /> : null}
-            {value?.liso && value.liso !== 'No aplica' ? <Chip label="Exige Liso" size="small" color="warning" variant="outlined" /> : null}
-            {value?.materia && value.materia !== 'No aplica' ? <Chip label="Exige Materia" size="small" color="warning" variant="outlined" /> : null}
+            {value?.promedio ? <Chip label={`Promedio: ≥${value.promedio}`} size="small" color="primary" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}}  /> : null}
+            {value?.UC ? <Chip label={`U.C: ≥${value.UC}`} size="small" color="primary" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}}  /> : null}
+            {value?.cohorte ? <Chip label="Exige Cohorte" size="small" color="info" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}}  /> : null}
+            {value?.liso && value.liso !== 'No aplica' ? <Chip label="Exige Liso" size="small" color="warning" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}} /> : null}
+            {value?.materia && value.materia !== 'No aplica' ? <Chip label="Exige Materia" size="small" color="warning" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}} /> : null}
 
           {value?.documents?.map((doc: string) => (
             <Chip 
@@ -240,7 +240,7 @@ const handleRemoveDocument = (docToDelete: string) => {
           emptyAction={
             <Button
               component={Link}
-              href="/managementRequest/add"
+              href="/managementType/add"
               variant="contained"
               startIcon={<AddIcon />}
             >
@@ -250,7 +250,7 @@ const handleRemoveDocument = (docToDelete: string) => {
           toolbarActions={
             <Button
               component={Link}
-              href="/managementRequest/add"
+              href="/managementType/add"
               variant="contained"
               color="secondary"
               startIcon={<AddIcon />}

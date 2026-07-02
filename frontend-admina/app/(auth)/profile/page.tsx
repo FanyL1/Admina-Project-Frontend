@@ -23,17 +23,7 @@ import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { Copy } from '@/components/UX/Copy/handleCopy';
 import { useGetAllUsers } from '../(management)/managementUser/usePage';
 import { refresh } from 'next/cache';
-
-const statusColors: Record<string, string> = {
-  active: '#4CAF50',
-  inactive: '#F44336',
-};
-
-const roleGradients: Record<string, string> = {
-  Estudiante: 'linear-gradient(135deg, #32539A, #6586CD)',
-  Administrativo: 'linear-gradient(135deg, #0c1527, #32539A)',
-  Superusuario: 'linear-gradient(135deg, #1a1a2e, #E94560)',
-};
+import {roleGradients, statusColorsUser} from '@/app/theme';
 
 export default function ProfilePage() {
 const { 
@@ -163,7 +153,7 @@ const {
                     <CircleIcon
                       sx={{
                         fontSize: 10,
-                        color: statusColors[userSession?.status || ''] || '#9E9E9E',
+                        color: statusColorsUser[userSession?.status || ''] || '#9E9E9E',
                       }}
                     />
                     <Typography variant="caption" color="text.secondary">
@@ -273,6 +263,17 @@ const {
                       error={!!getFieldError('lastname')}
                       helperText={getFieldError('lastname')}
                     />
+                    {sessionUser?.role?.name == 'Administrativo' || sessionUser?.role?.name == 'Superusuario' ? (
+                      <TextField
+                        label="Cedula"
+                        value={formData.dni}
+                        onChange={(e) => handleChange('dni', e.target.value)}
+                        fullWidth
+                        variant="outlined"
+                      size="small"
+                      error={!!getFieldError('dni')}
+                      helperText={getFieldError('dni')}
+                    />) : null}
                     <TextField
                       label="Correo Electrónico"
                       value={formData.email}
@@ -425,10 +426,10 @@ const {
                   chipColor={gradient}
                 />
                 <InfoRow
-                  icon={<CircleIcon sx={{ color: statusColors[userSession?.status || ''] || '#9E9E9E' }} />}
+                  icon={<CircleIcon sx={{ color: statusColorsUser[userSession?.status || ''] || '#9E9E9E' }} />}
                   label="Estado"
                   value={userSession?.status === 'active' ? 'Activo' : 'Inactivo'}
-                  valueColor={statusColors[userSession?.status || ''] || '#9E9E9E'}
+                  valueColor={statusColorsUser[userSession?.status || ''] || '#9E9E9E'}
                 />
               </Paper>
             </Grid>

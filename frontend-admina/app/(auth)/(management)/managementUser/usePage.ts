@@ -80,7 +80,7 @@ export const updateUser = async (id: string, userData: Partial<UserData>) => {
 
     if (!res.ok) {
       toast.dismiss(toastId);
-      toast.error(data.error || 'Error al actualizar el usuario');
+      toast.error('Error al actualizar el usuario');
       return {
         success: false,
         message: data.error || 'Error al actualizar el usuario',

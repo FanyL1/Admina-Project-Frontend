@@ -17,6 +17,7 @@ import { useGetAllCategory } from '../managementCategory/useCategory';
 import { useGetAllDegree } from '../managementDegree/useDegre';
 import { useGetAlltype } from '../managementType/useGetType';
 import { Copy } from '@/components/UX/Copy/handleCopy';
+import { useGetAllRequest } from '../request/useRequest';
 
 export default function ManagementRequestPage() {
   const [startDate, setStartDate] = React.useState('');
@@ -24,11 +25,12 @@ export default function ManagementRequestPage() {
   
   const { logs = [], loading, refreshLogs, refetch } = useGetAllLogs();
   const [openModal, setOpenModal] = React.useState(false);
-  const [modalData, setModalData] = React.useState<{ type: string; id: string; name: string } | null>(null);
+  const [modalData, setModalData] = React.useState<{ type: string; id: string; name: string, description: string } | null>(null);
   const { users = [] } = useGetAllUsers();
   const { categories } = useGetAllCategory();
   const { degrees } = useGetAllDegree();
   const { types } = useGetAlltype();
+  const {request} = useGetAllRequest();
   const { sessionUser, getUserCreatedAt } = useLogin();
 
   
@@ -70,7 +72,11 @@ export default function ManagementRequestPage() {
       case 'Carrera':
         const degree = degrees?.find((d: any) => d.id === resourceId);
         return degree?.name || 'Carrera no encontrado';
-        
+      
+      case 'Request':
+        const requests = request?.find((d: any) => d.id === resourceId);
+        return requests?.type_procedure?.name|| 'Solicitud no encontrado';
+
       case 'Type':
         const type = types?.find((t: any) => t.id === resourceId);
         return type?.name || 'Tipo no encontrado';
@@ -81,9 +87,9 @@ export default function ManagementRequestPage() {
   };
 
   // MANEJADOR PARA ABRIR EL MODAL CON LA DATA DEL RECURSO
-  const handleOpenResourceDetails = (resourceType: string, resourceId: string) => {
+  const handleOpenResourceDetails = (resourceType: string, resourceId: string, log: string) => {
     const name = getResourceName(resourceType, resourceId);
-    setModalData({ type: resourceType, id: resourceId, name });
+    setModalData({ type: resourceType, id: resourceId, name, description: log});
     setOpenModal(true);
   };
 
@@ -104,8 +110,10 @@ export default function ManagementRequestPage() {
             <Typography variant="body2"><strong>Cedula:</strong> {user.dni}</Typography>
             <Typography variant="body2"><strong>Correo Electrónico:</strong> {user.email}</Typography>
             <Typography variant="body2"><strong>Rol asignado:</strong> {user.role?.name || 'N/A'}</Typography>
-            <Typography variant="body2"><strong>Fecha de Registro:</strong> {getUserCreatedAt(user.created_at) || 'N/A'}</Typography>
+            <Typography variant="body2"><strong>Fecha de Registro:</strong> {getUserCreatedAt() || 'N/A'}</Typography>
             <Typography variant="body2"><strong>Estado:</strong> {user.status|| 'N/A'}</Typography>
+            <Divider/>
+            <Typography variant="body2"><strong>Descripcion:</strong> {modalData.description|| 'N/A'}</Typography>
           </Box>
         ) : null;
 
@@ -119,6 +127,8 @@ export default function ManagementRequestPage() {
             </Box>
             <Typography variant="body2"><strong>Nombre de Categoría:</strong> {category?.name || modalData.name}</Typography>
             <Typography variant="body2"><strong>Estado:</strong> {category?.status|| 'N/A'}</Typography>
+            <Divider/>
+            <Typography variant="body2"><strong>Descripcion:</strong> {modalData.description|| 'N/A'}</Typography>
           </Box>
         );
 
@@ -132,6 +142,27 @@ export default function ManagementRequestPage() {
             </Box>
             <Typography variant="body2"><strong>Carrera Universitaria:</strong> {degree?.name || modalData.name}</Typography>
             <Typography variant="body2"><strong>Estado:</strong> {degree?.status || 'N/A'}</Typography>
+            <Divider/>
+            <Typography variant="body2"><strong>Descripcion:</strong> {modalData.description|| 'N/A'}</Typography>
+          </Box>
+        );
+
+      case 'Request':
+        const requests = request?.find((d: any) => d.id === modalData.id);
+        return (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
+            <Box sx={{display:'flex', flexDirection:'row'}}>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace', ml:'3px', fontSize: '0.85rem', color: 'text.secondary' }}><strong>ID:</strong> {modalData.id}</Typography>
+              <Copy children text={`${requests?.id}`}/>
+            </Box>
+            <Typography variant="body2"><strong>Tramite:</strong> {requests?.type_procedure?.name|| 'N/A'}</Typography>
+            <Typography variant="body2"><strong>Carrera:</strong> {requests?.carrera?.name|| 'N/A'}</Typography>
+            <Typography variant="body2"><strong>Solicitante:</strong> {requests?.createByname == 'No Aplica' ? requests?.user?.name : requests?.createByname} {requests?.createByname == 'No Aplica' ? requests?.user?.lastname : ''}</Typography>
+            <Typography variant="body2"><strong>Cedula de Solicitante:</strong>{requests?.createByname == 'No Aplica' ? requests?.user?.dni : requests?.createByDNI}</Typography>
+            <Typography variant="body2"><strong>Revisor:</strong> {requests?.revisor?.name || 'No asignado'} {requests?.revisor?.lastname || ''}</Typography>
+            <Typography variant="body2"><strong>Estado:</strong> {requests?.status || 'N/A'}</Typography>
+            <Divider/>
+            <Typography variant="body2"><strong>Descripcion:</strong> {modalData.description|| 'N/A'}</Typography>
           </Box>
         );
 
@@ -167,7 +198,8 @@ export default function ManagementRequestPage() {
             )}
             <Typography variant="body2"><strong>Estado:</strong> {type?.status || 'No especificada'}</Typography>
             <Typography variant="body2"><strong>Fecha de Creacion:</strong> {type?.created_at|| 'N/A'}</Typography>
-
+            <Divider/>
+            <Typography variant="body2"><strong>Descripcion:</strong> {modalData.description|| 'N/A'}</Typography>
           </Box>
         );
 
@@ -270,7 +302,7 @@ export default function ManagementRequestPage() {
                       {/* Recurso afectado */}
                       <Box 
                         component="button" 
-                        onClick={() => handleOpenResourceDetails(log.resourceType, log.resourceId)}
+                        onClick={() => handleOpenResourceDetails(log.resourceType, log.resourceId, log.description)}
                         sx={{ 
                           bgcolor: 'action.hover', 
                           px: 0.8, 

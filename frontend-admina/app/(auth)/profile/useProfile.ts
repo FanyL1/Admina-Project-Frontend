@@ -8,6 +8,7 @@ import { useGetAllUsers } from '../(management)/managementUser/usePage';
 export interface ProfileFormData {
   name: string;
   lastname: string;
+  dni: string;
   email: string;
   currentPass: string;
   newPass: string;
@@ -25,7 +26,9 @@ const profileSchema = z.object({
     .min(3, 'El apellido debe tener al menos 3 caracteres')
     .max(50, 'El apellido no puede superar los 50 caracteres')
     .regex(/^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]+$/, 'El apellido solo puede contener letras y espacios'),
-  
+  dni: z.string()
+    .max(8,"Cedula inválida")
+    .regex(/^\d+$/, "Solo se permiten números"),
   email: z.string()
     .email('Correo electrónico inválido')
     .min(5, 'El email es demasiado corto')
@@ -81,6 +84,7 @@ export const useProfile = () => {
   const [formData, setFormData] = useState<ProfileFormData>({
     name: '',
     lastname: '',
+    dni: '',
     email: '',
     currentPass: '',
     newPass: '',
@@ -95,6 +99,7 @@ export const useProfile = () => {
         ...prev,
         name: currentUser.name || '',
         lastname: currentUser.lastname || '',
+        dni: currentUser.dni || '',
         email: currentUser.email || '',
       }));
 
@@ -113,15 +118,13 @@ export const useProfile = () => {
 
   const updateProfile = async (id: string | undefined,  sessionUser: any): Promise<boolean> => {
     let toastId: string | undefined;
-
-    console.log('datos actuales', formData);
-    console.log('datos a modificar',sessionUser);
     
     try {
       // Validar con Zod
       const validatedData = profileSchema.parse({
         name: formData.name,
         lastname: formData.lastname,
+        dni: formData.dni,
         email: formData.email,
         currentPass: formData.currentPass,
         newPass: formData.newPass,
@@ -138,6 +141,9 @@ export const useProfile = () => {
       }
       if (validatedData.email !== sessionUser.email) {
         body.email = validatedData.email;
+      }
+      if (validatedData.dni !== sessionUser.dni) {
+        body.dni = validatedData.dni;
       }
 
       // Si se está cambiando la contraseña

@@ -17,6 +17,17 @@ export const statusColor = (status: string) => {
     }
 };
 
+export const statusColorsUser: Record<string, string> = {
+  active: '#4CAF50',
+  inactive: '#F44336',
+};
+
+export const roleGradients: Record<string, string> = {
+  Estudiante: 'linear-gradient(135deg, #32539A, #6586CD)',
+  Administrativo: 'linear-gradient(135deg, #0c1527, #32539A)',
+  Superusuario: 'linear-gradient(135deg, #1a1a2e, #E94560)',
+};
+
 const theme = createTheme({
   typography: {
     fontFamily: 'Arial, Helvetica, sans-serif',

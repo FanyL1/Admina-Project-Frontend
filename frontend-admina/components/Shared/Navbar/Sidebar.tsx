@@ -20,6 +20,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useLogin } from '../../../app/login/useLogin';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useGetAllUsers } from '@/app/(auth)/(management)/managementUser/usePage';
 
 // Opciones según el rol
 const getMenuItems = (role: string) => {
@@ -62,10 +63,12 @@ export default function Sidebar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { sessionUser, logout, isAuthenticated } = useLogin();
+  const {users} = useGetAllUsers()
   
   const [open, setOpen] = useState(!isMobile);
 
   if (!isAuthenticated) return null;
+  const userSession = users.find((u) => u.id === sessionUser?.id);
 
   const menuItems = getMenuItems(sessionUser?.role?.name || '');
 
@@ -97,10 +100,10 @@ export default function Sidebar() {
       {open && (
         <Link href="/profile" style={{ textDecoration: 'none' }}>
           <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, borderBottom: 1, borderColor: 'divider' }}>
-            <Avatar sx={{ bgcolor: 'primary.main' }}>{sessionUser?.name?.[0]}</Avatar>
+            <Avatar sx={{ bgcolor: 'primary.main' }}>{userSession?.name?.[0]}</Avatar>
             <Box>
-              <Typography variant="body2" sx={{fontWeight:600}}>{sessionUser?.name} {sessionUser?.lastname}</Typography>
-              <Typography variant="caption" color="textSecondary">{sessionUser?.role?.name}</Typography>
+              <Typography variant="body2" sx={{fontWeight:600}}>{userSession?.name} {userSession?.lastname}</Typography>
+              <Typography variant="caption" color="textSecondary">{userSession?.role?.name}</Typography>
             </Box>
           </Box>
         </Link>

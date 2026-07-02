@@ -38,8 +38,8 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import InboxIcon from '@mui/icons-material/Inbox';
 import { visuallyHidden } from '@mui/utils';
 import { Order, DataTableProps } from '@/app/type';
-import { statusColor } from '@/app/theme';
-import { Chip } from '@mui/material';
+import { useState } from 'react';
+import { EditModal } from './editModal';
 
 export default function DataTable({
   data,
@@ -64,15 +64,15 @@ export default function DataTable({
 }: DataTableProps) {
 
   const theme = useTheme();
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<string>(columns[0]?.id || '');
-  const [selected, setSelected] = React.useState<readonly (string | number)[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [editModalOpen, setEditModalOpen] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState<any>(null);
-  const [savingEdit, setSavingEdit] = React.useState(false);
+  const [order, setOrder] = useState<Order>('asc');
+  const [orderBy, setOrderBy] = useState<string>(columns[0]?.id || '');
+  const [selected, setSelected] = useState<readonly (string | number)[]>([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
   const editColumns = columns.filter(col => (
     col.editable !== false && col.id !== 'status' && col.id !== 'role'
   ));
@@ -300,54 +300,15 @@ export default function DataTable({
     if (!selectedRow) return null;
 
     return (
-      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>
-          Editar {title}
-        </DialogTitle>
-        <DialogContent sx={{ mt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            {editColumns.map((column) => {
-              if (column.editOptions) {
-                return (
-                  <FormControl key={column.id} fullWidth>
-                    <InputLabel>{column.label}</InputLabel>
-                    <Select
-                      label={column.label}
-                      value={selectedRow[column.id] || ''}
-                      onChange={(e) => setSelectedRow({ ...selectedRow, [column.id]: e.target.value })}
-                    >
-                      {column.editOptions.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
-                      ))}
-                    </Select>
-                    {column.editOptions.length === 0 && (
-                      <FormHelperText>No hay opciones disponibles</FormHelperText>
-                    )}
-                  </FormControl>
-                );
-              }
-
-              return (
-                <TextField
-                  key={column.id}
-                  fullWidth
-                  label={column.label}
-                  value={selectedRow[column.id] || ''}
-                  onChange={(e) => setSelectedRow({ ...selectedRow, [column.id]: e.target.value })}
-                />
-              );
-            })}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditModalOpen(false)} variant="outlined" color="error" disabled={savingEdit}>
-            Cancelar
-          </Button>
-          <Button onClick={() => handleSaveEdit(selectedRow)} variant="contained" color="primary" disabled={savingEdit}>
-            {savingEdit ? 'Guardando...' : 'Guardar'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <EditModal 
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        rowData={selectedRow}
+        columns={editColumns}
+        title={title}
+        onSave={handleSaveEdit} 
+        saving={savingEdit}
+      />
     );
   };
 

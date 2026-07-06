@@ -9,8 +9,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  outputFileTracingRoot: path.join(__dirname, '../../'),
-  allowedDevOrigins: [`${process.env.NEXT_PUBLIC_IP_NETWORKING}`] // Esto es para permitir abrir el frontend por conexion WIFI. La variable tiene la ip de la computadora
 };
 
 export default nextConfig;

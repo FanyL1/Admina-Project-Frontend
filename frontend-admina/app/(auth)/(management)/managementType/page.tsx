@@ -29,6 +29,7 @@ export default function ManagementRequestPage() {
   const typesActive = types.filter(col => col.status !== 'inactive');
   const { categories } = useGetAllCategory();
 
+  
   // Estados para el Modal de Requisitos
   const [openModal, setOpenModal] = React.useState(false);
   const [selectedProcedure, setSelectedProcedure] = React.useState<ProcedureTypeData | null>(null);
@@ -45,7 +46,6 @@ export default function ManagementRequestPage() {
 
   const getCategoryName = (categoryId: string) => {
     const category = categories?.find(cat => cat.id === categoryId);
-    console.log(category?.name)
     return category?.name || 'Categoría no encontrada';
   };
 
@@ -106,7 +106,7 @@ export default function ManagementRequestPage() {
       category_id: row.category_id,
       requirements: row.requirements,
     } as any);
-  };
+  }; 
 
   const columns = [
     { id: 'category_id', 
@@ -235,7 +235,7 @@ const handleRemoveDocument = (docToDelete: string) => {
           loading={loading} 
           error={error}
           onRefresh={refreshtype} 
-          emptyTitle="Aún no hay trámites registrados"
+          emptyTitle="Aún  trámites registrados"
           emptyDescription="Agrega el primer trámite para configurar sus requisitos y comenzar a organizar el catálogo."
           emptyAction={
             <Button
@@ -386,7 +386,7 @@ const handleRemoveDocument = (docToDelete: string) => {
                     />
                   ))
                 ) : (
-                  <Typography variant="caption" color="text.secondary">No hay documentos asignados</Typography>
+                  <Typography variant="caption" color="text.secondary"> documentos asignados</Typography>
                 )}
               </Box>
             </Box>

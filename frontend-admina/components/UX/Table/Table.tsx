@@ -81,7 +81,7 @@ export default function DataTable({
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
- 
+
   const isRealError = error && 
     !error.toLowerCase().includes('exitosamente') && 
     !error.toLowerCase().includes('no hay datos');
@@ -135,8 +135,8 @@ export default function DataTable({
     }
   };
 
-
   const handleSaveEdit = async (updatedRow: any) => {
+    
     if (onSaveEdit) {
       setSavingEdit(true);
       try {
@@ -145,7 +145,9 @@ export default function DataTable({
         setSavingEdit(false);
       }
     }
-    setEditModalOpen(false);
+    setTimeout(()=>{
+      setEditModalOpen(false);
+    },3000)
     setSelectedRow(null);
   };
 
@@ -312,7 +314,7 @@ export default function DataTable({
     );
   };
 
-  if (loading && data.length === 0) {
+  if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
         <CircularProgress />

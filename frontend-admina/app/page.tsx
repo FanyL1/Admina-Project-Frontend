@@ -85,33 +85,28 @@ export default function HomePage() {
   const creditos = [
     {
       Image:'/C1.svg',
-      title: 'Nombre y Apellido',
-      description: 'Info de la persona',
+      title: 'Franny Luis',
+      description: 'Project Manager & Desarrollador Backend y Frontend',
     },
     {
       Image:'/C2.svg',
-      title: 'Nombre y Apellido',
-      description: 'Info de la persona',
+      title: 'Elvis Jimenez',
+      description: 'Desarrollador Backend',
     },
     {
       Image:'/C3.svg',
-      title: 'Nombre y Apellido',
-      description: 'Info de la persona',
+      title: 'Estefani Medina',
+      description: 'Desarrollador Frontend',
     },
     {
       Image:'/C1.svg',
-      title: 'Nombre y Apellido',
-      description: 'Info de la persona',
+      title: 'Carlos Lopez',
+      description: 'QA Tester',
     },
     {
       Image:'/C2.svg',
-      title: 'Nombre y Apellido',
-      description: 'Info de la persona',
-    },
-    {
-      Image:'/C3.svg',
-      title: 'Nombre y Apellido',
-      description: 'Info de la persona',
+      title: 'Oscar Agudo',
+      description: 'QA Tester',
     },
   ];
 
@@ -278,7 +273,7 @@ export default function HomePage() {
                   textAlign: 'justify',
                 }}
               >
-                Somos una alianza entre <strong style={{ color: theme.palette.primary.main }}>Admina</strong> y el <strong style={{ color: theme.palette.primary.main }}>Area de Ingenieria de Sistemas</strong>, 
+                <strong style={{ color: theme.palette.primary.main }}>Admina</strong>  es una herramineta desarrollada en el <strong style={{ color: theme.palette.primary.main }}>Area de Ingenieria de Sistemas</strong>, 
                 de la Universidada Nacional Experimental Romulo Gallegos, unimos la experiencia y tecnología para ofrecer una solucion integral para la gestión de procesos academicos en el area de estudio.
               </Typography>
 

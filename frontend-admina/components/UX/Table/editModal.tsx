@@ -29,9 +29,9 @@ export const EditModal = ({ open, onClose, rowData, columns, title, onSave, savi
   if (!open || !localRow) return null;
 
   const handleLocalSave = () => {
+    
     setValidationErrors({});
     const result = updateUserTable.safeParse(localRow);
-
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
@@ -41,7 +41,6 @@ export const EditModal = ({ open, onClose, rowData, columns, title, onSave, savi
       setValidationErrors(fieldErrors);
       return;
     }
-
     // Le devolvemos los datos listos y validados al padre
     onSave(localRow);
   };

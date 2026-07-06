@@ -66,7 +66,7 @@ export const updateUserTable = z.object({
     .max(8,"Cedula inválida")
     .regex(/^\d+$/, "Solo se permiten números")
     .optional(),
-  role: z.string()
+  rol: z.string()
     .uuid("Rol inválido")
     .optional(),
 });

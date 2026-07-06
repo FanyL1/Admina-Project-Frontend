@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import {Drawer, Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography, Avatar, useMediaQuery, useTheme} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -63,13 +63,14 @@ export default function Sidebar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { sessionUser, logout, isAuthenticated } = useLogin();
-  const {users} = useGetAllUsers()
+  const {users, refetch} = useGetAllUsers()
   
   const [open, setOpen] = useState(!isMobile);
 
   if (!isAuthenticated) return null;
   const userSession = users.find((u) => u.id === sessionUser?.id);
 
+  
   const menuItems = getMenuItems(sessionUser?.role?.name || '');
 
   const itemsFiltrados = isMobile 

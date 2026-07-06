@@ -5,7 +5,7 @@ import AppToaster from '@/components/UX/Toaster/AppToaster';
 export default function TramitesPage() {
 
   return (
-    <Box sx={{ p: { xs: 4, sm: 3, md: 4 } }}>
+    <Box sx={{ py: { xs: 3, sm: 3, md: 4 } }}>
       <AppToaster/>
 
       <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3, fontWeight: 'bold' }}>

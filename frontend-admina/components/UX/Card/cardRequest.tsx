@@ -118,72 +118,76 @@ export const CardRequest = () => {
 
   return (
     <Grid container spacing={3}>
-      {activeCategories.map((category: Category) => (
-        <Grid size={12} key={category.id}>
-          <Cards>
-            {/* Header de categoría */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                p: 2,
-                borderBottom: expandedCategory === category.id ? 1 : 0,
-                borderColor: 'divider',
-              }}
-              onClick={() => toggleCategory(category.id)}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}>
-                  {categoryIcons[category.name] || <Description />}
-                </Box>
-                <Box>
-                  <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
-                    {category.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Trámites disponibles en esta categoría
-                  </Typography>
-                </Box>
-              </Box>
-              <IconButton size="small">
-                {expandedCategory === category.id ? <ExpandLess /> : <ExpandMore />}
-              </IconButton>
-            </Box>
+      {activeCategories.map((category: Category) => {
+        // Filtramos los trámites para esta categoría una sola vez
+        const categoryTypes = activeTypes.filter((t) => t.category_id === category.id);
 
-            {/* Lista de trámites */}
-            <Collapse in={expandedCategory === category.id}>
-              <Box sx={{ p: 2 }}>
-                <Stack spacing={2}>
-                  {/* Aquí mapeas los tipos (trámites) */}
-                  {activeTypes.map((type) => (
-                    < Box  key={type.id}>
-                      { category.id == type.category_id && <Box
-                        key={type.id}
-                        sx={{
-                          p: 2,
-                          border: 1,
-                          borderColor: 'divider',
-                          borderRadius: 2,
-                          transition: 'all 0.2s ease',
-                          '&:hover': {
-                            bgcolor: 'action.hover',
-                            borderColor: 'primary.main',
-                          },
-                        }}
-                      >
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                          <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                              {type.name}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {/* Si tienes descripción, agrega aquí */}
-                              Trámite de {category.name}
-                            </Typography>
-                          </Box>
-                            <Buttons                     
+        return (
+          <Grid size={12} key={category.id}>
+            <Cards>
+              {/* Header de categoría */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  p: 2,
+                  borderBottom: expandedCategory === category.id ? 1 : 0,
+                  borderColor: 'divider',
+                }}
+                onClick={() => toggleCategory(category.id)}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}>
+                    {categoryIcons[category.name] || <Description />}
+                  </Box>
+                  <Box>
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
+                      {category.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {categoryTypes.length > 0 
+                        ? `Trámites disponibles: ${categoryTypes.length}` 
+                        : 'Sin trámites disponibles'}
+                    </Typography>
+                  </Box>
+                </Box>
+                <IconButton size="small">
+                  {expandedCategory === category.id ? <ExpandLess /> : <ExpandMore />}
+                </IconButton>
+              </Box>
+
+              {/* Lista de trámites */}
+              <Collapse in={expandedCategory === category.id}>
+                <Box sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    {categoryTypes.length > 0 ? (
+                      categoryTypes.map((type) => (
+                        <Box
+                          key={type.id}
+                          sx={{
+                            p: 2,
+                            border: 1,
+                            borderColor: 'divider',
+                            borderRadius: 2,
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              bgcolor: 'action.hover',
+                              borderColor: 'primary.main',
+                            },
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                            <Box>
+                              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                {type.name}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                Trámite de {category.name}
+                              </Typography>
+                            </Box>
+                            <Buttons
                               variant="contained"
                               size="small"
                               href={`/request/${type.id}/formRequest`}
@@ -191,29 +195,34 @@ export const CardRequest = () => {
                             >
                               Solicitar
                             </Buttons>
-                        </Box>
+                          </Box>
 
-                        <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
-                          
-                          {type.requirements && getAllRequirements(type.requirements).map((requeriment, index) =>(
-                            <Chip
-                            key={index}
-                            label={`📄 ${requeriment}`}
-                            size="small"
-                            variant="outlined"
-                          />
-                          ))}
-
+                          <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
+                            {type.requirements && getAllRequirements(type.requirements).map((requeriment, index) => (
+                              <Chip
+                                key={index}
+                                label={`📄 ${requeriment}`}
+                                size="small"
+                                variant="outlined"
+                              />
+                            ))}
+                          </Box>
                         </Box>
-                      </Box>}
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
-            </Collapse>
-          </Cards>
-        </Grid>
-      ))}
+                      ))
+                    ) : (
+                      <Box sx={{ py: 4, textAlign: 'center' }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                          No hay trámites disponibles en esta categoría actualmente.
+                        </Typography>
+                      </Box>
+                    )}
+                  </Stack>
+                </Box>
+              </Collapse>
+            </Cards>
+          </Grid>
+        );
+      })}
     </Grid>
   );
 };

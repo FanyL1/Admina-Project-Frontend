@@ -132,7 +132,7 @@ const categoryName = categories?.find(
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 8, md: 4 } }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, md: 4 } }}>
       <AppToaster />
       <Container maxWidth="lg">
         <Stack spacing={3}>
@@ -202,7 +202,7 @@ const categoryName = categories?.find(
                   }}
                   cedula={errorPromedio}
                 />
-                <FormControl fullWidth>
+                <FormControl>
                   <InputLabel>Carrera</InputLabel>
                   <Select value={degreeId} label="Carrera" onChange={(event) => setDegreeId(event.target.value)}>
                     {degrees.map((degree) => (

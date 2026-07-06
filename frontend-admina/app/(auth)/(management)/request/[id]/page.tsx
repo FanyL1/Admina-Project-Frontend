@@ -124,7 +124,7 @@ export default function RequestDetailPage() {
     }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 8, md: 3 } }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 4, md: 3 } }}>
       <AppToaster />
       <Container maxWidth="lg">
         <Stack spacing={3}>

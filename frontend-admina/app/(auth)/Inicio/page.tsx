@@ -16,7 +16,7 @@ export default function HomePage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Box sx={{ py: { xs: 8, sm: 4, md: 0.5}, }}>
+      <Box sx={{ py: { xs: 4, sm: 4, md: 0.5}, }}>
         <Container maxWidth="lg">
          
         <WelcomeBanner/>

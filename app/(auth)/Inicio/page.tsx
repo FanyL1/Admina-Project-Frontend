@@ -13,10 +13,10 @@ export default function HomePage() {
   const {sessionUser, getUserCreatedAt} = useLogin()
 
   if (!sessionUser) return null;
-  
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Box sx={{ py: { xs: 6, sm: 4, md: 0.5}, }}>
+      <Box sx={{ py: { xs: 8, sm: 4, md: 0.5}, }}>
         <Container maxWidth="lg">
          
         <WelcomeBanner/>

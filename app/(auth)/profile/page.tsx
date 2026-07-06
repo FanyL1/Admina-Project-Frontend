@@ -61,7 +61,7 @@ const {
       <AppToaster />
 
       {/* Header decorativo */}
-      <Box sx={{ py: { xs: 5, sm: 2, md: 0 } }}>
+      <Box sx={{ py: { xs: 8, sm: 2, md: 0 } }}>
 
         <Container maxWidth="lg">
           {/* Tarjeta principal - Avatar y datos principales */}

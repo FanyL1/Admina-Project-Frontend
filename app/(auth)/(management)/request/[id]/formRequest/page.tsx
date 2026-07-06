@@ -132,7 +132,7 @@ const categoryName = categories?.find(
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 4 } }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 8, md: 4 } }}>
       <AppToaster />
       <Container maxWidth="lg">
         <Stack spacing={3}>

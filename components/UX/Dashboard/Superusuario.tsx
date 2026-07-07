@@ -26,7 +26,7 @@ export const SuperUserDashboard = () => {
   )??[]
 
   return (
-    <Box sx={{ p: 1 }}>
+    <Box sx={{ py: {xs:6,md: 2} }}>
       {/* Tarjetas de Usuarios */}
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 4 }}>
         <Paper

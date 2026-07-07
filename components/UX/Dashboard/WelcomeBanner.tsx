@@ -31,7 +31,7 @@ export const WelcomeBanner = () => {
             {getRoleIcon(sessionUser?.role?.name)}
           </Avatar>
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h5" sx={{ fontSize:{xs:'20px',mb:'25px'}, fontWeight: 'bold' }}>
               ¡Bienvenido, {userSession?.name} {userSession?.lastname}!
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, color:'white' }}>

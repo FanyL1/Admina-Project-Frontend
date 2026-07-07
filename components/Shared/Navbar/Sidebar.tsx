@@ -91,9 +91,9 @@ export default function Sidebar() {
            <Typography variant="h6">Admina</Typography>
         </Box>}
         {!isMobile && (
-          <IconButton onClick={() => setOpen(!open)}>
-            {open ? <ChevronLeftIcon /> : <MenuIcon />}
-          </IconButton>
+            <IconButton onClick={() => setOpen(!open)}>
+              {open ? <ChevronLeftIcon /> : <MenuIcon />}
+            </IconButton>
         )}
       </Box>
 
@@ -149,12 +149,12 @@ export default function Sidebar() {
       <>
         <IconButton 
           onClick={() => setOpen(true)} 
-          sx={{ position: 'fixed', top: 16, left: 16, zIndex: 1100 }}
+          sx={{ position: 'fixed', top: 16, left: 16, zIndex: 1100, bgcolor:'#ffffff' }}
         >
           <MenuIcon />
         </IconButton>
         <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
-          <Box sx={{ width: 280 }}>{sidebarContent}</Box>
+          <Box sx={{ width: 260 }}>{sidebarContent}</Box>
         </Drawer>
       </>
     );
@@ -164,8 +164,8 @@ export default function Sidebar() {
     <Drawer
       variant="permanent"
       sx={{
-        width: open ? 280 : 80,
-        '& .MuiDrawer-paper': { width: open ? 280 : 80, transition: 'width 0.2s', boxSizing: 'border-box' },
+        width: open ? 260 : 80,
+        '& .MuiDrawer-paper': { width: open ? 260 : 80, transition: 'width 0.2s', boxSizing: 'border-box' },
       }}
     >
       {sidebarContent}

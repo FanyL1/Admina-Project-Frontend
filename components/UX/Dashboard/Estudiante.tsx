@@ -8,7 +8,7 @@ import { RecentActivity } from '@/components/UX/Dashboard/RecentActivity';
 export default function StudentDashboard() {
 
   return (
-    <Container maxWidth="xl" sx={{ py: 3 }}>     
+    <Container maxWidth="xl" sx={{ p: 0 }}>     
 
       {/* Solicitudes recientes resueltas */}
       <RecentActivity title="Solicitudes Recientes" />

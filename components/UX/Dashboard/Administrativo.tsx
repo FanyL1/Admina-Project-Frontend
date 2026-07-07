@@ -73,7 +73,7 @@ export default function AdminDashboard() {
     { value: 'Rechazado', label: 'Rechazado' },
   ];
   return (
-    <Container maxWidth="xl" sx={{ py: 3 }}>      
+    <Container maxWidth="xl" sx={{ py: {xs:6,md:2}}}>      
     
     <ResumAdmin/>
 

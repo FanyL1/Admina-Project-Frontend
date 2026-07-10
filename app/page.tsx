@@ -389,14 +389,14 @@ export default function HomePage() {
                   }}
                 >
                   <CardContent sx={{display:'flex',justifyContent:'center', alignContent:"center", flexDirection:'column'}}>
-                    <CardMedia
+                    {/* <CardMedia
                       component="img"
                       height="100"
                       width='100'
                       sx={{borderRadius:'50%', objectFit:'contain'}}
                       image={person.Image}
                       alt="Paella dish"
-                    />
+                    /> */}
                     <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                       {person.title}
                     </Typography>

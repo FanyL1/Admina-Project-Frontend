@@ -11,10 +11,15 @@ import { getRequests } from '@/app/services/requestService';
 import DataTable from '@/components/UX/Table/Table';
 import { statusColor } from '@/app/theme';
 import { getAcademicPeriod, formatDate } from '@/components/UX/Dashboard/utils'; 
-
+import { ModalFiltrosLocal } from '@/components/UX/Buttons/ModalDowloadTable';
+import { filtrarYExportarPDF } from '@/components/UX/Buttons/dowloadTable';
+import { useGetAllCategory } from '../managementCategory/useCategory';
+import { useGetAlltype } from '../managementType/useGetType';
 
 export default function ListRequestPage() {
   const [requests, setRequests] = React.useState<StudentRequestData[]>([]);
+  const {categories} = useGetAllCategory();
+  const {types} = useGetAlltype();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -25,7 +30,7 @@ export default function ListRequestPage() {
     typeName: true,
     status: true,
   });
-
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate] = React.useState('');
   const [selectedPeriod, setSelectedPeriod] = React.useState<string>(() => {
@@ -55,6 +60,9 @@ export default function ListRequestPage() {
     void Promise.resolve().then(loadRequests);
   }, [loadRequests]);
 
+  const handleProcesarDescarga = (filtrosSeleccionados: { periodo: string; categoria: string; tipoTramite: string }) => {
+    filtrarYExportarPDF(requests, filtrosSeleccionados);
+  };
 
   const tableRows = React.useMemo(() => {
     return requests
@@ -219,7 +227,27 @@ export default function ListRequestPage() {
               >
                 Limpiar Filtros
               </Button>
-            </Box>
+                <Box style={{ padding: '20px' }}>
+                  {/* Botón que acciona el flujo */}
+                  <Button 
+                    variant="outlined" 
+                    size="small"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    Descargar Reporte Filtrado
+                  </Button>
+
+                  {/* El modal controlado */}
+                  <ModalFiltrosLocal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onAplicarFiltros={handleProcesarDescarga}
+                    categories={categories}
+                    types={types}
+                    requests={requests}
+                  />
+                </Box>
+              </Box>
           </Paper>
 
           <DataTable

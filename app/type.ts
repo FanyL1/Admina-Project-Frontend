@@ -173,6 +173,7 @@ export interface ProcedureTypeData {
   name: string;
   category_id:string;
   requirements: ProcedureRequirements;
+  category?: OnlyNameData;
   status?: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;

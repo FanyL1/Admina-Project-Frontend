@@ -1,10 +1,8 @@
-// ComponentePDF.tsx
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { useGetAllUsers } from '@/app/(auth)/(management)/managementUser/usePage';
 import { StudentRequestData } from '@/app/type';
-import { request } from 'http';
-import { string } from 'zod';
+
 // Definir los estilos del PDF
 const styles = StyleSheet.create({
   page: {
@@ -19,7 +17,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 2,
-    borderBottomColor: '#0056b3', // Color institucional
+    borderBottomColor: '#2B364C', // Color institucional
     paddingBottom: 10,
     marginBottom: 20,
   },
@@ -33,7 +31,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#0056b3',
+    color: '#2B364C',
   },
   // Información de la Solicitud
   sectionTitle: {
@@ -41,8 +39,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 15,
     marginBottom: 8,
-    color: '#222222',
-    backgroundColor: '#f0f4f8',
+    color: '#ffffff',
+    backgroundColor: '#2B364C',
     padding: 4,
   },
   row: {
@@ -52,10 +50,11 @@ const styles = StyleSheet.create({
   label: {
     width: 120,
     fontWeight: 'bold',
-    color: '#555555',
+    color: '#000000',
   },
   value: {
     flex: 1,
+    color: '#000000',
   },
   footer: {
     position: 'absolute',
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#cccccc',
     paddingTop: 5,
     fontSize: 9,
-    color: '#777777',
+    color: '#000000',
   }
 });
 export const DownloadRequest = ({ data, nameRevisor }: { data: StudentRequestData, nameRevisor: string }) => {

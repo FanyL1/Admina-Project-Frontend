@@ -42,7 +42,8 @@ export default function RequestPage() {
   const [ucStudent, setUcStudent] = React.useState<number | null>(null);
   const [cohorteStudent, setCohorteStudent] = React.useState<string | null>(null);
   const [isLisoStudent, setIsLisoStudent] = React.useState<boolean | null>(null);
-  
+  const [materiaStudent, setMateriaStudent] = React.useState<string | null>(null);
+
   const tramite = types?.filter(
     (selecType) => selecType.id === idUrl
   ) ?? [];
@@ -110,7 +111,8 @@ const categoryName = categories?.find(
           promedio: promedioStudent, 
           UC: ucStudent, 
           cohorte: cohorteStudent,  
-          conditionLiso: isLisoStudent,  
+          conditionLiso: isLisoStudent, 
+          materia: materiaStudent, 
         }
       });
 
@@ -154,6 +156,14 @@ const categoryName = categories?.find(
                   </Stack>
                 </Box>
 
+                <FormControl fullWidth>
+                  <InputLabel>Carrera</InputLabel>
+                  <Select value={degreeId} label="Carrera" onChange={(event) => setDegreeId(event.target.value)}>
+                    {degrees.map((degree) => (
+                      <MenuItem key={degree.id} value={degree.id}>{degree.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <Paper variant="outlined" sx={{ p: 2 }}>
                   {externalApplicant ? (
                     <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -202,14 +212,25 @@ const categoryName = categories?.find(
                   }}
                   cedula={errorPromedio}
                 />
-                <FormControl fullWidth>
-                  <InputLabel>Carrera</InputLabel>
-                  <Select value={degreeId} label="Carrera" onChange={(event) => setDegreeId(event.target.value)}>
-                    {degrees.map((degree) => (
-                      <MenuItem key={degree.id} value={degree.id}>{degree.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                {tramite[0]?.requirements?.materia && <TextField
+                  fullWidth
+                  label="Materia"
+                  value={materiaStudent || ''}
+                  onChange={(event) => setMateriaStudent(event.target.value)}
+                  disabled={loading}
+                  sx={{
+                      maxWidth: {
+                        xs: '300px', 
+                        sm: '300px',
+                        md: '100%'
+                      },
+                      '& .MuiSelect-select': {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }
+                    }}
+                />}
 
                 <Stack spacing={2}>
                   {requirements.map((requirement) => (

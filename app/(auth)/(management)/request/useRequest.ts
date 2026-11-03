@@ -10,7 +10,7 @@ export const getAllRequest = async (): Promise<RequestResponse> => {
     
     const token = localStorage.getItem('authToken')
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/requests`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/requests`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export const getAllRequestByUserLogeado = async (userId: string | undefined): Pr
     
     const token = localStorage.getItem('authToken')
     console.log(userId)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/requests/user/${userId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/requests/user/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export const getAllRequestByRevisor = async (userId: string | undefined): Promis
     
     const token = localStorage.getItem('authToken')
     console.log(userId)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/requests/admin/${userId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/requests/admin/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

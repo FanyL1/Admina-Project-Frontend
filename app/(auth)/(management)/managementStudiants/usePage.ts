@@ -12,7 +12,7 @@ export const getAllStudents = async (): Promise<GetAllUsersResponse> => {
     
     const token = localStorage.getItem('authToken');
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/studiants`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/studiants`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

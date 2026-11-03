@@ -12,7 +12,7 @@ export const getAllcategory = async (): Promise<GetAllResponseOnlyName> => {
     
     const token = localStorage.getItem('authToken')
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export const createCategory= async (formData: OnlyNameData): Promise<any> =>{
     
     const token = localStorage.getItem('authToken');
     const validatedData = onlyNameSchem.parse({ name: formData.name });
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export const updateCategoryById = async ( id: string,  updates: Partial<OnlyName
     
     const token = localStorage.getItem('authToken');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export const updateStatusCategory = async ( id: string): Promise<any> => {
   try {
     const token = localStorage.getItem('authToken');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/status/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/status/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

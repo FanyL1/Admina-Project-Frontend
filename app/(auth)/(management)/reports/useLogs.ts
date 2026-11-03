@@ -10,7 +10,7 @@ export const getAllLogs = async (): Promise<LogResponse> => {
     
     const token = localStorage.getItem('authToken')
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/audit-logs`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/audit-logs`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

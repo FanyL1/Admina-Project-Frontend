@@ -10,7 +10,6 @@ import {
   ListItem,
   ListItemText,
   useTheme,
-  useMediaQuery,
   Container,
 } from '@mui/material';
 import Image from 'next/image';
@@ -23,7 +22,6 @@ import { Buttons } from '../../UX/Buttons/buttons';
 
 
 export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({ onNavClick }) => {  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
 
  const [currentPath, setCurrentPath] = useState('');
@@ -44,9 +42,7 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
     if (onNavClick) {
       onNavClick(sectionId); 
     }
-    if (isMobile) {
-      handleDrawerToggle();
-    }
+    setMobileOpen(false);
   };
 
   useEffect(() => {
@@ -149,8 +145,7 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
           </Box>
 
           {/* Menú Desktop */}
-          {!isMobile && (
-           <Box>
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             {currentPath == '/' && (<Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
               {menuItems.map((item) => (
                 <Box
@@ -192,26 +187,21 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
               ))}
             </Box>)}
            </Box>
-          )}
 
           {/* Botones Desktop */}
-          {!isMobile && (
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              {currentPath !== '/login' && (<Buttons variantType="tertiary" href="/login">
-                Iniciar Sesión
-              </Buttons>)}
-              {currentPath !== '/signUp' && (<Buttons variantType="primary" href="/signUp">
-                Registrarse
-              </Buttons>)}
-            </Box>
-          )}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
+            {currentPath !== '/login' && (<Buttons variantType="tertiary" href="/login">
+              Iniciar Sesión
+            </Buttons>)}
+            {currentPath !== '/signUp' && (<Buttons variantType="primary" href="/signUp">
+              Registrarse
+            </Buttons>)}
+          </Box>
 
           {/* Botón menú mobile */}
-          {isMobile && (
-            <IconButton onClick={handleDrawerToggle}>
-              <MenuIcon />
-            </IconButton>
-          )}
+          <IconButton onClick={handleDrawerToggle} sx={{ display: { xs: 'inline-flex', md: 'none' } }}>
+            <MenuIcon />
+          </IconButton>
 
           {/* Drawer Mobile */}
           <Drawer

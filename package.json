@@ -4,15 +4,24 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:network": "next dev -H 0.0.0.0",
+    "dev:android": "cap run android -l",
     "build": "next build",
+    "build:web": "next build",
+    "build:android": "next build && cap sync android",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/status-bar": "^8.0.4",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^9.0.1",
     "@mui/material": "^9.0.1",
+    "@mui/material-nextjs": "^9.5.0",
     "@mui/x-charts": "^9.5.0",
     "@react-pdf/renderer": "^4.5.1",
     "js-cookie": "^3.0.8",
@@ -27,6 +36,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
     "@tailwindcss/postcss": "^4",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
@@ -34,6 +44,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.5",
+    "prettier": "^3.9.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

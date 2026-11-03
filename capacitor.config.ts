@@ -8,6 +8,10 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'LIGHT',
       backgroundColor: '#FFFFFF'
+    },
+    // viewport-fit=cover desde el primer frame; evita el salto de layout.
+    SystemBars: {
+      initialViewportFitValueHint: 'cover'
     }
   }
 };

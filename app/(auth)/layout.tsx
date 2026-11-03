@@ -67,7 +67,13 @@ export default function AuthenticatedLayout({
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar />
-      <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, sm: 3 } }}>
+      <Box component="main" sx={{
+        flexGrow: 1,
+        minWidth: 0,
+        p: { xs: 2, sm: 3 },
+        pt: { xs: 'calc(16px + var(--safe-top))', sm: 'calc(24px + var(--safe-top))' },
+        pb: { xs: 'calc(16px + var(--safe-bottom))', sm: 'calc(24px + var(--safe-bottom))' },
+      }}>
         {children}
       </Box>
     </Box>

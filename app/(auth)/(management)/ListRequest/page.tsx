@@ -261,7 +261,7 @@ export default function ListRequestPage() {
             emptyTitle="No hay solicitudes registradas"
             emptyDescription="Cuando existan solicitudes que coincidan con los filtros, aparecerán listadas aquí."
             rowActions={(request) => (
-              <Button component={Link} href={`/request/${request.id}`} size="small" startIcon={<VisibilityIcon />}>
+              <Button component={Link} href={`/request/detail?id=${request.id}`} size="small" startIcon={<VisibilityIcon />}>
                 Ver
               </Button>
             )}

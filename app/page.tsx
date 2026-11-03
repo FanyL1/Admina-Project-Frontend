@@ -150,6 +150,7 @@ export default function HomePage() {
                   sx={{
                     height: '100%',
                     textAlign: 'center',
+                    position: 'relative',
                     transition: 'transform 0.3s, box-shadow 0.3s',
                     '&:hover': {
                       transform: 'translateY(-8px)',

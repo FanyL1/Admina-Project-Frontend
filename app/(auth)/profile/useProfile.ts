@@ -163,7 +163,7 @@ export const useProfile = () => {
       console.log('Body enviado al backend:', body);
       
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/update/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/update/${id}`,
         {
           method: 'PATCH',
           headers: {

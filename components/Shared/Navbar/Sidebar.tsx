@@ -149,7 +149,7 @@ export default function Sidebar() {
       <>
         <IconButton 
           onClick={() => setOpen(true)} 
-          sx={{ position: 'fixed', top: 16, left: 16, zIndex: 1100, bgcolor:'#ffffff' }}
+          sx={{ position: 'fixed', top: 'calc(16px + var(--safe-top))', left: 16, zIndex: 1100, bgcolor:'#ffffff' }}
         >
           <MenuIcon />
         </IconButton>

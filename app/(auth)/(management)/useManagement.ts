@@ -6,7 +6,7 @@ export const updateStatus = async (id: string) => {
     let toastId: string | undefined;
   try { 
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/status/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/status/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export const updateRol = async (id: string,  roleName: string) => {
     let toastId: string | undefined;
   try { 
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/role/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/role/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

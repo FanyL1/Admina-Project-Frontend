@@ -13,7 +13,7 @@ export const getAllUsers = async (): Promise<GetAllUsersResponse> => {
     toastId = toast.loading('Obteniendo usuarios...');   
     const token = localStorage.getItem('authToken');
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export const updateUser = async (id: string, userData: Partial<UserData>) => {
     toastId = toast.loading('Actualizando usuario...');
     const token = localStorage.getItem('authToken');
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/update/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/update/${id}`, {
       method: 'PATCH', 
       headers: {
         'Content-Type': 'application/json',

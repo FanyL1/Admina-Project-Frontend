@@ -49,7 +49,7 @@ export const SuperUserDashboard = () => {
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
                 {activeUsers.length}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1 }}>
                 <Typography variant="caption" sx={{ opacity: 0.8 }}>
                   Estudiantes: {activeUsers.filter(  (student) => student.role?.name == "Estudiante" ).length}
                 </Typography>
@@ -96,7 +96,7 @@ export const SuperUserDashboard = () => {
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
                 {inactiveUsers.length}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1 }}>
                 <Typography variant="caption" sx={{ opacity: 0.8 }}>
                   Estudiantes: {inactiveUsers.filter((student)=> student.role?.name == 'Estudiante').length}
                 </Typography>

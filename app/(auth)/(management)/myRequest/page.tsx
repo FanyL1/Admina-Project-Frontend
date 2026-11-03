@@ -104,7 +104,7 @@ export default function MyRequestPage() {
                       <TableCell>{formatDate(request.created_at)}</TableCell>
                       <TableCell><Chip label={request.status} size="small" sx={{background:statusColor(request.status), color:'white'}} suppressHydrationWarning/></TableCell>
                       <TableCell align="center">
-                        <Button component={Link} href={`/request/${request.id}`} size="small" startIcon={<VisibilityIcon />}>
+                        <Button component={Link} href={`/request/detail?id=${request.id}`} size="small" startIcon={<VisibilityIcon />}>
                           Ver
                         </Button>
                       </TableCell>

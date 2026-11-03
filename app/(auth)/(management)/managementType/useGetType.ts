@@ -11,7 +11,7 @@ export const getAlltype = async (): Promise<GetAllTypeResponse> => {
   try {
     
     const token = localStorage.getItem('authToken')
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/procedure-types`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/procedure-types`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export const updateType = async ( id: string,  updates: ProcedureTypeUpdates): P
     
     const token = localStorage.getItem('authToken');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/procedure-types/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/procedure-types/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export const updateStatusType = async ( id: string): Promise<any> => {
   try {
     const token = localStorage.getItem('authToken');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/procedure-types/status/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/procedure-types/status/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

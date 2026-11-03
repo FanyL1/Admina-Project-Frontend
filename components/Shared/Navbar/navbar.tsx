@@ -50,7 +50,7 @@ import { Buttons } from '../../UX/Buttons/buttons';
   const drawer = (
     <Box sx={{ width: 230, p: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
-        <IconButton onClick={handleDrawerToggle}>
+        <IconButton onClick={handleDrawerToggle} sx={{ mt: 1 }}>
           <CloseIcon />
         </IconButton>
       </Box>

@@ -57,7 +57,7 @@ export default function AdminDashboard() {
       label: 'Acciones',
       render: (row) => {
         return(
-          <Button component={Link} href={`/request/${row.id}`} size="small" startIcon={<VisibilityIcon />}>
+          <Button component={Link} href={`/request/detail?id=${row.id}`} size="small" startIcon={<VisibilityIcon />}>
                 Ver
           </Button>
         )

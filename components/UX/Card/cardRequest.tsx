@@ -190,7 +190,7 @@ export const CardRequest = () => {
                             <Buttons
                               variant="contained"
                               size="small"
-                              href={`/request/${type.id}/formRequest`}
+                              href={`/request/formRequest?id=${type.id}`}
                               sx={{ ml: 2 }}
                             >
                               Solicitar

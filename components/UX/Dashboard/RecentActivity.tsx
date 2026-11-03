@@ -79,7 +79,7 @@ const RequestRevisor = React.useMemo(() => {
                           <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 0.5 }}>
                           
                             <Chip label={activity.status} size="small" sx={{color:'white', ml:'5px', backgroundColor:statusColor(activity.status), height: 20, fontSize: '0.7rem' }}/>
-                            <Button component={Link} href={`/request/${activity.id}`} size="small" startIcon={<VisibilityIcon />}>
+                            <Button component={Link} href={`/request/detail?id=${activity.id}`} size="small" startIcon={<VisibilityIcon />}>
                               Ver
                             </Button>
                           </Box>
@@ -124,7 +124,7 @@ const RequestRevisor = React.useMemo(() => {
                           </Box>
                           <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 0.5 }}>
                           
-                            <Button component={Link} href={`/request/${activity.id}`} size="small" startIcon={<VisibilityIcon />}>
+                            <Button component={Link} href={`/request/detail?id=${activity.id}`} size="small" startIcon={<VisibilityIcon />}>
                               Ver
                             </Button>
                           </Box>

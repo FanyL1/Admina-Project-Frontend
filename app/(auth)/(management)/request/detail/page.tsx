@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Alert, Box, Button, Chip, Container, Divider, FormControl, Grid, InputLabel, Link as MuiLink, MenuItem, Paper,
   Select, Stack, TextField, Typography,} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -29,8 +29,9 @@ const formatDate = (value?: string) => value
   })
   : 'No disponible';
 
-export default function RequestDetailPage() {
-  const params = useParams<{ id: string }>();
+function RequestDetailContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id') ?? '';
   const router = useRouter();
   const { sessionUser } = useLogin();
   const revisorId = sessionUser?.id;
@@ -55,14 +56,19 @@ export default function RequestDetailPage() {
   
   React.useEffect(() => {
     const loadRequest = async () => {
+      if (!id) {
+        setError('No se indico la solicitud');
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
-        const data = await getRequestById(params.id);
+        const data = await getRequestById(id);
         if (!data) throw new Error('Solicitud no encontrada');
         setRequest(data);
         setStatus(data.status);
         setObservation(data.observation || '');
-        setDocuments(await getRequestDocuments(params.id));
+        setDocuments(await getRequestDocuments(id));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'No se pudo cargar la solicitud');
       } finally {
@@ -71,7 +77,7 @@ export default function RequestDetailPage() {
     };
 
     void Promise.resolve().then(loadRequest);
-  }, [params.id]);
+  }, [id]);
 
   const handleSave = async () => {
     if (!request) return;
@@ -268,7 +274,7 @@ export default function RequestDetailPage() {
                               </Box>
                             </Stack>
                             {document.router_file && (
-                              <MuiLink href={`${process.env.NEXT_PUBLIC_BACKEND_URL}${document.router_file}`}
+                              <MuiLink href={`${process.env.NEXT_PUBLIC_API_URL}${document.router_file}`}
                                target="_blank" 
                                rel="noreferrer">
                                 Ver documento
@@ -330,5 +336,19 @@ export default function RequestDetailPage() {
         </Stack>
       </Container>
     </Box>
+  );
+}
+
+export default function RequestDetailPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+          <Typography>Cargando detalles de la solicitud...</Typography>
+        </Box>
+      }
+    >
+      <RequestDetailContent />
+    </React.Suspense>
   );
 }

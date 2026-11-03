@@ -1,5 +1,8 @@
-/* Áreas seguras de la app nativa (notch, isla dinámica, barra de gestos).
-   Requieren viewport-fit=cover, ya configurado en app/layout.tsx. */
+/* Áreas seguras del dispositivo (notch, isla dinámica, barra de gestos).
+   Uso:
+     <Box className="safe-y">...</Box>       contenido de pantalla completa
+     <Box className="safe-bottom">...</Box>  barra fija inferior
+   Requiere viewport-fit=cover, configurado en app/layout.tsx. */
 .safe-top { padding-top: env(safe-area-inset-top); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 .safe-x {

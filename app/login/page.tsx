@@ -2,6 +2,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 import { TextField,  Typography, Box, Link, Paper,} from '@mui/material';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -158,6 +159,7 @@ export default function LoginPage() {
               ¿No tienes cuenta?{' '}
               <Link
                 href="/signUp"
+                component={NextLink}
                 sx={{
                   color: '#667eea',
                   textDecoration: 'none',

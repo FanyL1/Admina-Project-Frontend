@@ -1,5 +1,6 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   AppBar,
   Toolbar,
@@ -21,11 +22,12 @@ import Divider from '@mui/material/Divider';
 import { Buttons } from '../../UX/Buttons/buttons';
 
 
-export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({ onNavClick }) => {  const theme = useTheme();
+ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({ onNavClick }) => {  const theme = useTheme();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
- const [currentPath, setCurrentPath] = useState('');
- const [currentPath2, setCurrentPath2] = useState('');
+  // usePathname puede devolver "/login/" por trailingSlash; se normaliza.
+  const currentPath = (usePathname() || '/').replace(/\/+$/, '') || '/';
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -44,11 +46,6 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
     }
     setMobileOpen(false);
   };
-
-  useEffect(() => {
-    setCurrentPath(window.location.pathname);
-    setCurrentPath2(window.location.pathname);
-  }, []);
 
   const drawer = (
     <Box sx={{ width: 230, p: 2 }}>
@@ -70,20 +67,20 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
         ))}
         <Divider sx={{ my: 2 }} />
         <ListItem sx={{ flexDirection: 'column', gap: 1, mt: 2 }}>
-          {currentPath2 !== '/login' && (<Buttons
+          <Buttons
             variantType="primary"
             fullWidth
             href="/login"
           >
             Iniciar Sesión
-          </Buttons>)}
-          {currentPath2 !== '/signUp' && (<Buttons
+          </Buttons>
+          <Buttons
             variantType="tertiary"
             fullWidth
             href="/signUp"
           >
             Registrarse
-          </Buttons>)}
+          </Buttons>
         </ListItem>
       </List>)}
       { currentPath !== '/' && (<List> 
@@ -91,7 +88,7 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
           <ListItem 
             key={item.label} 
             sx={{ pb: 0, border: 'none', background: 'none'}}
-            onClick={() => window.location.href='/' }
+            onClick={() => router.push('/') }
             component="button"
           >
             <ListItemText primary={item.label} />
@@ -99,14 +96,14 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
         ))}
         <Divider sx={{ my: 2 }} />
         <ListItem sx={{ flexDirection: 'column', gap: 1, mt: 2 }}>
-          { currentPath2 !== '/login'  && (<Buttons
+          { currentPath !== '/login'  && (<Buttons
             variantType="primary"
             fullWidth
             href="/login"
           >
             Iniciar Sesión
           </Buttons>)}
-          {currentPath2 !== '/signUp' && (<Buttons
+          {currentPath !== '/signUp' && (<Buttons
             variantType="tertiary"
             fullWidth
             href="/signUp"
@@ -128,6 +125,7 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
         borderBottom: `1px solid ${theme.palette.secondary.main}`,
         top: 0,
         zIndex: 1100,
+        pt: 'var(--safe-top)',
       }}
     >
       <Container maxWidth="xl">
@@ -171,7 +169,7 @@ export const Navbar: React.FC<{ onNavClick?: (sectionId: string) => void }> = ({
                 <Box
                   key={item.label}
                   component="button"
-                  onClick={() => window.location.href='/'}
+                  onClick={() => router.push('/')}
                   sx={{
                     background: 'none',
                     border: 'none',

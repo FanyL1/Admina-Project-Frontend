@@ -11,7 +11,7 @@ export const getAllRoles = async (): Promise<GetAllRolesResponse> => {
     
     const token = localStorage.getItem('authToken')
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/role`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/role`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export const createRole = async (name: string): Promise<any> => {
     
     const token = localStorage.getItem('authToken')
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/role`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/role`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export const updateRole = async (id: string, name: string): Promise<any> => {
     
     const token = localStorage.getItem('authToken')
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/role/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/role/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export const deleteRole = async (id: string): Promise<any> => {
     const token = localStorage.getItem('authToken') || localStorage.getItem('token');
     const cleanToken = token?.replace(/undefined\.undefined\./g, '');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/roles/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/roles/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

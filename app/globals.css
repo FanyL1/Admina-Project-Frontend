@@ -1,0 +1,24 @@
+/* Áreas seguras del dispositivo (notch, isla dinámica, barra de gestos).
+   Capacitor inyecta --safe-area-inset-*; env() queda como respaldo en web.
+   Uso:
+     <Box className="safe-y">...</Box>       contenido de pantalla completa
+     <Box className="safe-bottom">...</Box>  barra fija inferior
+   Requiere viewport-fit=cover, configurado en app/layout.tsx. */
+:root {
+  --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+}
+
+.safe-top { padding-top: var(--safe-top); }
+.safe-bottom { padding-bottom: var(--safe-bottom); }
+.safe-x {
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+.safe-y {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+.safe-all { padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left); }

@@ -58,7 +58,7 @@ export const login = async (formData: LoginData): Promise<Session> => {
     const validatedData = loginSchema.parse(formData);   
     toastId = toast.loading('Iniciando sesión...');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

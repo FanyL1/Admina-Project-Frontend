@@ -14,7 +14,7 @@ export const signUp = async (formData: SignUpData): Promise<SignUpResponse> => {
     const validatedData = registerSchema.parse(formData);
     toastId = toast.loading('Registrando usuario...');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/signup`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

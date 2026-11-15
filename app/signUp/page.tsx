@@ -2,6 +2,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 import { TextField, Paper, Typography, Box, Link } from '@mui/material';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -182,6 +183,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             Al registrarte aceptas los {' '}
             <Link
               href="/terms"
+              component={NextLink}
               sx={{
                 color: '#667eea',
                 textDecoration: 'none',
@@ -216,6 +218,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             ¿Ya tienes cuenta?{' '}
             <Link
               href="/login"
+              component={NextLink}
               sx={{
                 color: '#667eea',
                 textDecoration: 'none',

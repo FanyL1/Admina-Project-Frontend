@@ -12,7 +12,7 @@ export const getAllDegree = async (): Promise<GetAllResponseOnlyName> => {
     
     const token = localStorage.getItem('authToken')
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/degree`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/degree`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export const createDegree = async (formData: OnlyNameData): Promise<any> =>{
     
     const token = localStorage.getItem('authToken');
     const validatedData = onlyNameSchem.parse({ name: formData.name });
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/degree`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/degree`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export const updateDegreeById = async ( id: string,  updates: Partial<OnlyNameDa
     
     const token = localStorage.getItem('authToken');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/degree/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/degree/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export const updateStatusDegree = async ( id: string): Promise<any> => {
   try {
     const token = localStorage.getItem('authToken');
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/degree/status/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/degree/status/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

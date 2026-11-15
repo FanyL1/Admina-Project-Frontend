@@ -40,6 +40,7 @@ import { visuallyHidden } from '@mui/utils';
 import { Order, DataTableProps } from '@/app/type';
 import { useState } from 'react';
 import { EditModal } from './editModal';
+import MuiPopconfirm from '../Popover/PopConfirm';
 
 export default function DataTable({
   data,
@@ -459,12 +460,21 @@ export default function DataTable({
                             )}
                             {onToggleStatus && (
                               <Tooltip title={row.status === 'active' ? 'Inactivar' : 'Activar'}>
-                                <IconButton onClick={() => onToggleStatus(row)} size="small">
-                                  {row.status === 'active' ? 
-                                    <BlockIcon sx={{ color: theme.palette.error.main }} /> : 
-                                    <CheckCircleIcon sx={{ color: theme.palette.success.main }} />
-                                  }
-                                </IconButton>
+                                  <MuiPopconfirm
+                                  alert={`¿Estás seguro de querer ${row.status === 'active' ? 'desactivar' : 'activar'} este elemento?`}
+                                  onConfirm={() => onToggleStatus(row)}
+                                  okText={row.status === 'active' ? 'Inactivar' : 'Activar'}
+                                  cancelText="Cancelar"
+                                  okButtonProps={{ danger: true }}
+                                  loading={loading}
+                                >
+                                  <IconButton size="small">
+                                    {row.status === 'active' ? 
+                                      <BlockIcon sx={{ color: theme.palette.error.main }} /> : 
+                                      <CheckCircleIcon sx={{ color: theme.palette.success.main }} />
+                                    }
+                                  </IconButton>
+                                </MuiPopconfirm>
                               </Tooltip>
                             )}
 

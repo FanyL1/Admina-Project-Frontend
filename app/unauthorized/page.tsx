@@ -1,5 +1,4 @@
 'use client';
-
 import { useRouter } from 'next/navigation';
 // Importaciones directas de componentes para evitar sobrecargar el bundle
 import Box from '@mui/material/Box';

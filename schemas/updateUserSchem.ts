@@ -17,6 +17,7 @@ export const updateUserSchema = z.object({
     .toLowerCase(),
   pass: z.string()
     .max(50, 'La contraseña es demasiado larga')
+    .min(7, 'La contraseña es demasiado corta')
     .regex(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).*$/, 'La contraseña debe incluir una mayúscula, un número y un caracter especial.')
 })
 
@@ -36,6 +37,7 @@ export const updateSuperUserSchema = z.object({
     .toLowerCase(),
   pass: z.string()
     .max(50, 'La contraseña es demasiado larga')
+    .min(7, 'La contraseña es demasiado corta')
     .regex(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).*$/, 'La contraseña debe incluir una mayúscula, un número y un caracter especial.'),
   dni: z.string()
     .max(8,"Cedula inválida")

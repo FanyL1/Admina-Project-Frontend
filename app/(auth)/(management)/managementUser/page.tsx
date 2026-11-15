@@ -95,7 +95,7 @@ const handleEdit = async (updatedRow: UserData) => {
       const newStatus = row.status === 'active' ? 'inactive' : 'active';
       await updateStatus(row.id);
       toast.success(`Usuario ${newStatus === 'active' ? 'inactive' : 'activado'} exitosamente`);
-      await refreshUsers(); 
+      refreshUsers(); 
 
     } catch (error) {   
        toast.error('Error al cambiar el estado');
@@ -106,7 +106,7 @@ const handleEdit = async (updatedRow: UserData) => {
   const handleRolChange = async (row: UserData, newRol: string) => {
     try {
       await updateRol(row.id, newRol)
-      await refreshUsers(); 
+      refreshUsers(); 
     } catch (error) {
       toast.error('Error al cambiar el rol');
     }

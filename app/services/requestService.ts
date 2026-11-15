@@ -10,7 +10,7 @@ type ApiResult<T> = {
   details?: Array<{ field: string; message: string }>;
 };
 
-const backendUrl = () => process.env.NEXT_PUBLIC_BACKEND_URL;
+const backendUrl = () => process.env.NEXT_PUBLIC_API_URL;
 
 const authHeaders = () => {
   const token = localStorage.getItem('authToken');

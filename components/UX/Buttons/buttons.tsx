@@ -1,5 +1,6 @@
 // components/CustomButton.tsx
 import React from 'react';
+import Link from 'next/link';
 import { Button, ButtonProps, styled } from '@mui/material';
 
 interface CustomButtonProps extends ButtonProps {
@@ -63,10 +64,16 @@ const StyledButton = styled(Button, {
 export const Buttons: React.FC<CustomButtonProps> = ({
   variantType = 'primary',
   children,
+  href,
   ...props
 }) => {
   return (
-    <StyledButton variantType={variantType} {...props}>
+    <StyledButton
+      variantType={variantType}
+      component={typeof href === 'string' && href.startsWith('/') ? Link : undefined}
+      href={href}
+      {...props}
+    >
       {children}
     </StyledButton>
   );

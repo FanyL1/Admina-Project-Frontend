@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "android/**",
+    "graphify-out/**",
     "next-env.d.ts",
   ]),
 ]);

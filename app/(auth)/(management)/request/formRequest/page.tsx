@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Alert, Box, Button, Checkbox, Chip, Container, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper,
   Select, Stack, TextField, Typography} from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -9,7 +9,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SendIcon from '@mui/icons-material/Send';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import toast from 'react-hot-toast';
-import { useParams } from 'next/navigation';
 import { Category } from '@mui/icons-material';
 
 import { useLogin } from '@/app/login/useLogin';
@@ -17,11 +16,25 @@ import { OnlyNameData, ProcedureTypeData } from '@/app/type';
 import { createRequest, getDegrees, getProcedureTypes, uploadRequestDocument,} from '@/app/services/requestService';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { PromedioExtractor } from '@/components/UX/Buttons/ExtractorData';
-import { useGetAllCategory } from '../../../managementCategory/useCategory';
+import { useGetAllCategory } from '../../managementCategory/useCategory';
 
 const isAverageRequirement = (value: string) => value.toLowerCase().includes('promedio');
 
-export default function RequestPage() {
+export default function RequestFormPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+          <Typography>Cargando tramite...</Typography>
+        </Box>
+      }
+    >
+      <RequestFormContent />
+    </React.Suspense>
+  );
+}
+
+function RequestFormContent() {
   const router = useRouter();
   const { sessionUser } = useLogin();
   const [types, setTypes] = React.useState<ProcedureTypeData[]>([]);
@@ -35,8 +48,8 @@ export default function RequestPage() {
   const [requirementFiles, setRequirementFiles] = React.useState<Record<string, File | null>>({});
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const params = useParams<{ id: string }>();
-  const idUrl = params.id;
+  const searchParams = useSearchParams();
+  const idUrl = searchParams.get('id') ?? '';
   const [promedioStudent, setPromedioStudent] = React.useState<number | null>(null);
   const [errorPromedio, seterrorPromedio] = React.useState('')
   const [ucStudent, setUcStudent] = React.useState<number | null>(null);
@@ -54,6 +67,10 @@ const categoryName = categories?.find(
 
   React.useEffect(() => {
     const loadData = async () => {
+      if (!idUrl) {
+        setError('No se indico el tramite');
+        return;
+      }
       try {
         const [typeData, degreeData] = await Promise.all([getProcedureTypes(), getDegrees()]);
         setTypes(typeData);
@@ -65,7 +82,7 @@ const categoryName = categories?.find(
     };
 
     void Promise.resolve().then(loadData);
-  }, []);
+  }, [idUrl]);
 
   const requirements = tramite[0]?.requirements.documents || [];
   const promedio = tramite[0]?.requirements.promedio;

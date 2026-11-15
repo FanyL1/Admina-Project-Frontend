@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+android
+graphify-out
+package-lock.json
+*.md

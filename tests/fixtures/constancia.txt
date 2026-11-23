@@ -1,0 +1,98 @@
+                                                                             JUEVES, 19 DE NOVIEMBRE DE 2026
+                                 REPÚBLICA BOLIVARIANA DE VENEZUELA
+                         UNIVERSIDAD NACIONAL EXPERIMENTAL RÓMULO GALLEGOS
+                             DIRECCIÓN DE ADMISIÓN, CONTROL Y EVALUACIÓN
+
+
+                           CONSTANCIA DE CALIFICACIONES
+
+C.I.: 00000000 - PrimerApellido SegundoApellido PrimerNombre SegundoNombre
+CARRERA: (601) INGENIERIA EN INFORMATICA - INGENIERIA DE SISTEMAS (SAN JUAN DE
+LOS MORROS)
+COHORTE: 2022
+STATUS: ACTIVO
+
+ COD.MATERIA                                 NOMBRE MATERIA                                     U.C    NOTA
+                                             Período 20222
+     EC005           ECONOMIA DIGITAL                                                            2       10
+    FC0001           FORMACION CONSTITUCIONAL                                                    2       07
+     IC1222          FUNDAMENTOS DE LA INFORMATICA                                               3       09
+     IH1125          INGLES I                                                                    2       09
+     IH1124          LENGUAJE Y COMUNICACION                                                     2       10
+    IM1223           LOGICA MATEMATICA                                                           3       08
+    IM1421           MATEMATICA I                                                                5       10
+                                             Período 20231
+     IC2323          ALGORITMOS I                                                                3       08
+    AC0001           ARTE Y CULTURA                                                              2       09
+    IME320           ELECTIVA I (CONDUCTA HUMANA)                                                2       10
+     IB2322          FISICA I                                                                    4       06
+     IH2125          INGLES II                                                                   2       09
+    IM2421           MATEMATICA II                                                               5       10
+     IH2124          PROBLEMATICA CIENTIFICA TECNOL                                              2       09
+                                             Período 20232
+     IC3323          ALGORITMOS II                                                               3       09
+    IME520           ELECTIVA II (LEGISLACION INFORMATICA)                                       2       09
+    IM3421           MATEMATICA III                                                              5       09
+     IH3125          METODOLOGIA Y TECNICAS DE INVESTIGACION                                     2       09
+     IC5422          ORGANIZACION DEL COMPUTADOR                                                 5       10
+     IC3244          PROGRAMACION I                                                              4       10
+                                             Período 20233
+     IB3322          FISICA II                                                                   4       07
+                                             Período 20241
+     IS4225          BASE DE DATOS                                                               3       09
+    IME720           ELECTIVA III (MANTENIMIENTO DEL COMPUTADOR)                                 2       09
+    IM4323           ESTRUCTURAS DISCRETAS I                                                     4       10
+    IM4421           MATEMATICA IV                                                               5       06
+    IM5421           PROBABILIDADES Y ESTADISTICA                                                3       10
+     IC4244          PROGRAMACION II                                                             4       09
+                                             Período 20242
+     IC6322          ARQUITECTURA DEL COMPUTADOR                                                 4       09
+    DP0001           DEPORTE                                                                     2       08
+     IMEIV           ELECTIVA IV (TELEINFORMATICA)                                               2       08
+Este documento sin el sello y la firma de la oficina sectorial de Control de Estudios, no tiene validez
+                                   D.A.C.E   19/11/2026 15:34:54   Página 1 de 2
+    IM5323           ESTRUCTURAS DISCRETAS II                                                    4        10
+     ID6124          INGENIERIA ECONOMICA                                                        2        10
+     IC5244          PROGRAMACION III                                                            4        10
+     IS5205          TEORIA DE SISTEMAS                                                          2        08
+                                             Período 20243
+    IM5221           ALGEBRA BOOLEANA                                                            3        07
+                                             Período 20251
+       EA            ELECTIVA DE AREA I                                                          4        09
+     IMEV            ELECTIVA V                                                                  2        07
+    IM6243           METODOS NUMERICOS                                                           4        07
+     IS6425          SISTEMAS DE INFORMACION I                                                   5        09
+     IC7322          SISTEMAS OPERATIVOS                                                         4        08
+     IS7244          TRADUCTORES E INTERPRETES                                                   4        10
+                                             Período 20252
+     ID7322          CONTROL DE PROYECTOS                                                        4        08
+     IS8243          LENGUAJE DE PROGRAMACION                                                    4        10
+     ID7323          ORGANIZACION Y GESTION EMPRESA                                              4        10
+     IT8241          REDES                                                                       4        10
+     IS7324          SISTEMAS DE INFORMACION II                                                  5        09
+                                             Período 20253
+     ID6241          INVESTIGACION DE OPERACIONES                                                4        08
+                                             Período 20261
+    EA9244           ELECTIVA DE AREA II                                                         4        08
+    EL9325           ELECTIVA LIBRE I                                                            4        10
+     IH9202          ETICA PROFESIONAL                                                           2        09
+     ID8082          PASANTIA                                                                    4        10
+    PG9083           PROYECTO DE GRADO I                                                         4        10
+     IT9241          SISTEMAS DISTRIBUIDOS                                                       4        09
+                                                                                   Totales:   U.A | U.C   I.A
+                                                                                              178 | 178   8.54
+
+
+
+     Escala de medición: 1-10 Calificación mínima aprobatoria: 6
+                Calificaciones por equivalencia: EQ AP
+
+
+                                                                                   SCN - 3453688132
+
+
+
+
+Este documento sin el sello y la firma de la oficina sectorial de Control de Estudios, no tiene validez
+                                   D.A.C.E   19/11/2026 15:34:54   Página 2 de 2
+

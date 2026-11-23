@@ -1,0 +1,17 @@
+PLAN DE ESTUDIO
+C.I.: 31415658
+APELLIDOS: Vásquez Sanchez
+NOMBRES: Rafael Andres
+PERIODO: 2026-2
+
+SEMESTRE III
+CÓDIGO                MATERIA                                                  U.C.      SECCIÓN         TRATAMIENTO
+(1693) IS8424         SISTEMAS DE INFORMACION III                              5         01
+(809) EA0244          ELECTIVA DE AREA III                                     4         03
+(1169) EL             ELECTIVA LIBRE II                                        3         02              EXTRACREDITOS
+(1785) PG0083         PROYECTO DE GRADO II                                     4         03
+(586) IS0222          INFORMATICA EDUCATIVA                                    3         03
+(403) ID0221          GERENCIA DE PROYECTO                                     3         01
+NOTA: Escribe el tratamiento solo en las materias a las que aplique; deja en blanco las demás celdas. Usa únicamente códigos y materias del pensum
+cargado y exporta este archivo a PDF antes de subirlo.
+

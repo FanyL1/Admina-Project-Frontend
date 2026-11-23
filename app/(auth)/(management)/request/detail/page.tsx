@@ -251,6 +251,37 @@ function RequestDetailContent() {
                         }
                       </Grid>
                     </Grid>
+
+                    {request.additionalData?.academicValidation && (
+                      <Box sx={{ mt: 2 }}>
+                        <Divider />
+                        <Typography sx={{ fontWeight: 700, mt: 2 }}>
+                          Validación académica: {request.additionalData.academicValidation.isEligible ? 'elegible' : 'no elegible'}
+                        </Typography>
+                        <Stack spacing={0.5} sx={{ mt: 1 }}>
+                          {request.additionalData.academicValidation.checkedRules.map((rule) => (
+                            <Box key={rule.ruleId}>
+                              <Chip
+                                size="small"
+                                sx={{ mr: 1 }}
+                                color={rule.passed ? 'success' : 'error'}
+                                label={`${rule.ruleId} · ${rule.passed ? 'cumple' : 'falla'}`}
+                              />
+                              <Typography component="span" variant="caption" color="text.secondary">
+                                {rule.detail}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Stack>
+                        {request.additionalData.academicValidation.reasons.length > 0 && (
+                          <Alert severity="error" sx={{ mt: 1 }}>
+                            {request.additionalData.academicValidation.reasons.map((reason) => (
+                              <Typography key={reason} variant="caption" component="div">{reason}</Typography>
+                            ))}
+                          </Alert>
+                        )}
+                      </Box>
+                    )}
                   </Box>)}
 
                 </Stack>

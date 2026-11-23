@@ -1,16 +1,17 @@
 'use client';
-import { Box, Container,Typography, useMediaQuery } from '@mui/material';
+import { Box, Container } from '@mui/material';
 
 import {useLogin} from '../../login/useLogin'
-import theme from '../../theme';
 import DashboardEstudiante from '@/components/UX/Dashboard/Estudiante'
 import AdminDashboard from '@/components/UX/Dashboard/Administrativo';
 import { SuperUserDashboard } from '@/components/UX/Dashboard/Superusuario';
 import {WelcomeBanner }from '@/components/UX/Dashboard/WelcomeBanner'
+import AcademicSetup from '@/components/UX/Dashboard/AcademicSetup'
 
 export default function HomePage() {
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const {sessionUser, getUserCreatedAt} = useLogin()
+  const {sessionUser} = useLogin()
+  const roleName = sessionUser?.role?.name
+  const isAdmin = roleName === 'Administrativo' || roleName === 'Superusuario'
 
 
   return (
@@ -20,10 +21,12 @@ export default function HomePage() {
          
         <WelcomeBanner/>
 
+          {isAdmin && <AcademicSetup />}
+
           <Box>
-            {sessionUser?.role?.name == 'Estudiante' && <DashboardEstudiante/>}
-            {sessionUser?.role?.name == 'Administrativo' && <AdminDashboard/>}
-            {sessionUser?.role?.name == 'Superusuario' && <SuperUserDashboard/>}
+            {roleName == 'Estudiante' && <DashboardEstudiante/>}
+            {roleName == 'Administrativo' && <AdminDashboard/>}
+            {roleName == 'Superusuario' && <SuperUserDashboard/>}
 
           </Box>
            

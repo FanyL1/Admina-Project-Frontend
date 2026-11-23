@@ -164,7 +164,8 @@ export interface ProcedureRequirements {
   UC?: number;
   cohorte?: string | boolean;
   conditionLiso?: boolean;
-  materia?: string | null;
+  materia?: string | boolean | null;
+  tratamiento?: string | string[] | null;
   [key: string]: unknown;
 }
 
@@ -217,6 +218,20 @@ export interface AdditionalAcademicData {
   cohorte?: string | null | boolean;
   conditionLiso?: boolean | null;
   materia: string | null | boolean;
+  academicValidation?: {
+    isEligible: boolean;
+    checkedRules: Array<{
+      ruleId: string;
+      description: string;
+      kind: string;
+      operator: string;
+      threshold?: string | number;
+      passed: boolean;
+      skipped?: boolean;
+      detail: string;
+    }>;
+    reasons: string[];
+  } | null;
 }
 
 export interface StudentRequestData {

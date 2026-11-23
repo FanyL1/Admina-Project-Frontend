@@ -4,21 +4,25 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Alert, Box, Button, Checkbox, Chip, Container, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper,
   Select, Stack, TextField, Typography} from '@mui/material';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SendIcon from '@mui/icons-material/Send';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import toast from 'react-hot-toast';
-import { Category } from '@mui/icons-material';
 
 import { useLogin } from '@/app/login/useLogin';
 import { OnlyNameData, ProcedureTypeData } from '@/app/type';
 import { createRequest, getDegrees, getProcedureTypes, uploadRequestDocument,} from '@/app/services/requestService';
 import AppToaster from '@/components/UX/Toaster/AppToaster';
 import { PromedioExtractor } from '@/components/UX/Buttons/ExtractorData';
+import { compareIdentity } from '@/app/lib/academicPdf';
+import type { EligibilityResult } from '@/app/lib/academicPdf';
+import { usePensumCatalog } from '@/hooks/useAcademicCatalog';
 import { useGetAllCategory } from '../../managementCategory/useCategory';
 
 const isAverageRequirement = (value: string) => value.toLowerCase().includes('promedio');
+
+// Estos PDFs se cargan en el validador académico; no se pide una segunda copia.
+const VALIDATOR_DOCUMENTS = ['Constancia de notas', 'Plan de estudio'];
 
 export default function RequestFormPage() {
   return (
@@ -56,6 +60,8 @@ function RequestFormContent() {
   const [cohorteStudent, setCohorteStudent] = React.useState<string | null>(null);
   const [isLisoStudent, setIsLisoStudent] = React.useState<boolean | null>(null);
   const [materiaStudent, setMateriaStudent] = React.useState<string | null>(null);
+  const [eligibilityResult, setEligibilityResult] = React.useState<EligibilityResult | null>(null);
+  const catalogPensum = usePensumCatalog();
 
   const tramite = types?.filter(
     (selecType) => selecType.id === idUrl
@@ -64,6 +70,26 @@ function RequestFormContent() {
 const categoryName = categories?.find(
   (c) => c.id === tramite[0]?.category_id
 )?.name ?? 'Categoría no encontrada';
+
+  // El validador memoiza la elegibilidad con este objeto; si se crea en cada
+  // render, el efecto de onEligibilityChange entra en un ciclo infinito.
+  const identityProfile = React.useMemo(
+    () => (externalApplicant
+      ? { dni: externalDni, name: externalName }
+      : {
+          dni: sessionUser?.dni,
+          name: sessionUser?.name,
+          lastname: sessionUser?.lastname,
+        }),
+    [
+      externalApplicant,
+      externalDni,
+      externalName,
+      sessionUser?.dni,
+      sessionUser?.name,
+      sessionUser?.lastname,
+    ],
+  );
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -85,6 +111,7 @@ const categoryName = categories?.find(
   }, [idUrl]);
 
   const requirements = tramite[0]?.requirements.documents || [];
+  const visibleRequirements = requirements.filter((name) => !VALIDATOR_DOCUMENTS.includes(name));
   const promedio = tramite[0]?.requirements.promedio;
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -94,13 +121,18 @@ const categoryName = categories?.find(
     if (externalApplicant && (externalName.trim().length < 3 || externalDni.trim().length < 6)) {
       return toast.error('Completa nombre y cedula del solicitante');
     }
-    if (promedio !== null && promedio !== undefined) {
-      if (promedioStudent !== null) {
-        if (promedioStudent < promedio) {
-          seterrorPromedio('No puedes enviar la solicitud porque tu promedio es inferior al requerido.');
-          return;
-        }
+    if (errorPromedio) {
+      return toast.error(errorPromedio);
+    }
+    if (promedio !== null && promedio !== undefined && promedio > 0) {
+      if (promedioStudent === null || promedioStudent < promedio) {
+        const message = 'No puedes enviar la solicitud porque tu promedio es inferior al requerido o no se pudo leer.';
+        seterrorPromedio(message);
+        return toast.error(message);
       }
+    }
+    if (eligibilityResult && !eligibilityResult.isEligible) {
+      return toast.error(`No cumples la validación académica: ${eligibilityResult.reasons[0] ?? 'revisa el resultado'}`);
     }
     
     for (const requirement of requirements) {
@@ -128,8 +160,15 @@ const categoryName = categories?.find(
           promedio: promedioStudent, 
           UC: ucStudent, 
           cohorte: cohorteStudent,  
-          conditionLiso: isLisoStudent, 
-          materia: materiaStudent, 
+          conditionLiso: isLisoStudent,
+          materia: materiaStudent,
+          academicValidation: eligibilityResult
+            ? {
+                isEligible: eligibilityResult.isEligible,
+                checkedRules: eligibilityResult.checkedRules,
+                reasons: eligibilityResult.reasons,
+              }
+            : undefined,
         }
       });
 
@@ -212,45 +251,32 @@ const categoryName = categories?.find(
                   />
                 </Paper>
                 <PromedioExtractor
+                  initialPensum={catalogPensum}
                   requirementsRules={tramite[0]?.requirements || {}}
+                  cedula={errorPromedio}
+                  profile={identityProfile}
                   onDNIextraido={(dniLeido) => {
-                    if (externalApplicant) {
-                      seterrorPromedio(externalDni !== dniLeido ? 'La cédula del documento no coincide con el solicitante.' : '');
-                    } else {
-                      seterrorPromedio(sessionUser?.dni !== dniLeido ? 'La cédula del documento no coincide con tu usuario.' : '');
-                    }
+                    const expectedDni = externalApplicant ? externalDni : sessionUser?.dni;
+                    const identity = compareIdentity({ idNumber: dniLeido }, { dni: expectedDni });
+                    seterrorPromedio(identity.ok ? '' : identity.issues.join('. '));
                   }}
                   onDataExtraida={(data) => {
-                    // Aquí recibes solo lo que el trámite solicitó. Lo demás vendrá como undefined.
                     setPromedioStudent(data.promedio ?? null);
                     setUcStudent(data.uc ?? null);
                     setCohorteStudent(data.cohorte ?? null);
                     setIsLisoStudent(data.isLiso ?? null);
                   }}
-                  cedula={errorPromedio}
+                  onEligibilityChange={setEligibilityResult}
+                  onDocumentFile={(name, file) => setRequirementFiles((current) => ({
+                    ...current,
+                    [name]: file,
+                  }))}
+                  selectedSubjectCode={materiaStudent}
+                  onSubjectChange={setMateriaStudent}
                 />
-                {tramite[0]?.requirements?.materia && <TextField
-                  fullWidth
-                  label="Materia"
-                  value={materiaStudent || ''}
-                  onChange={(event) => setMateriaStudent(event.target.value)}
-                  disabled={loading}
-                  sx={{
-                      maxWidth: {
-                        xs: '300px', 
-                        sm: '300px',
-                        md: '100%'
-                      },
-                      '& .MuiSelect-select': {
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }
-                    }}
-                />}
 
                 <Stack spacing={2}>
-                  {requirements.map((requirement) => (
+                  {visibleRequirements.map((requirement) => (
                     <Paper key={requirement} variant="outlined" sx={{ p: 2 }}>
                       <Typography sx={{ fontWeight: 700, mb: 1 }}>{requirement}</Typography>
                       {isAverageRequirement(requirement) ? (

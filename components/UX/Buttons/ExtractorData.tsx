@@ -16,6 +16,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import toast from 'react-hot-toast';
 
@@ -263,6 +264,17 @@ export const PromedioExtractor = ({
         <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }} useFlexGap>
           {uploadButton('constancia', transcript ? 'Constancia cargada' : 'Cargar constancia')}
           {planVisible && uploadButton('plan', plan ? 'Plan cargado' : 'Cargar plan de estudio')}
+          {planVisible && (
+            <Button
+              component="a"
+              href="/plantillas/plan-de-estudio.docx"
+              download="plan-de-estudio.docx"
+              size="small"
+              startIcon={<DownloadIcon />}
+            >
+              Plantilla Word
+            </Button>
+          )}
         </Stack>
       </Box>
 

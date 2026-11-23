@@ -145,6 +145,15 @@ test('plan: tratamiento por fila y PROYECTO DE GRADO II como materia', async () 
   assert.ok(result.courses.filter((course) => course.treatment === null).length === 5);
 });
 
+test('plan: tratamiento partido en varias líneas se normaliza', async () => {
+  const result = parseStudyPlan(await fixture('plan-examen-extraordinario.txt'));
+
+  const elective = result.courses.find((course) => course.code === 'EL');
+  assert.equal(elective?.treatment, 'EXAMEN EXTRAORDINARIO');
+  assert.equal(result.courses.find((course) => course.code === 'EA0244')?.treatment, null);
+  assert.ok(!result.warnings.some((warning) => warning.includes('Tratamiento no reconocido')));
+});
+
 test('identidad: tolera tildes/mayúsculas/segundo nombre ausente y detecta tokens distintos', () => {
   const profile = { dni: '31415658', name: 'Rafael Andres', lastname: 'Vásquez Sanchez' };
 

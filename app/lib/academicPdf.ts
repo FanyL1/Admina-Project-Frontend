@@ -518,6 +518,17 @@ export const parseStudyPlan = (text: string): StudyPlanParseResult => {
   const warnings: string[] = [];
   const courses: StudyPlanCourse[] = [];
 
+  const rowRegex = /^\s*(?:\(\d+\)\s+)?([A-Z]{1,6}\d{0,5})\s+(.+?)\s+(\d{1,2})\s+(\d{1,2})\s*(.*)$/;
+  const isCourseLine = (value: string) => rowRegex.test(value);
+  const isTreatmentContinuation = (value: string) => {
+    const candidate = value.trim();
+    if (!candidate || isCourseLine(candidate) || isIgnorableLine(candidate)) return false;
+    if (/^(NOTA|CARGADO|PERIODO|SEMESTRE|C[ÓO]DIGO|PLAN\b)/i.test(candidate)) return false;
+    // Fragmentos como "EXTRAordinario" salen en su propia línea cuando Word
+    // ajusta el texto de la celda TRATAMIENTO.
+    return candidate.length <= 60 && /^[\p{L}\p{N}\s.,()\-/]+$/u.test(candidate);
+  };
+
   const identityLine = lines.map(parseIdentityLine).find(Boolean);
   const idNumber = identityLine?.idNumber ?? null;
   const apellidos = joined.match(/APELLIDOS\s*[:\-]\s*(.*?)(?=\s+NOMBRES\s*:|$)/i)?.[1]?.trim() ?? null;
@@ -527,16 +538,24 @@ export const parseStudyPlan = (text: string): StudyPlanParseResult => {
 
   if (rawPeriod && !period) warnings.push(`Período del plan no reconocido: ${rawPeriod}`);
 
-  for (const line of lines) {
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
     if (isIgnorableLine(line)) continue;
-    const match = line.match(
-      /^\s*(?:\(\d+\)\s+)?([A-Z]{1,6}\d{0,5})\s+(.+?)\s+(\d{1,2})\s+(\d{1,2})\s*(.*)$/,
-    );
+    const match = line.match(rowRegex);
     if (!match) continue;
 
-    const treatment = normalizeTreatment(match[5]);
-    if (match[5].trim() && !treatment) {
-      warnings.push(`Tratamiento no reconocido en la fila de ${match[1]}: ${match[5].trim()}`);
+    const fragments = match[5].trim() ? [match[5].trim()] : [];
+    let cursor = index + 1;
+    while (cursor < lines.length && isTreatmentContinuation(lines[cursor])) {
+      fragments.push(lines[cursor].trim());
+      cursor += 1;
+    }
+    index = cursor - 1;
+
+    const rawTreatment = fragments.join(' ').trim();
+    const treatment = normalizeTreatment(rawTreatment);
+    if (rawTreatment && !treatment) {
+      warnings.push(`Tratamiento no reconocido en la fila de ${match[1]}: ${rawTreatment}`);
     }
 
     courses.push({

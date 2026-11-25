@@ -64,9 +64,9 @@ export default function ManagementRequestPage() {
      liso: typeof procedure.requirements?.conditionLiso === 'boolean'
         ? (procedure.requirements.conditionLiso ? 'Liso' : 'No aplica')
         : (procedure.requirements?.conditionLiso || 'No aplica'),
-      materia: typeof procedure.requirements?.materia === 'string' 
+      materia: typeof procedure.requirements?.materia === 'string'
         ? (procedure.requirements.materia ? 'Incluir' : 'No aplica')
-        : (procedure.requirements?.materia || 'No aplica'),
+        : (procedure.requirements?.materia ? 'Incluir' : 'No aplica'),
       documents: procedure.requirements?.documents || []
     });
     setOpenModal(true);
@@ -132,6 +132,7 @@ export default function ManagementRequestPage() {
             {value?.cohorte ? <Chip label="Exige Cohorte" size="small" color="info" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}}  /> : null}
             {value?.liso && value.liso !== 'No aplica' ? <Chip label="Exige Liso" size="small" color="warning" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}} /> : null}
             {value?.materia && value.materia !== 'No aplica' ? <Chip label="Exige Materia" size="small" color="warning" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}} /> : null}
+            {value?.tratamiento ? <Chip label={`Tratamiento: ${Array.isArray(value.tratamiento) ? value.tratamiento.join(', ') : value.tratamiento}`} size="small" color="secondary" variant="outlined" sx={{ fontWeight: 'normal',  fontSize: '11px'}} /> : null}
 
           {value?.documents?.map((doc: string) => (
             <Chip 

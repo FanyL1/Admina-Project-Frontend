@@ -1,0 +1,94 @@
+                                                                                                                  JUEVES, 19 DE NOVIEMBRE DE 2026
+
+                                 PENSUM DE ESTUDIOS DE INGENIERIA EN INFORMATICA
+
+    Carrera: INGENIERIA EN INFORMATICA
+    Pensum ID: 5
+
+                                                                  HORAS      HORAS        HORAS
+     CÓD.                        ASIGNATURA                      TEÓRICAS   PRÁCTICAS   SEMANALES   U.C                         PRELACIONES
+
+
+ 1 Semestre
+(1514) IC1222   (731) FUNDAMENTOS DE LA INFORMATICA                0           2           2        3
+(2743) DP0001                (1482) DEPORTE                        0           2           2        2
+(1848) IM1421              (276) MATEMATICA I                      0           6           6        5
+(1064) IM1223           (345) LOGICA MATEMATICA                    0           5           5        3
+(1287) FC0001        (15) FORMACION CONSTITUCIONAL                 0          65          65        2
+(706) IH1124         (133) LENGUAJE Y COMUNICACION                 0           3           3        2
+(775) IH1125                  (223) INGLES I                       0           4           4        2
+(4078) EC005             (2322) ECONOMIA DIGITAL                   20         20          40        2
+ 2 Semestre
+(1000) IM2421              (134) MATEMATICA II                     0          11          11        5                     (276) MATEMATICA I
+(1728) IH2124   (716) PROBLEMATICA CIENTIFICA TECNOL               0           9           9        2                      13 U.C Aprobadas
+(788) IB2322                  (164) FISICA I                       0           7           7        4                     (276) MATEMATICA I
+(1300) IME320      (656) ELECTIVA I (CONDUCTA HUMANA)              0          55          55        2                      13 U.C Aprobadas
+(1462) IC2323               (40) ALGORITMOS I                      0           8           8        3                  (345) LOGICA MATEMATICA
+(2559) AC0001            (1478) ARTE Y CULTURA                     0           2           2        2              (15) FORMACION CONSTITUCIONAL
+(771) IH2125                  (590) INGLES II                      0          10          10        2                        (223) INGLES I
+ 3 Semestre
+(1201) IC3323              (679) ALGORITMOS II                     0          14          14        3                     (40) ALGORITMOS I
+                      (571) ELECTIVA II (LEGISLACION
+(350) IME520                   INFORMATICA)                        0          57          57        2            (656) ELECTIVA I (CONDUCTA HUMANA)
+(397) IC3244              (83) PROGRAMACION I                      0          13          13        4                     (40) ALGORITMOS I
+(671) IM3421               (172) MATEMATICA III                    0          16          16        5                     (134) MATEMATICA II
+(1721) IB3322                 (588) FISICA II                      0          12          12        4                        (164) FISICA I
+                    (13) METODOLOGIA Y TECNICAS DE
+(1429) IH3125                INVESTIGACION                         0          15          15        2                      30 U.C Aprobadas
+ 4 Semestre
+(1767) IM5421      (249) PROBABILIDADES Y ESTADISTICA              0          20          20        3                    (172) MATEMATICA III
+(333) IM4421               (159) MATEMATICA IV                     0          19          19        5                    (172) MATEMATICA III
+(917) IC4244             (454) PROGRAMACION II                     0          17          17        4                     (679) ALGORITMOS II
+                    (229) ELECTIVA III (MANTENIMIENTO
+(1497) IME720               DEL COMPUTADOR)                        0          21          21        2         (571) ELECTIVA II (LEGISLACION INFORMATICA)
+(784) IM4323         (362) ESTRUCTURAS DISCRETAS I                 0          18          18        4                     (679) ALGORITMOS II
+(906) IS4225              (209) BASE DE DATOS                      0          22          22        3                    (83) PROGRAMACION I
+ 5 Semestre
+(1265) IS5205           (180) TEORIA DE SISTEMAS                   0          28          28        2                      50 U.C Aprobadas
+(1657) IM5221           (537) ALGEBRA BOOLEANA                     0          25          25        3              (362) ESTRUCTURAS DISCRETAS I
+(1561) IM5323        (827) ESTRUCTURAS DISCRETAS II                0          26          26        4              (362) ESTRUCTURAS DISCRETAS I
+(756) IC5244             (264) PROGRAMACION III                    0          23          23        4                   (454) PROGRAMACION II
+(1418) IMEIV       (125) ELECTIVA IV (TELEINFORMATICA)             0          27          27        2     (229) ELECTIVA III (MANTENIMIENTO DEL COMPUTADOR)
+(1686) IC5422   (631) ORGANIZACION DEL COMPUTADOR                  0          24          24        5                        (588) FISICA II
+ 6 Semestre
+(1150) ID6241      (122) INVESTIGACION DE OPERACIONES              0          31          31        4            (249) PROBABILIDADES Y ESTADISTICA
+ (62) IC6322       (17) ARQUITECTURA DEL COMPUTADOR                0          29          29        4           (631) ORGANIZACION DEL COMPUTADOR
+(174) IS6425         (299) SISTEMAS DE INFORMACION I               0          33          33        5                  (180) TEORIA DE SISTEMAS
+(390) IM6243           (506) METODOS NUMERICOS                     0          32          32        4              (827) ESTRUCTURAS DISCRETAS II
+(1008) ID6124          (873) INGENIERIA ECONOMICA                  0          30          30        2                      70 U.C Aprobadas
+ (1742) IMEV                (803) ELECTIVA V                       0          59          59        2            (125) ELECTIVA IV (TELEINFORMATICA)
+ 7 Semestre
+(1210) ID7323   (406) ORGANIZACION Y GESTION EMPRESA               0          36          36        4                      86 U.C Aprobadas
+(1570) IS7244       (283) TRADUCTORES E INTERPRETES                0          37          37        4              (827) ESTRUCTURAS DISCRETAS II
+ (10) IC7322           (313) SISTEMAS OPERATIVOS                   0          34          34        4            (17) ARQUITECTURA DEL COMPUTADOR
+(774) IS7324        (755) SISTEMAS DE INFORMACION II               0          38          38        5              (299) SISTEMAS DE INFORMACION I
+(1609) ID7322         (267) CONTROL DE PROYECTOS                   0          35          35        4                      86 U.C Aprobadas
+ 8 Semestre
+  (1378) EA              (60) ELECTIVA DE AREA I                   0          39          39        4                      100 U.C Aprobadas
+(872) ID8082                 (435) PASANTIA                        0          40          40        4               (267) CONTROL DE PROYECTOS
+(859) IS8243        (66) LENGUAJE DE PROGRAMACION                  0          41          41        4             (283) TRADUCTORES E INTERPRETES
+(1693) IS8424       (653) SISTEMAS DE INFORMACION III              0          42          42        5              (755) SISTEMAS DE INFORMACION II
+
+
+
+
+                                                       D.A.C.E    19/11/2026 15:42:40        Página 1 de 2
+(1282) IT8241           (165) REDES                     0        43           43      4          (313) SISTEMAS OPERATIVOS
+ 9 Semestre
+(615) EL9325       (315) ELECTIVA LIBRE I               0         1           1       4                136 U.C Aprobadas
+(1185) IT9241   (859) SISTEMAS DISTRIBUIDOS             0        46           46      4                  (165) REDES
+ (7) EA9244       (549) ELECTIVA DE AREA II             0        44           44      4            (60) ELECTIVA DE AREA I
+(803) IH9202      (649) ETICA PROFESIONAL               0        45           45      2        (755) SISTEMAS DE INFORMACION II
+(254) PG9083    (103) PROYECTO DE GRADO I               0        47           47      4                157 U.C Aprobadas
+ 10 Semestre
+(809) EA0244     (289) ELECTIVA DE AREA III             0        48           48      4            (549) ELECTIVA DE AREA II
+  (1169) EL        (251) ELECTIVA LIBRE II              0        49           49      3                157 U.C Aprobadas
+(1785) PG0083   (697) PROYECTO DE GRADO II              0        52           52      4          (103) PROYECTO DE GRADO I
+ (586) IS0222   (427) INFORMATICA EDUCATIVA             0        51           51      3                157 U.C Aprobadas
+(403) ID0221    (598) GERENCIA DE PROYECTO              0        50           50      3                 (435) PASANTIA
+
+
+
+
+                                              D.A.C.E   19/11/2026 15:42:40    Página 2 de 2
+

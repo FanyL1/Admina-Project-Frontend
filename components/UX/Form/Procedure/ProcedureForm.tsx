@@ -6,13 +6,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SaveIcon from '@mui/icons-material/Save';
 import { OnlyNameData, ProcedureTypeFormData } from '@/app/type';
+import { TREATMENT_OPTIONS } from '@/app/lib/academicPdf';
 import { useGetAllCategory } from '@/app/(auth)/(management)/managementCategory/useCategory';
 
 interface ProcedureFormProps {
   initialValues?: ProcedureTypeFormData;
   loading?: boolean;
   submitLabel?: string;
-  onSubmit: (values: any) => Promise<void> | void;
+  onSubmit: (values: ProcedureTypeFormData) => Promise<void> | void;
 }
 
 const emptyValues: ProcedureTypeFormData = {
@@ -37,6 +38,10 @@ export default function ProcedureForm({
   const [cohorte, setCohorte] = React.useState<string>('false'); 
   const [conditionalLiso, setConditionalLiso] = React.useState<string>('No aplica'); 
   const [materia, setmateria] = React.useState<string>('');
+  const [tratamiento, setTratamiento] = React.useState<string>(() => {
+    const configured = initialValues.requirements.tratamiento;
+    return Array.isArray(configured) ? configured[0] ?? '' : typeof configured === 'string' ? configured : '';
+  });
 
   const [documents, setDocuments] = React.useState<string[]>(
     initialValues.requirements.documents.length > 0
@@ -101,7 +106,8 @@ export default function ProcedureForm({
         UC: UC !== '' ? Number(UC) : undefined,
         cohorte: cohorteBackendValue,
         liso: lisoBackendValue,
-        materia: requiereMateriaBackend
+        materia: requiereMateriaBackend,
+        tratamiento: tratamiento || undefined
       },
     });
   };
@@ -220,6 +226,20 @@ export default function ProcedureForm({
             >
               <MenuItem value="true">Sí, el estudiante debe especificar una materia</MenuItem>
               <MenuItem value="false">No aplica para este trámite</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth disabled={loading}>
+            <InputLabel>Tratamiento solicitado en el plan</InputLabel>
+            <Select
+              label="Tratamiento solicitado en el plan"
+              value={tratamiento}
+              onChange={(event) => setTratamiento(event.target.value)}
+            >
+              <MenuItem value="">No aplica</MenuItem>
+              {TREATMENT_OPTIONS.map((option) => (
+                <MenuItem key={option} value={option}>{option}</MenuItem>
+              ))}
             </Select>
           </FormControl>
 
